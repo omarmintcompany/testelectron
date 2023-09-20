@@ -1,22 +1,32 @@
 <template>
-  <q-item
-    clickable
-    tag="a"
-    target="_blank"
-    :href="link"
-  >
-    <q-item-section
-      v-if="icon"
-      avatar
-    >
-      <q-icon :name="icon" />
-    </q-item-section>
-
-    <q-item-section>
-      <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>{{ caption }}</q-item-label>
-    </q-item-section>
-  </q-item>
+  <div>
+    <div v-if="children.length == 0">
+      <q-item clickable v-ripple :inset-level="level" :to="link">
+        <q-item-section>{{ title }}</q-item-section>
+      </q-item>
+    </div>
+    <div v-else>
+      <div v-if="children.length > 0">
+        <!-- {{children}} -->
+        <q-expansion-item
+          expand-separator
+          :icon="icon"
+          :label="title"
+          :caption="caption"
+          :header-inset-level="level"
+          default-closed
+        >
+          <EssentialLink v-for="child in children" :key="child" v-bind="child">
+          </EssentialLink>
+        </q-expansion-item>
+      </div>
+      <div v-else>
+        <q-item clickable v-ripple :inset-level="level" :to="link">
+          <q-item-section>{{ title }}</q-item-section>
+        </q-item>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -27,23 +37,29 @@ export default defineComponent({
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
 
     caption: {
       type: String,
-      default: ''
+      default: '',
     },
 
     link: {
       type: String,
-      default: '#'
+      default: '#',
     },
 
     icon: {
       type: String,
-      default: ''
-    }
-  }
+      default: '',
+    },
+
+    level: {
+      type: String,
+      default: '',
+    },
+    children: [],
+  },
 });
 </script>

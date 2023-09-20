@@ -13,7 +13,9 @@
 
 
 
+import {LocalStorage,Notify,Loading,Dialog} from 'quasar'
 
 
-export default { config: {} }
+
+export default { config: {},plugins: {LocalStorage,Notify,Loading,Dialog} }
 

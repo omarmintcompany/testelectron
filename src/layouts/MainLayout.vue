@@ -1,4 +1,5 @@
 <template>
+  <div></div>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
@@ -11,9 +12,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
+        <q-toolbar-title> Quasar App </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
@@ -23,19 +22,18 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
+      content-class="bg-grey-1"
     >
       <q-list>
-        <q-item-label
-          header
-        >
+        <q-item-label header class="text-grey-8">
           Essential Links
         </q-item-label>
-
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
-        />
+        >
+        </EssentialLink>
       </q-list>
     </q-drawer>
 
@@ -51,66 +49,75 @@ import EssentialLink from 'components/EssentialLink.vue';
 
 const linksList = [
   {
-    title: 'Docs',
+    title: 'Search',
     caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    icon: 'book_online',
+    link: 'https://quasar.dev',
+    level: 0,
+    children: [
+      {
+        title: 'Documents',
+        caption: 'quasar.dev',
+        icon: 'school',
+        link: 'https://quasar.dev',
+        level: 1,
+        children: [
+          {
+            title: 'Search (level 3)',
+            caption: 'quasar.dev',
+            icon: 'school',
+            link: 'https://quasar.dev',
+            level: 2,
+            children: [],
+          },
+        ],
+      },
+    ],
   },
   {
     title: 'Github',
     caption: 'github.com/quasarframework',
     icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    link: 'https://github.com/quasarframework',
+    level: 0,
+    children: [
+      {
+        title: 'Github Level 2',
+        caption: 'quasar.dev',
+        icon: 'school',
+        link: 'https://quasar.dev',
+        level: 1,
+        children: [],
+      },
+    ],
   },
   {
     title: 'Forum',
     caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    icon: 'school',
+    link: 'prueba',
+    level: 0,
+    children: [],
   },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
 ];
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    EssentialLink
+    EssentialLink,
   },
 
-  setup () {
-    const leftDrawerOpen = ref(false)
+  setup() {
+    const leftDrawerOpen = ref(false);
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
-    }
-  }
+      toggleLeftDrawer() {
+        leftDrawerOpen.value = !leftDrawerOpen.value;
+      },
+    };
+  },
 });
 </script>
