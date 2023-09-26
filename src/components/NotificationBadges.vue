@@ -1,12 +1,6 @@
 <template>
   <div>
-    <q-btn
-      dense
-      icon="alarm"
-      color="black"
-      title="Stock solicitado"
-      label="Stock solicitado"
-    >
+    <q-btn dense icon="alarm" color="black" round title="Stock solicitado">
       <q-badge color="red" floating>{{ RequestedStock }}</q-badge>
     </q-btn>
     <q-btn
@@ -36,6 +30,7 @@
       icon="alarm"
       class="q-ml-md"
       title="Reservas abiertas"
+      @click="$router.replace('/reservas')"
     >
       <q-badge color="red" floating>{{ Reservations }}</q-badge>
     </q-btn>

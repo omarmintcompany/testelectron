@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh lpR fFf" class="fondomint">
     <q-header elevated class="bg-primary text-white" height-hint="98">
       <q-toolbar class="mint">
         <q-toolbar-title>
@@ -11,14 +11,17 @@
           MSM - Mint Store Manager
           <b>
             {{
-              store.getCurrentWhsCode != ''
+              store.getCurrentWhsCode.whsName != ''
                 ? ' - ' + store.getCurrentWhsCode.whsName
                 : ''
             }}
           </b>
         </q-toolbar-title>
-
-        <q-tabs v-model="tab" class="mint">
+        <q-tabs
+          v-model="tab"
+          class="mint"
+          v-if="store.getCurrentWhsCode.whsCode != ''"
+        >
           <q-tab name="Disponibilidad" icon="search" label="Disponibilidad" />
           <q-tab
             name="Transferencias"
@@ -42,18 +45,39 @@
           <q-tab name="Reservas" icon="alarm" label="Reservas">
             <q-menu class="mint">
               <q-list style="min-width: 100px">
-                <q-item clickable v-close-popup to="reservas">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/reservas')"
+                >
                   <q-avatar icon="content_paste_search" />
                   <q-item-section>Buscador</q-item-section>
                 </q-item>
-                <q-item clickable v-close-popup>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/reservas/0')"
+                >
                   <q-avatar icon="note_add" />
                   <q-item-section>Nueva reserva</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
           </q-tab>
-          <q-tab name="Stock" icon="inventory" label="Stock de Tienda" />
+          <q-tab name="Stock" icon="inventory" label="Stock de Tienda">
+            <q-menu class="mint">
+              <q-list style="min-width: 100px">
+                <q-item clickable v-close-popup to="stockrequested">
+                  <q-avatar icon="list_alt" />
+                  <q-item-section>Peticiones</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup to="stockwhs">
+                  <q-avatar icon="list" />
+                  <q-item-section>Stock</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-tab>
           <q-tab
             name="Configuracion"
             icon="home"
@@ -65,15 +89,13 @@
             @click="$router.replace('/config')"
           />
         </q-tabs>
-
         <notification-badges
-          v-bind:CurrentWhsCode="store.getCurrentWhsCode.whsCode"
           v-if="store.getCurrentWhsCode.whsCode != ''"
         ></notification-badges>
       </q-toolbar>
     </q-header>
 
-    <q-page-container>
+    <q-page-container background-image="~assets/fondo.jpg">
       <router-view />
     </q-page-container>
   </q-layout>

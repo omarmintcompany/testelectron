@@ -6,8 +6,20 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MSMLayout.vue'),
 
     children: [
-      { path: 'reservas', component: () => import('pages/Reservas.vue') },
       { path: 'config', component: () => import('pages/Config.vue') },
+      {
+        path: 'reservas',
+        component: () => import('pages/Reservas.vue'),
+      },
+      {
+        path: 'reservas/:reservationId',
+        component: () => import('pages/ReservasEditar.vue'),
+        props: true,
+      },
+      {
+        path: 'stockrequested',
+        component: () => import('pages/StockRequested.vue'),
+      },
     ],
   },
 

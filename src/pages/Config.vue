@@ -4,6 +4,7 @@
     <div class="col"></div>
     <div class="col">
       <q-select
+        bg-color="white"
         outlined
         v-model="WhsSelected"
         :options="WhsList"
@@ -12,7 +13,7 @@
         map-options
       />
       <div class="column" style="height: 10px"></div>
-      <q-btn class="full-width mint" @click="confirm()">
+      <q-btn class="full-width mint" @click="confirm()" dense>
         <q-icon left size="3em" name="check" />
         <div>Confirmar</div>
       </q-btn>
