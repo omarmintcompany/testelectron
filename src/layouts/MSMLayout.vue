@@ -17,12 +17,21 @@
             }}
           </b>
         </q-toolbar-title>
+        <div v-if="store.getCurrentWhsCode.whsName == ''">
+          <q-icon name="error" size="lg" />
+          No conectado al servidor
+        </div>
         <q-tabs
           v-model="tab"
           class="mint"
           v-if="store.getCurrentWhsCode.whsCode != ''"
         >
-          <q-tab name="Disponibilidad" icon="search" label="Disponibilidad" />
+          <q-tab
+            name="Disponibilidad"
+            icon="search"
+            label="Disponibilidad"
+            @click="$router.replace('/disponibilidad')"
+          />
           <q-tab
             name="Transferencias"
             icon="transfer_within_a_station"
@@ -67,7 +76,11 @@
           <q-tab name="Stock" icon="inventory" label="Stock de Tienda">
             <q-menu class="mint">
               <q-list style="min-width: 100px">
-                <q-item clickable v-close-popup to="stockrequested">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/stockrequested')"
+                >
                   <q-avatar icon="list_alt" />
                   <q-item-section>Peticiones</q-item-section>
                 </q-item>

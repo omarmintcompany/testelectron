@@ -70,10 +70,6 @@ export default defineComponent({
     },
   },
   methods: {
-    cancel() {
-      this.show = false;
-      this.$emit('token', '');
-    },
     accept() {
       axios
         .post(`${this.store.options['ApiEndPoint']}/login`, {
@@ -81,11 +77,12 @@ export default defineComponent({
           password: this.password,
         })
         .then((x) => {
-          console.log(x.data.token);
+          this.store.setToken(x.data.token);
           this.show = false;
           this.$emit('token', x.data.token);
         })
         .catch((err) => {
+          this.store.setToken('');
           this.show = false;
           this.$emit('token', '');
         });

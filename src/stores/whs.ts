@@ -5,9 +5,10 @@ import axios from 'axios';
 export const useWhsStore = defineStore('whs', {
   state: () => ({
     options: {
-      ApiEndPoint: 'http://localhost:32773',
+      ApiEndPoint: 'http://localhost:32771',
       WhsData: { whsCode: '', whsName: '', isDefault: false } as WhsInfo,
       WhsList: [] as WhsInfo[],
+      token: 's' as string,
     },
   }),
   actions: {
@@ -15,6 +16,7 @@ export const useWhsStore = defineStore('whs', {
       axios
         .get(`${this.options['ApiEndPoint']}/whsipmapping/`)
         .then((x) => {
+          this.options['token'] = '';
           this.options['WhsList'] = x.data as WhsInfo[];
           this.options['WhsData'] = this.options['WhsList'].filter((item) => {
             return item.isDefault == true;
@@ -22,16 +24,22 @@ export const useWhsStore = defineStore('whs', {
         })
         .catch((err) => console.log('Axios err: ', err));
     },
-    setWhsCode(value: WhsInfor) {
+    setWhsCode(value: WhsInfo) {
       this.options['WhsData'] = value;
+    },
+    setToken(value: string) {
+      this.options['token'] = value;
     },
   },
   getters: {
-    getCurrentWhsCode(): string {
+    getCurrentWhsCode(): WhsInfo {
       return this.options['WhsData'];
     },
     getWhsList(): WhsInfo[] {
       return this.options['WhsList'];
+    },
+    getToken(): string {
+      return this.options['token'];
     },
   },
 });

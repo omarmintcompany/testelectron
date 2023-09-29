@@ -1,6 +1,13 @@
 <template>
   <div>
-    <q-btn dense icon="alarm" color="black" round title="Stock solicitado">
+    <q-btn
+      dense
+      icon="alarm"
+      color="black"
+      round
+      title="Stock solicitado"
+      @click="$router.replace('/stockrequested')"
+    >
       <q-badge color="red" floating>{{ RequestedStock }}</q-badge>
     </q-btn>
     <q-btn

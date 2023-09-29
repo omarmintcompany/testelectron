@@ -1,17 +1,16 @@
 <template>
-  <div class="row">&nbsp;</div>
-  <div class="row">
-    <div class="col-1"></div>
-    <div class="col-10">
-      <q-form @submit="onSubmit">
-        <div class="q-pa-md mint-search">
-          <div class="q-gutter-md row items-start">
+  <div class="q-pa-md q-a-md">
+    <div class="row">
+      <div class="col">
+        <q-form @submit="onSubmit">
+          <div class="row q-pa-md mint-search">
             <q-input
               v-model.number="idreservation"
               type="number"
               dense
               label="Id Reserva"
               label-color="black"
+              color="black"
               style="max-width: 200px"
             />
             <q-input
@@ -20,6 +19,7 @@
               dense
               label="Desde"
               label-color="black"
+              color="black"
             />
             <q-input
               v-model="todate"
@@ -27,6 +27,7 @@
               dense
               label="Hasta"
               label-color="black"
+              color="black"
             />
             <q-input
               v-model.number="itemcode"
@@ -34,6 +35,7 @@
               dense
               label="Código Producto"
               label-color="black"
+              color="black"
             />
             <q-select
               v-model="status"
@@ -41,6 +43,7 @@
               label="Estado"
               label-color="black"
               dense
+              color="black"
             />
             <q-select
               v-model="category"
@@ -51,43 +54,46 @@
               option-value="id"
               option-label="name"
               map-options
+              color="black"
             />
-            <div align="center">
-              <q-btn type="submit" class="mint-reverse" icon="search" />
+            <q-separator inset />
+            <q-btn type="submit" class="mint-reverse" icon="search" />
+            <div class="col" align="right">
+              <q-icon name="alarm" size="md" />
+              <q-separator vertical />
+              <b>LISTADO DE RESERVAS</b>
             </div>
           </div>
-        </div>
-      </q-form>
+        </q-form>
 
-      <q-table
-        dense
-        table-header-class="mint-reverse"
-        flat
-        bordered
-        :rows="RList"
-        :columns="RCol"
-        row-key="id"
-        :rows-per-page-options="[0]"
-        virtual-scroll
-        style="height: 80vh"
-        title="Listado de Reservas"
-      >
-        <template v-slot:body-cell-actions="props">
-          <q-td :props="props" class="mint">
-            <q-btn
-              dense
-              round
-              flat
-              color="black"
-              icon="edit_document"
-              title="Editar"
-              @click="onEdit(props)"
-            ></q-btn>
-          </q-td>
-        </template>
-      </q-table>
+        <q-table
+          dense
+          table-header-class="mint-reverse"
+          flat
+          bordered
+          :rows="RList"
+          :columns="RCol"
+          row-key="id"
+          :rows-per-page-options="[0]"
+          virtual-scroll
+          style="height: 75vh"
+        >
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props" class="mint">
+              <q-btn
+                dense
+                round
+                flat
+                color="black"
+                icon="edit_document"
+                title="Editar"
+                @click="onEdit(props)"
+              ></q-btn>
+            </q-td>
+          </template>
+        </q-table>
+      </div>
     </div>
-    <div class="col-1"></div>
   </div>
 </template>
 
@@ -98,7 +104,7 @@ import { IReservation } from '../ts/Reservation.ts';
 import { ReservationCategory } from '../interfaces/ReservationCategory.ts';
 import axios from 'axios';
 import moment from 'moment';
-import { date } from 'quasar';
+import { date, useQuasar } from 'quasar';
 
 export type ReservationList = IReservation[];
 
@@ -183,7 +189,7 @@ export default defineComponent({
       },
       { name: 'actions', label: '', field: '', align: 'center' },
     ];
-
+    const $q = useQuasar();
     return {
       store,
       RCol,
@@ -192,6 +198,12 @@ export default defineComponent({
         { label: 'Cancelada', value: 'C' },
         { label: 'Confirmada', value: 'CN' },
       ],
+      showLoading() {
+        $q.loading.show();
+      },
+      hideLoading() {
+        $q.loading.hide();
+      },
     };
   },
   data() {
@@ -216,6 +228,7 @@ export default defineComponent({
         .catch((err) => console.log('Axios err: ', err));
     },
     getReservationList() {
+      this.showLoading();
       const params = {
         WhsCode: this.store.getCurrentWhsCode.whsCode,
         status: this.status.value != undefined ? this.status.value : 'SC',
@@ -235,8 +248,11 @@ export default defineComponent({
         })
         .then((x) => {
           this.RList = x.data;
+          this.hideLoading();
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => {
+          this.hideLoading();
+        });
     },
     onSubmit() {
       this.getReservationList();

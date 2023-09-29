@@ -110,6 +110,7 @@
                 emit-value
                 map-options
                 :disable="reservationId != '0'"
+                color="black"
               />
               <q-input
                 dense
@@ -188,6 +189,7 @@
                 type="text"
                 dense
                 required
+                color="black"
               >
                 <template v-slot:append>
                   <q-icon name="person" />
@@ -199,6 +201,7 @@
                 v-model="reservationData.phone"
                 type="text"
                 dense
+                color="black"
               >
                 <template v-slot:append> <q-icon name="phone" /> </template
               ></q-input>
@@ -208,6 +211,7 @@
                 v-model="reservationData.email"
                 type="text"
                 dense
+                color="black"
                 ><template v-slot:append> <q-icon name="email" /> </template
               ></q-input>
               <q-input
@@ -217,6 +221,7 @@
                 type="textarea"
                 dense
                 autogrow
+                color="black"
                 ><template v-slot:append> <q-icon name="notes" /> </template
               ></q-input>
             </q-card-section>
@@ -225,15 +230,15 @@
         <div class="col-10 q-pl-md">
           <q-card>
             <q-table
+              dense
               table-header-class="mint-reverse"
               flat
-              bordered
               :rows="reservationData.reservationLines"
               :columns="RCol"
               row-key="itemcode"
               :rows-per-page-options="[0]"
               virtual-scroll
-              style="height: 80vh"
+              style="height: 85vh"
               class="my-sticky-header-table"
             >
               <template v-slot:body-cell-actions="props">
@@ -271,13 +276,14 @@ import { useWhsStore } from '../stores/whs';
 import { Reservation } from '../ts/Reservation.ts';
 import { ReservationCategory } from '../interfaces/ReservationCategory.ts';
 import Login from '../components/Login.vue';
-import { date } from 'quasar';
+import { date, useQuasar } from 'quasar';
 import axios from 'axios';
 
 export default defineComponent({
   name: 'ReservationForm',
   components: { Login },
   setup() {
+    const $q = useQuasar();
     const store = useWhsStore();
     const RCol = [
       { name: 'actions', label: '', field: '', align: 'center' },
@@ -344,6 +350,12 @@ export default defineComponent({
     return {
       store,
       RCol,
+      showLoading() {
+        $q.loading.show();
+      },
+      hideLoading() {
+        $q.loading.hide();
+      },
     };
   },
   data() {
@@ -374,6 +386,7 @@ export default defineComponent({
   },
   methods: {
     loadReservationData() {
+      this.showLoading();
       if (this.reservationId != 0) {
         axios
           .get(
@@ -429,13 +442,17 @@ export default defineComponent({
               this.reservationData.pickDateTime,
               'hh:mm'
             );
+            this.hideLoading();
           })
-          .catch((err) => console.log('Axios err: ', err));
+          .catch((err) => {
+            this.hideLoading();
+          });
       } else {
         this.reservationData = new Reservation(
           0,
           this.store.getCurrentWhsCode.whsCode
         );
+        this.hideLoading();
       }
     },
     geturl(prop) {
@@ -567,13 +584,15 @@ export default defineComponent({
           });
         });
     },
-    getToken(token: string) {
+    getToken() {
+      let token = this.store.getToken as string;
       if (token == '') {
         this.$q.notify({
           type: 'negative',
           message: 'Error en el usuario o la contraseña',
         });
       } else {
+        this.showLoading();
         switch (this.action) {
           case 'save':
             if (this.reservationData.id == 0) this.save(token);
@@ -586,6 +605,7 @@ export default defineComponent({
             if (this.reservationData.status == 'SC') this.confirm(token);
             break;
         }
+        this.hideLoading();
       }
 
       this.showlogin = false;
