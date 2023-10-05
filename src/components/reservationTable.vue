@@ -12,6 +12,7 @@
         :rows-per-page-options="[0]"
         virtual-scroll
         title="Reservas"
+        no-data-label="No hay reservas para esta referencia"
       />
     </div>
   </div>

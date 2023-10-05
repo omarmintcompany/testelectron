@@ -1,6 +1,20 @@
-// app global css in SCSS form
+.font-xs {
+  font-size: 0.8em;
+}
 .mint {
   background-color: $mint-yellow;
+  color: $mint-black;
+}
+.mint-urgent {
+  background-color: $mint-orange;
+  color: $mint-black;
+}
+.mint-ecom {
+  background-color: $mint-red;
+  color: $mint-black;
+}
+.mint-green {
+  background-color: $mint-green;
   color: $mint-black;
 }
 .mint-reverse {

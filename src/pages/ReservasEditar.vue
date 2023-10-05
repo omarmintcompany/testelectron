@@ -251,15 +251,13 @@
                     icon="delete"
                     title="Eliminar linea"
                     @click="deleteLine(props)"
+                    :disable="reservationId != '0'"
                   />
                 </q-td>
               </template>
               <template v-slot:body-cell-photo="props">
-                <q-td :props="props" style="width: 100px">
-                  <q-img
-                    :src="geturl(props)"
-                    style="height: 50px; max-width: 50px"
-                  />
+                <q-td :props="props" style="width: 80px">
+                  <q-img :src="geturl(props)" fit />
                 </q-td>
               </template>
             </q-table>
@@ -460,7 +458,7 @@ export default defineComponent({
     },
     getCategoryList() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/reservationcategory`)
+        .get(`${this.store.options['ApiEndPoint']}/Reservation/category`)
         .then((x) => {
           this.categorylist = x.data;
         })
@@ -586,6 +584,7 @@ export default defineComponent({
     },
     getToken() {
       let token = this.store.getToken as string;
+
       if (token == '') {
         this.$q.notify({
           type: 'negative',

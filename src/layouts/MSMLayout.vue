@@ -39,11 +39,19 @@
           >
             <q-menu class="mint">
               <q-list style="min-width: 100px">
-                <q-item clickable v-close-popup>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/transfersin')"
+                >
                   <q-avatar icon="move_down" />
                   <q-item-section>Entradas</q-item-section>
                 </q-item>
-                <q-item clickable v-close-popup>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/transfersout')"
+                >
                   <q-avatar icon="move_up" />
                   <q-item-section>Salidas</q-item-section>
                 </q-item>
@@ -84,7 +92,11 @@
                   <q-avatar icon="list_alt" />
                   <q-item-section>Peticiones</q-item-section>
                 </q-item>
-                <q-item clickable v-close-popup to="stockwhs">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/stockwhs')"
+                >
                   <q-avatar icon="list" />
                   <q-item-section>Stock</q-item-section>
                 </q-item>
@@ -93,15 +105,44 @@
           </q-tab>
           <q-tab
             name="Configuracion"
-            icon="home"
+            icon="settings"
             :label="
               store.getCurrentWhsCode != ''
                 ? store.getCurrentWhsCode.whsCode
                 : 'Configuracion'
             "
-            @click="$router.replace('/config')"
-          />
+          >
+            <q-menu class="mint">
+              <q-list style="min-width: 100px">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/config')"
+                >
+                  <q-avatar icon="home" />
+                  <q-item-section>Selección de tienda</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/mapping')"
+                >
+                  <q-avatar icon="lan" />
+                  <q-item-section>Mapeo de Tiendas</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/users')"
+                >
+                  <q-avatar icon="groups" />
+                  <q-item-section>Permisos de Usuarios</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-tab>
         </q-tabs>
+
         <notification-badges
           v-if="store.getCurrentWhsCode.whsCode != ''"
         ></notification-badges>

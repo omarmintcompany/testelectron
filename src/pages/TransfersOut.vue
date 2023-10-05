@@ -5,10 +5,10 @@
         <q-form @submit="onSubmit">
           <div class="row q-pa-md mint-search">
             <q-input
-              v-model.number="idreservation"
+              v-model.number="idtransfer"
               type="number"
               dense
-              label="Id Reserva"
+              label="NºTransferencia"
               label-color="black"
               color="black"
               style="max-width: 200px"
@@ -18,6 +18,7 @@
               type="date"
               dense
               label="Desde"
+              required
               label-color="black"
               color="black"
             />
@@ -25,6 +26,7 @@
               v-model="todate"
               type="date"
               dense
+              required
               label="Hasta"
               label-color="black"
               color="black"
@@ -45,23 +47,13 @@
               dense
               color="black"
             />
-            <q-select
-              v-model="category"
-              :options="categorylist"
-              label="Tipo"
-              label-color="black"
-              dense
-              option-value="id"
-              option-label="name"
-              map-options
-              color="black"
-            />
+
             <q-separator inset />
             <q-btn type="submit" class="mint-reverse" icon="search" />
             <div class="col" align="right">
-              <q-icon name="alarm" size="md" />
+              <q-icon name="move_up" size="md" />
               <q-separator vertical />
-              <b>LISTADO DE RESERVAS</b>
+              <b>LISTADO DE TRANSFERENCIAS DE SALIDA</b>
             </div>
           </div>
         </q-form>
@@ -71,24 +63,33 @@
           table-header-class="mint-reverse"
           flat
           bordered
-          :rows="RList"
+          :rows="TOList"
           :columns="RCol"
           row-key="id"
           :rows-per-page-options="[0]"
           virtual-scroll
           style="height: 75vh"
-          no-data-label="No hay reservas que cumplan los filtros"
+          no-data-label="No hay transferencias de salida que cumplan los filtros"
         >
           <template v-slot:body="props">
-            <q-tr :props="props" :class="isTimeOut(props) ? 'mint-urgent' : ''">
-              <q-td key="timeout" :props="props">
+            <q-tr
+              :props="props"
+              :class="
+                props.row.whsTo == 'T108' || props.row.whsTo == 'T137'
+                  ? 'mint-ecom'
+                  : props.row.urgent
+                  ? 'mint-urgent'
+                  : ''
+              "
+            >
+              <q-td key="urgent" :props="props">
                 <div>
-                  <q-icon
-                    name="warning"
-                    size="xs"
-                    v-if="isTimeOut(props)"
-                    title="Reserva caducada"
-                  />
+                  <q-icon name="warning" size="xs" v-if="props.row.urgent" />
+                </div>
+              </q-td>
+              <q-td key="status" :props="props">
+                <div>
+                  {{ getStatus(props) }}
                 </div>
               </q-td>
               <q-td key="id" :props="props">
@@ -96,14 +97,24 @@
                   {{ props.row.id }}
                 </div>
               </q-td>
-              <q-td key="categoryName" :props="props">
+              <q-td key="typeName" :props="props">
                 <div>
-                  {{ props.row.categoryName }}
+                  {{ props.row.typeName }}
                 </div>
               </q-td>
-              <q-td key="status" :props="props">
+              <q-td key="title" :props="props">
                 <div>
-                  {{ getStatus(props.row.status) }}
+                  {{ props.row.title }}
+                </div>
+              </q-td>
+              <q-td key="whsFromName" :props="props">
+                <div>
+                  {{ props.row.whsFromName }}
+                </div>
+              </q-td>
+              <q-td key="whsToName" :props="props">
+                <div>
+                  {{ props.row.whsToName }}
                 </div>
               </q-td>
               <q-td key="dateCreated" :props="props">
@@ -111,19 +122,9 @@
                   {{ formatDate(props.row.dateCreated) }}
                 </div>
               </q-td>
-              <q-td key="pickDateTime" :props="props">
+              <q-td key="needDateTime" :props="props">
                 <div>
-                  {{ formatDate(props.row.pickDateTime) }}
-                </div>
-              </q-td>
-              <q-td key="cardName" :props="props">
-                <div>
-                  {{ props.row.cardName }}
-                </div>
-              </q-td>
-              <q-td key="notes" :props="props">
-                <div>
-                  {{ props.row.notes }}
+                  {{ formatDate(props.row.needDateTime) }}
                 </div>
               </q-td>
               <q-td key="actions" :props="props">
@@ -150,34 +151,24 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useWhsStore } from '../stores/whs';
-import { IReservation } from '../ts/Reservation.ts';
-import { ReservationCategory } from '../interfaces/ReservationCategory.ts';
+import { TransferList } from '.axios./ts/TransferInterfaces.ts';
 import axios from 'axios';
 import moment from 'moment';
 import { date, useQuasar } from 'quasar';
 
-export type ReservationList = IReservation[];
-
 export default defineComponent({
-  name: 'Reservations',
+  name: 'TransfersOut',
   setup() {
     const store = useWhsStore();
 
     const RCol = [
-      { name: 'timeout', label: '', field: '', align: 'center' },
       {
-        name: 'id',
+        name: 'urgent',
         align: 'center',
-        label: 'NºReserva',
-        field: 'id',
+        label: '',
+        field: 'urgent',
         sortable: true,
-      },
-      {
-        name: 'categoryName',
-        align: 'center',
-        label: 'Tipo',
-        field: 'categoryName',
-        sortable: false,
+        style: 'width:10px',
       },
       {
         name: 'status',
@@ -187,33 +178,62 @@ export default defineComponent({
         sortable: true,
       },
       {
+        name: 'id',
+        align: 'center',
+        label: 'NºTransferencia',
+        field: 'id',
+        sortable: true,
+      },
+      {
+        name: 'typeName',
+        align: 'left',
+        label: 'Tipo',
+        field: 'typeName',
+        sortable: true,
+      },
+      {
+        name: 'title',
+        align: 'left',
+        label: 'Título',
+        field: 'title',
+        sortable: true,
+      },
+
+      {
+        name: 'whsFromName',
+        align: 'left',
+        label: 'Desde',
+        field: 'whsFromName',
+        sortable: true,
+      },
+      {
+        name: 'whsToName',
+        align: 'left',
+        label: 'Hasta',
+        field: 'whsToName',
+        sortable: true,
+      },
+      {
         name: 'dateCreated',
         align: 'center',
-        label: 'Fecha Creación',
+        label: 'F.Creación',
         field: 'dateCreated',
         sortable: true,
+        format: (val, row) => {
+          return moment(String(val)).format('DD/MM/YYYY');
+        },
       },
       {
-        name: 'pickDateTime',
+        name: 'needDateTime',
         align: 'center',
-        label: 'Fecha Recogida',
-        field: 'pickDateTime',
+        label: 'F.Límite',
+        field: 'needDateTime',
         sortable: true,
+        format: (val, row) => {
+          return moment(String(val)).format('DD/MM/YYYY');
+        },
       },
-      {
-        name: 'cardName',
-        align: 'left',
-        label: 'Cliente',
-        field: 'cardName',
-        sortable: true,
-      },
-      {
-        name: 'notes',
-        align: 'left',
-        label: 'Observaciones',
-        field: 'notes',
-        sortable: false,
-      },
+
       { name: 'actions', label: '', field: '', align: 'center' },
     ];
     const $q = useQuasar();
@@ -221,9 +241,13 @@ export default defineComponent({
       store,
       RCol,
       statuslist: [
-        { label: 'Abierta', value: 'SC' },
-        { label: 'Cancelada', value: 'C' },
-        { label: 'Confirmada', value: 'CN' },
+        { label: 'En espera', value: 'SC' },
+        { label: 'Listo sin bultos', value: 'SB' },
+        { label: 'Listo con bultos', value: 'CB' },
+        { label: 'En Tránsito', value: 'T' },
+        { label: 'Entregada', value: 'EN' },
+        { label: 'Recibida', value: 'CN' },
+        { label: 'Anulada', value: 'A' },
       ],
       showLoading() {
         $q.loading.show();
@@ -235,68 +259,36 @@ export default defineComponent({
   },
   data() {
     return {
-      RList: [] as ReservationList[],
+      TOList: [] as TransferList[],
       fromdate: '' as string,
       todate: '' as string,
-      idreservation: '' as string,
+      idtransfer: '' as string,
+      status: 'En espera',
       itemcode: '' as string,
-      status: 'Abierta',
-      categorylist: [] as ReservationCategory[],
-      category: 'Reserva Normal',
     };
   },
   methods: {
-    isTimeOut(props) {
-      const today = new Date();
-      const date = new Date(props.row.pickDateTime);
-
-      return date < today ? 1 : 0;
-    },
-    formatDate(value: string) {
-      return moment(String(value)).format('DD/MM/YYYY');
-    },
-    getStatus(value: string) {
-      switch (value) {
-        case 'SC':
-          return 'Abierta';
-          break;
-        case 'CN':
-          return 'Completada';
-          break;
-        case 'C':
-          return 'Cancelada';
-          break;
-      }
-    },
-    getCategoryList() {
-      axios
-        .get(`${this.store.options['ApiEndPoint']}/Reservation/category`)
-        .then((x) => {
-          this.categorylist = x.data;
-        })
-        .catch((err) => console.log('Axios err: ', err));
-    },
-    getReservationList() {
+    getTransfersList() {
       this.showLoading();
       const params = {
         WhsCode: this.store.getCurrentWhsCode.whsCode,
         status: this.status.value != undefined ? this.status.value : 'SC',
-        category: this.category.id != undefined ? this.category.id : '1',
+        Type: 1,
       };
 
-      if (this.idreservation != '') params.id = this.idreservation;
       if (this.fromdate != '')
         params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
       if (this.todate != '')
         params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD');
-      if (this.itemcode != '') params.ItemCode = this.itemcode;
+      if (this.idtransfer != '') params.id = this.idtransfer;
+      if (this.itemcode != '') params.itemcode = this.itemcode;
 
       axios
-        .get(`${this.store.options['ApiEndPoint']}/Reservation/list/`, {
+        .get(`${this.store.options['ApiEndPoint']}/transfers`, {
           params: params,
         })
         .then((x) => {
-          this.RList = x.data;
+          this.TOList = x.data;
           this.hideLoading();
         })
         .catch((err) => {
@@ -304,15 +296,28 @@ export default defineComponent({
         });
     },
     onSubmit() {
-      this.getReservationList();
+      this.getTransfersList();
+    },
+    formatDate(value: string) {
+      return date.formatDate(value, 'DD-MM-YYYY');
     },
     onEdit(props) {
-      this.$router.push('/reservas/' + props.row.id);
+      this.$router.push('/transfer/' + props.row.id);
+    },
+    getStatus(props) {
+      return this.statuslist.filter((p) => p.value == props.row.status)[0][
+        'label'
+      ];
     },
   },
   mounted() {
-    this.getCategoryList();
-    this.getReservationList();
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 5);
+    this.fromdate = moment(String(yesterday)).format('YYYY-MM-DD');
+    this.todate = moment(String(today)).format('YYYY-MM-DD');
+
+    this.getTransfersList();
   },
 });
 </script>

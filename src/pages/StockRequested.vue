@@ -1,7 +1,6 @@
 <template>
   <div class="q-pa-md q-a-md">
     <login :show-login="showlogin" @token="getToken"> </login>
-
     <div class="row">
       <div class="col q-pa-md mint-search">
         <div class="col" align="right">
@@ -25,11 +24,8 @@
           style="height: 75vh"
           class="my-sticky-header-table"
           ><template v-slot:body-cell-photo="props">
-            <q-td :props="props" style="width: 100px">
-              <q-img
-                :src="props.row.urlPhoto"
-                style="height: 100px; max-width: 100px"
-              />
+            <q-td :props="props" style="width: 80px">
+              <q-img :src="props.row.urlPhoto" fit />
             </q-td>
           </template>
           <template v-slot:body-cell-actions="props">
@@ -53,7 +49,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useWhsStore } from '../stores/whs';
-import { StockRequested } from '../ts/StockRequested.ts';
+import { StockRequested } from '../ts/Stock.ts';
 import Login from '../components/Login.vue';
 import moment from 'moment';
 import axios from 'axios';
@@ -67,14 +63,7 @@ export default defineComponent({
     const $q = useQuasar();
     const RCol = [
       { name: 'photo', label: '', field: '', align: 'center' },
-      {
-        name: 'id',
-        align: 'center',
-        label: '',
-        field: 'id',
-        sortable: false,
-        style: 'width: 20px',
-      },
+
       {
         name: 'createDate',
         align: 'center',
@@ -170,7 +159,7 @@ export default defineComponent({
       this.showLoading();
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/StockRequested/list/${this.store.getCurrentWhsCode.whsCode}`
+          `${this.store.options['ApiEndPoint']}/Stock/Requested/list/${this.store.getCurrentWhsCode.whsCode}`
         )
         .then((x) => {
           this.stockRequested = x.data;
@@ -203,14 +192,14 @@ export default defineComponent({
 
         return axios
           .put(
-            `${this.store.options['ApiEndPoint']}/StockRequested/confirm/${this.id}`,
+            `${this.store.options['ApiEndPoint']}/Stock/Requested/confirm/${this.id}`,
             {},
             config
           )
           .then((data) => {
             this.$q.notify({
               type: 'positive',
-              message: 'Se ha confirmado con éxito',
+              message: 'Se ha solicitado con éxito',
             });
             this.id = 0;
             this.token = '';
@@ -221,7 +210,7 @@ export default defineComponent({
           .catch((err) => {
             this.$q.notify({
               type: 'negative',
-              message: 'Error al confirmar el envío',
+              message: 'Error al solicitar el envío',
             });
             this.id = 0;
             this.token = '';

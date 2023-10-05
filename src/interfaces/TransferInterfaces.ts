@@ -8,6 +8,9 @@ export interface TransferList {
   dateCreated: string;
   dateSend: string;
   title: string;
+  urgent: boolean;
+  NeedDateTime: string;
+  TypeName: string;
 }
 
 export interface Transfer {

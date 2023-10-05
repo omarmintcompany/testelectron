@@ -3,26 +3,30 @@
   <table style="width: 100%">
     <thead>
       <tr>
-        <th class="mint-reverse"></th>
-        <th v-for="t in sortedTitles" :key="t" class="mint-reverse">
+        <th></th>
+        <th v-for="t in sortedTitles" :key="t" class="mint font-xs">
           {{ getWhsName(t) }}
         </th>
       </tr>
       <tr>
-        <th class="mint-reverse"></th>
-        <th v-for="t in sortedTitles" :key="t" class="mint-reverse">
+        <th></th>
+        <th v-for="t in sortedTitles" :key="t" class="mint-reverse font-xs">
           {{ t }}
         </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="(item, index) in stock" :key="index">
-        <td class="mint-reverse">{{ item.itemCode }} {{ item.size }}</td>
+        <td class="mint-reverse font-xs" nowrap>
+          {{ item.itemCode }} {{ item.size }}
+        </td>
         <td
           :class="{
-            'text-right table-border mint-cell': wItem.whsCode != currentStore,
+            'text-right table-border mint-cell':
+              wItem.whsCode != currentStore && !isWarehouse(wItem.whsCode),
             'text-right table-border store-cell mint-cell':
               wItem.whsCode == currentStore,
+            'text-right table-border mint-green': isWarehouse(wItem.whsCode),
           }"
           v-for="(wItem, index) in item.stockInfo"
           :key="item.itemCode + '-' + index"
@@ -45,7 +49,7 @@
               </div>
             </div>
             <div v-else>
-              <div v-if="availableWhs(wItem.whsCode) == 1">
+              <div v-if="availableWhs(wItem.whsCode)">
                 <q-radio
                   v-model="stockSelected"
                   :val="wItem.itemCode + '-' + wItem.whsCode"
@@ -53,6 +57,7 @@
                   dense
                   color="black"
                   size="xs"
+                  v-if="wItem.onHand > 0"
                 />
               </div>
               <div v-else>{{ wItem.onHand }}</div>
@@ -77,11 +82,15 @@ import { stockTable, whsconfig } from 'src/Interfaces/TransferInterfaces';
 import { useWhsStore } from '../stores/whs';
 import { defineComponent, PropType } from 'vue';
 import Login from '../components/Login.vue';
+import axios from 'axios';
+import { useQuasar } from 'quasar';
+
 export default defineComponent({
   name: 'stockTableComponent',
   components: { Login },
   setup() {
     const store = useWhsStore();
+    const $q = useQuasar();
     return {
       store,
       showLoading() {
@@ -102,6 +111,7 @@ export default defineComponent({
       stockSelected: '' as string,
       urgent: true as boolean,
       delivery: false as boolean,
+      itemcode: '' as string,
     };
   },
 
@@ -151,6 +161,7 @@ export default defineComponent({
     availableWhs(whscode: string) {
       if (whscode != '') {
         let filteredArray = this.whsconfig
+          .filter((e) => e.businessUnitId != 5)
           .filter((element) =>
             element.whsCodes.some((subElement) => subElement.whsCode == whscode)
           )
@@ -158,13 +169,48 @@ export default defineComponent({
             return element.whsCodes.filter((x) => x.whsCode == whscode);
           });
 
-        if (filteredArray[0][0]['type'] != undefined) {
+        if (filteredArray.length > 0) {
           if (filteredArray[0][0]['type'] != 'A') {
-            console.log(whscode + ' 1');
             return 1;
           }
         }
-        console.log(whscode + ' 0');
+
+        return 0;
+      }
+    },
+    isWarehouse(whscode: string) {
+      if (whscode != '') {
+        let filteredArray = this.whsconfig
+          .filter((e) => e.businessUnitId != 5)
+          .filter((element) =>
+            element.whsCodes.some((subElement) => subElement.whsCode == whscode)
+          )
+          .map((element) => {
+            return element.whsCodes.filter((x) => x.whsCode == whscode);
+          });
+
+        if (filteredArray.length > 0) {
+          if (filteredArray[0][0]['type'] == 'A') {
+            return 1;
+          }
+        }
+
+        return 0;
+      }
+    },
+    showWhs(whscode: string) {
+      if (whscode != '') {
+        let filteredArray = this.whsconfig
+          .filter((e) => e.businessUnitId != 5)
+          .filter((element) =>
+            element.whsCodes.some((subElement) => subElement.whsCode == whscode)
+          )
+          .map((element) => {
+            return element.whsCodes.filter((x) => x.whsCode == whscode);
+          });
+
+        if (filteredArray.length > 0) return 1;
+
         return 0;
       }
     },
@@ -182,21 +228,56 @@ export default defineComponent({
       });
     },
     requestStock(itemcode: string) {
+      this.itemcode = itemcode;
       this.showlogin = true;
     },
     getToken() {
       let token = this.store.getToken as string;
 
       if (token == '') {
-        RLÑ;
         this.showlogin = false;
         this.$q.notify({
           type: 'negative',
           message: 'Error en el usuario o la contraseña',
         });
       } else {
-        this.showlogin = false;
-        //this.showLoading();
+        this.showLoading();
+        const config = {
+          headers: { Authorization: `Bearer ${token}` },
+        };
+        const params = {
+          WhsCode: this.store.getCurrentWhsCode.whsCode,
+          ItemCode: this.itemcode,
+        };
+        return axios
+          .put(
+            `${this.store.options['ApiEndPoint']}/Stock/Requested/create`,
+            {
+              WhsCode: this.store.getCurrentWhsCode.whsCode,
+              ItemCode: this.itemcode,
+            },
+            config
+          )
+          .then((data) => {
+            this.$q.notify({
+              type: 'positive',
+              message: 'Se ha confirmado con éxito',
+            });
+            this.itemcode = '';
+            this.token = '';
+            this.showlogin = false;
+            this.hideLoading();
+          })
+          .catch((err) => {
+            this.$q.notify({
+              type: 'negative',
+              message: 'Error al confirmar el envío',
+            });
+            this.itemcode = '';
+            this.token = '';
+            this.showlogin = false;
+            this.hideLoading();
+          });
       }
     },
   },

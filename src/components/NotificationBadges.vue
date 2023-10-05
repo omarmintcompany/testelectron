@@ -17,6 +17,7 @@
       icon="move_down"
       class="q-ml-md"
       title="Transferencias entrada"
+      @click="$router.replace('/transfersin')"
     >
       <q-badge color="red" floating>{{ TransferIn }}</q-badge>
     </q-btn>
@@ -27,6 +28,7 @@
       icon="move_up"
       class="q-ml-md"
       title="Transferencias salida"
+      @click="$router.replace('/transfersout')"
     >
       <q-badge color="red" floating>{{ TransfersOut }}</q-badge>
     </q-btn>

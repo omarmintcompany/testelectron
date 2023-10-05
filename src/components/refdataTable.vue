@@ -13,36 +13,36 @@
       <table style="width: 100%">
         <thead>
           <tr>
-            <th class="mint-reverse">Referencia</th>
+            <th class="mint-reverse font-xs">Referencia</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center">
+            <td class="mint-cell text-center font-xs">
               {{ data.supplierReferenceNumber }}
             </td>
           </tr>
           <tr>
-            <th class="mint-reverse">Temporada</th>
+            <th class="mint-reverse font-xs">Temporada</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center">FW22{{ data.fullseason }}</td>
+            <td class="mint-cell text-center font-xs">{{ data.fullSeason }}</td>
           </tr>
           <tr>
-            <th class="mint-reverse">Marca</th>
+            <th class="mint-reverse font-xs">Marca</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center">{{ data.brand }}</td>
+            <td class="mint-cell text-center font-xs">{{ data.brand }}</td>
           </tr>
           <tr>
-            <th class="mint-reverse">Sección</th>
+            <th class="mint-reverse font-xs">Sección</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center">{{ data.section }}</td>
+            <td class="mint-cell text-center font-xs">{{ data.section }}</td>
           </tr>
           <tr>
-            <th class="mint-reverse">Family</th>
+            <th class="mint-reverse font-xs">Family</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center">{{ data.family }}</td>
+            <td class="mint-cell text-center font-xs">{{ data.family }}</td>
           </tr>
         </thead>
       </table>

@@ -12,6 +12,7 @@
         :rows-per-page-options="[0]"
         virtual-scroll
         title="Tránsito"
+        no-data-label="No hay tránsito para esta referencia"
       />
     </div>
   </div>

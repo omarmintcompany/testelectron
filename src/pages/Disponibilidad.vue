@@ -179,7 +179,12 @@ export default defineComponent({
   },
   mounted() {
     this.$refs.ItemCodeInput.focus();
-    this.itemCode = 'A788392';
+
+    this.itemCode = this.$route.params.itemcode = !''
+      ? this.$route.params.itemcode
+      : '';
+    console.log(this.itemcode);
+    if (this.itemCode != undefined) this.onSubmit();
   },
   methods: {
     onSubmit() {
