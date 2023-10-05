@@ -40,6 +40,14 @@ export interface TransferLine {
 export interface SalesRep {
   code: string;
   name: string;
+  govid: string;
+}
+
+export interface SalesRepResources {
+  govid: string;
+  id: number;
+  description: string;
+  resourceEnable: boolean;
 }
 
 export type TodoErrorResponse = {

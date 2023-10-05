@@ -99,11 +99,23 @@ export default {
 
     const RCol = [
       {
+        name: 'isDefault',
+        align: 'center',
+        label: '',
+        field: 'isDefault',
+        sortable: false,
+        format: (val: string, row: WhsInfo) => {
+          return row.isDefault ? 'Principal' : '';
+        },
+        style: 'width:100px',
+      },
+      {
         name: 'ip',
         align: 'center',
         label: 'IP',
         field: 'ip',
         sortable: true,
+        style: 'width:100px',
       },
       {
         name: 'whsCode',
@@ -116,20 +128,11 @@ export default {
         },
       },
       {
-        name: 'isDefault',
-        align: 'center',
-        label: '',
-        field: 'isDefault',
-        sortable: false,
-        format: (val: string, row: WhsInfo) => {
-          return row.isDefault ? 'Principal' : '';
-        },
-      },
-      {
         name: 'actions',
         label: '',
         field: '',
         align: 'center',
+        style: 'width:10px',
       },
     ];
     const $q = useQuasar();

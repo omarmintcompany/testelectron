@@ -1,28 +1,74 @@
 <template>
-  <div class="q-pa-md q-a-md">
-    <login :show-login="showlogin" @token="getToken"> </login>
-    <div class="row">
-      <div class="col q-pa-md mint-search" align="right">
-        <q-icon name="groups" size="md" />
-        <q-separator vertical />
-        <b>PERMISOS</b>
-      </div>
-    </div>
+  <login :show-login="showlogin" @token="getToken"> </login>
+  <div class="q-pa-md">
     <div class="row">
       <div class="col">
+        <div class="row q-pa-md mint-search">
+          <div class="col" align="right">
+            <q-icon name="groups" size="md" />
+            <q-separator vertical />
+            <b>PERMISOS DE USUARIOS</b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-8">
         <q-table
+          title="Usuarios"
           dense
           table-header-class="mint-reverse"
           flat
           bordered
-          :rows="SList"
+          :rows="salesreps"
           :columns="RCol"
-          row-key="itemCode"
+          row-key="code"
           :rows-per-page-options="[0]"
-          :filter="filter"
           virtual-scroll
           style="height: 75vh"
-          no-data-label="No hay mapeos definidos"
+          no-data-label="No hay usuarios definidos"
+        >
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props" class="mint">
+              <q-btn
+                dense
+                round
+                flat
+                color="black"
+                icon="edit"
+                title="Editar permisos"
+                @click="viewSaleRep(props)"
+              ></q-btn>
+            </q-td>
+          </template>
+        </q-table>
+      </div>
+      <q-separator inset />
+      <div class="col">
+        <q-table
+          selection="multiple"
+          v-model:selected="selected"
+          :title="userSelected != '' ? userSelected : 'Seleccione un usuario'"
+          dense
+          table-header-class="mint-reverse"
+          flat
+          bordered
+          :rows="salesresources"
+          :columns="RColResources"
+          row-key="id"
+          :rows-per-page-options="[0]"
+          virtual-scroll
+          style="height: 69vh"
+          no-data-label="No hay permisos definidos"
+        />
+        <q-separator spaced />
+        <q-btn
+          class="mint-reverse full-width"
+          :disable="userSelected == ''"
+          title="Guardar Permisos"
+          icon="save"
+          @click="saveUserResources()"
         />
       </div>
     </div>
@@ -31,37 +77,147 @@
 
 <script lang="ts">
 import { useWhsStore } from '../stores/whs';
+import Login from '../components/Login.vue';
 import { WhsInfo } from '../interfaces/WhsInfo';
-import { ref } from 'vue';
+import { SalesRep, SalesRepResources } from '../interfaces/Transfers';
 import { useQuasar } from 'quasar';
+import axios from 'axios';
 
 export default {
-  data() {
+  name: 'Mapping',
+  components: { Login },
+  setup() {
+    const store = useWhsStore();
+
+    const RCol = [
+      {
+        name: 'code',
+        align: 'center',
+        label: 'Código',
+        field: 'code',
+        sortable: true,
+      },
+      {
+        name: 'govId',
+        align: 'center',
+        label: 'NºDocumento',
+        field: 'govId',
+        sortable: true,
+      },
+      {
+        name: 'name',
+        align: 'left',
+        label: 'Nombre',
+        field: 'name',
+        sortable: true,
+      },
+      {
+        name: 'actions',
+        label: '',
+        field: '',
+        align: 'center',
+      },
+    ];
+
+    const RColResources = [
+      {
+        name: 'description',
+        align: 'left',
+        label: 'Permiso',
+        field: 'description',
+        sortable: true,
+      },
+    ];
+    const $q = useQuasar();
     return {
-      WhsSelected: { whsCode: '', whsName: '', isDefault: false } as WhsInfo,
-      WhsList: [] as WhsInfo[],
-      store: useWhsStore(),
+      store,
+      RCol,
+      RColResources,
+      showLoading() {
+        $q.loading.show();
+      },
+      hideLoading() {
+        $q.loading.hide();
+      },
     };
   },
-  mounted() {
-    this.WhsSelected = this.store.getCurrentWhsCode;
-    this.WhsList = this.store.getWhsList;
+  data() {
+    return {
+      salesreps: [] as SalesRep[],
+      salesresources: [] as SalesRepResources[],
+      showlogin: false as boolean,
+      userSelected: '' as string,
+      govIdSelected: '' as string,
+      selected: [] as boolean[],
+    };
   },
-
   methods: {
-    confirm() {
-      this.store.setWhsCode(this.WhsSelected);
-
-      this.$q.notify({
-        message:
-          'Se ha realizado el cambio a ' +
-          this.WhsSelected.whsCode +
-          ' - ' +
-          this.WhsSelected.whsName,
-        color: 'green',
-      });
-      this.$router.push({ path: '/' });
+    getSalesRep() {
+      axios
+        .get(`${this.store.options['ApiEndPoint']}/salesrep`)
+        .then((x) => {
+          this.salesreps = x.data;
+        })
+        .catch((err) => console.log('Axios err: ', err));
     },
+
+    getToken() {
+      let token = this.store.getToken as string;
+
+      if (token == '') {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Error en el usuario o la contraseña',
+        });
+      } else {
+        this.showLoading();
+
+        this.hideLoading();
+      }
+      this.showlogin = false;
+    },
+    viewSaleRep(props) {
+      this.userSelected = props.row.name;
+      this.govIdSelected = props.row.govId;
+      axios
+        .get(
+          `${this.store.options['ApiEndPoint']}/salesrep/resources/${props.row.govId}`
+        )
+        .then((x) => {
+          this.salesresources = x.data;
+          this.selected = this.salesresources.filter((e) => e.resourceEnable);
+        })
+        .catch(() => {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Error al obtener los permisos',
+          });
+        });
+    },
+    saveUserResources() {
+      console.log(this.selected.map((e) => e.id));
+
+      axios
+        .put(`${this.store.options['ApiEndPoint']}/salesrep/resources/save`, {
+          govId: this.govIdSelected,
+          resourcesIds: this.selected.map((e) => e.id),
+        })
+        .then((x) => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Permisos guardados con éxito',
+          });
+        })
+        .catch(() => {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Error al grabar los permisos',
+          });
+        });
+    },
+  },
+  mounted() {
+    this.getSalesRep();
   },
 };
 </script>
