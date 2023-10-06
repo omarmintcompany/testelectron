@@ -1,6 +1,7 @@
 <template>
-  <login :show-login="showlogin" @token="getToken"> </login>
-  <div class="q-pa-md">
+  <login :show-login="showlogin" :resourceid="resourceid" @token="getToken">
+  </login>
+  <div class="q-pa-md" v-if="showMapping">
     <div class="row">
       <div class="col">
         <q-form @submit="createMapping">
@@ -99,23 +100,11 @@ export default {
 
     const RCol = [
       {
-        name: 'isDefault',
-        align: 'center',
-        label: '',
-        field: 'isDefault',
-        sortable: false,
-        format: (val: string, row: WhsInfo) => {
-          return row.isDefault ? 'Principal' : '';
-        },
-        style: 'width:100px',
-      },
-      {
         name: 'ip',
         align: 'center',
         label: 'IP',
         field: 'ip',
         sortable: true,
-        style: 'width:100px',
       },
       {
         name: 'whsCode',
@@ -128,11 +117,20 @@ export default {
         },
       },
       {
+        name: 'isDefault',
+        align: 'center',
+        label: '',
+        field: 'isDefault',
+        sortable: false,
+        format: (val: string, row: WhsInfo) => {
+          return row.isDefault ? 'Principal' : '';
+        },
+      },
+      {
         name: 'actions',
         label: '',
         field: '',
         align: 'center',
-        style: 'width:10px',
       },
     ];
     const $q = useQuasar();
@@ -160,6 +158,8 @@ export default {
       ipAddress: '' as string,
       whsCode: 'T101' as string,
       isDefault: false as boolean,
+      resourceid: 0 as number,
+      showMapping: false as boolean,
     };
   },
   methods: {
@@ -206,12 +206,13 @@ export default {
       if (token == '') {
         this.$q.notify({
           type: 'negative',
-          message: 'Error en el usuario o la contraseña',
+          message: this.store.getLastError,
         });
+        this.$router.push({ path: '/' });
       } else {
-        this.showLoading();
-
-        this.hideLoading();
+        this.getMapping();
+        this.getWhs();
+        this.showMapping = true;
       }
       this.showlogin = false;
     },
@@ -278,8 +279,8 @@ export default {
     },
   },
   mounted() {
-    this.getMapping();
-    this.getWhs();
+    this.resourceid = 1;
+    this.showlogin = true;
   },
 };
 </script>

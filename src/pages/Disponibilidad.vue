@@ -79,7 +79,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useWhsStore } from '../stores/whs';
-import Login from '../components/Login.vue';
 import { useQuasar } from 'quasar';
 import axios from 'axios';
 import stockTableComponent from '../components/stockTable.vue';

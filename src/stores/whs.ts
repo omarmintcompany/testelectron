@@ -9,6 +9,7 @@ export const useWhsStore = defineStore('whs', {
       WhsData: { whsCode: '', whsName: '', isDefault: false } as WhsInfo,
       WhsList: [] as WhsInfo[],
       token: '' as string,
+      lastError: '' as string,
     },
   }),
   actions: {
@@ -30,8 +31,14 @@ export const useWhsStore = defineStore('whs', {
     setToken(value: string) {
       this.options['token'] = value;
     },
+    setLastError(value: string) {
+      this.options['lastError'] = value;
+    },
   },
   getters: {
+    getLastError(): string {
+      return this.options['lastError'];
+    },
     getCurrentWhsCode(): WhsInfo {
       return this.options['WhsData'];
     },

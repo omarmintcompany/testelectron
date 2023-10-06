@@ -1,6 +1,7 @@
 <template>
   <div class="q-pa-md">
-    <login :show-login="showlogin" @token="getToken"> </login>
+    <login :show-login="showlogin" :resourceid="resourceid" @token="getToken">
+    </login>
     <q-form @submit="onSubmit" class="q-gutter-md">
       <div class="row">
         <div class="col-2">
@@ -358,6 +359,7 @@ export default defineComponent({
   },
   data() {
     return {
+      resourceid: 0 as number,
       action: '' as string,
       showlogin: false as boolean,
       token: '' as string,
@@ -504,6 +506,7 @@ export default defineComponent({
     },
     onSubmit() {
       this.action = 'save';
+      this.resourceid = this.reservationData.status == 'SC' ? 7 : 4;
       this.showlogin = true;
     },
     save(token: string) {
@@ -588,7 +591,7 @@ export default defineComponent({
       if (token == '') {
         this.$q.notify({
           type: 'negative',
-          message: 'Error en el usuario o la contraseña',
+          message: this.store.getLastError,
         });
       } else {
         this.showLoading();
@@ -611,6 +614,7 @@ export default defineComponent({
       this.action = '';
     },
     actions(action: string) {
+      this.resourceid = action == 'cancel' ? 6 : 5;
       this.action = action;
       this.showlogin = true;
     },

@@ -1,5 +1,6 @@
 <template>
-  <login :show-login="showlogin" @token="getToken"> </login>
+  <login :show-login="showlogin" :resourceid="resourceid" @token="getToken">
+  </login>
   <div class="q-pa-md">
     <div class="row">
       <div class="col">
@@ -65,6 +66,7 @@ export default {
       WhsList: [] as WhsInfo[],
       showlogin: false as boolean,
       token: '' as string,
+      resourceid: 0 as number,
     };
   },
   mounted() {
@@ -74,6 +76,7 @@ export default {
 
   methods: {
     confirm() {
+      this.resourceid = 8;
       this.showlogin = true;
     },
     getToken() {
@@ -83,7 +86,7 @@ export default {
         this.showlogin = false;
         this.$q.notify({
           type: 'negative',
-          message: 'Error en el usuario o la contraseña',
+          message: this.store.getLastError,
         });
       } else {
         this.showLoading();

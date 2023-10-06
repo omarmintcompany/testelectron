@@ -1,6 +1,7 @@
 <template>
   <div class="q-pa-md q-a-md">
-    <login :show-login="showlogin" @token="getToken"> </login>
+    <login :show-login="showlogin" :resourceid="resourceid" @token="getToken">
+    </login>
     <div class="row">
       <div class="col q-pa-md mint-search">
         <div class="col" align="right">
@@ -152,6 +153,7 @@ export default defineComponent({
       showlogin: false as boolean,
       token: '' as string,
       id: 0 as number,
+      resourceid: 0 as number,
     };
   },
   methods: {
@@ -173,13 +175,14 @@ export default defineComponent({
       this.visible = true;
       this.id = prop.row.id;
       this.token = '';
+      this.resourceid = 15;
       this.showlogin = true;
     },
     getToken(token: string) {
       if (token == '') {
         this.$q.notify({
           type: 'negative',
-          message: 'Error en el usuario o la contraseña',
+          message: this.store.getLastError,
         });
         this.id = 0;
         this.token = '';

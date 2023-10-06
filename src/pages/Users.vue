@@ -1,6 +1,7 @@
 <template>
-  <login :show-login="showlogin" @token="getToken"> </login>
-  <div class="q-pa-md">
+  <login :show-login="showlogin" :resourceid="resourceid" @token="getToken">
+  </login>
+  <div class="q-pa-md" v-if="showUser">
     <div class="row">
       <div class="col">
         <div class="row q-pa-md mint-search">
@@ -23,12 +24,25 @@
           bordered
           :rows="salesreps"
           :columns="RCol"
+          :filter="filter"
           row-key="code"
           :rows-per-page-options="[0]"
           virtual-scroll
           style="height: 75vh"
           no-data-label="No hay usuarios definidos"
         >
+          <template v-slot:top-right>
+            <q-input
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Buscador"
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </template>
           <template v-slot:body-cell-actions="props">
             <q-td :props="props" class="mint">
               <q-btn
@@ -149,6 +163,9 @@ export default {
       userSelected: '' as string,
       govIdSelected: '' as string,
       selected: [] as boolean[],
+      resourceid: 0 as number,
+      showUser: false as boolean,
+      filter: '' as string,
     };
   },
   methods: {
@@ -167,12 +184,12 @@ export default {
       if (token == '') {
         this.$q.notify({
           type: 'negative',
-          message: 'Error en el usuario o la contraseña',
+          message: this.store.getLastError,
         });
+        this.$router.push({ path: '/' });
       } else {
-        this.showLoading();
-
-        this.hideLoading();
+        this.getSalesRep();
+        this.showUser = true;
       }
       this.showlogin = false;
     },
@@ -198,9 +215,9 @@ export default {
       console.log(this.selected.map((e) => e.id));
 
       axios
-        .put(`${this.store.options['ApiEndPoint']}/salesrep/resources/save`, {
+        .post(`${this.store.options['ApiEndPoint']}/salesrep/resources/save`, {
           govId: this.govIdSelected,
-          resourcesIds: this.selected.map((e) => e.id),
+          resources: this.selected.map((e) => e.id),
         })
         .then((x) => {
           this.$q.notify({
@@ -217,7 +234,7 @@ export default {
     },
   },
   mounted() {
-    this.getSalesRep();
+    this.showlogin = true;
   },
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
-  <login :show-login="showlogin" @token="getToken"> </login>
+  <login :show-login="showlogin" :resourceid="resourceid" @token="getToken">
+  </login>
   <table style="width: 100%">
     <thead>
       <tr>
@@ -73,7 +74,12 @@
       <q-checkbox v-model="delivery" label="Repartidor" color="black" />
     </div>
     <div class="col text-right">
-      <q-btn icon="local_shipping" label="Solicitar" class="mint-reverse" />
+      <q-btn
+        icon="local_shipping"
+        label="Solicitar"
+        class="mint-reverse"
+        @click="createTransfer()"
+      />
     </div>
   </div>
 </template>
@@ -107,6 +113,7 @@ export default defineComponent({
       currentStore: '' as string,
       sortedTitles: [] as string[],
       showlogin: false as boolean,
+      resourceid: 0 as number,
       token: '' as string,
       stockSelected: '' as string,
       urgent: true as boolean,
@@ -229,6 +236,11 @@ export default defineComponent({
     },
     requestStock(itemcode: string) {
       this.itemcode = itemcode;
+      this.resourceid = 3;
+      this.showlogin = true;
+    },
+    createTransfer() {
+      this.resourceid = 2;
       this.showlogin = true;
     },
     getToken() {
@@ -238,7 +250,7 @@ export default defineComponent({
         this.showlogin = false;
         this.$q.notify({
           type: 'negative',
-          message: 'Error en el usuario o la contraseña',
+          message: this.store.getLastError,
         });
       } else {
         this.showLoading();

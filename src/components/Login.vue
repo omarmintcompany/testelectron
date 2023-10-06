@@ -61,6 +61,7 @@ export default defineComponent({
   },
   props: {
     showLogin: Boolean,
+    resourceid: Number,
   },
   watch: {
     showLogin() {
@@ -75,16 +76,16 @@ export default defineComponent({
         .post(`${this.store.options['ApiEndPoint']}/login`, {
           username: this.username,
           password: this.password,
+          resourceid: this.resourceid,
         })
         .then((x) => {
-          console.log(x.data.token);
           this.store.setToken(x.data.token);
           this.show = false;
           this.$emit('token', x.data.token);
         })
         .catch((err) => {
-          console.log(err);
           this.store.setToken('');
+          this.store.setLastError(err.response.data);
           this.show = false;
           this.$emit('token', '');
         });
