@@ -11,6 +11,7 @@
               :options="WhsList"
               option-label="whsName"
               option-value="whsCode"
+              color="black"
               map-options
             />
             <q-separator inset />

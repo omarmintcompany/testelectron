@@ -22,6 +22,7 @@ export const useWhsStore = defineStore('whs', {
           this.options['WhsData'] = this.options['WhsList'].filter((item) => {
             return item.isDefault == true;
           })[0];
+          //  this.hideLoading();
         })
         .catch((err) => console.log('Axios err: ', err));
     },

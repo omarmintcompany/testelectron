@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { useWhsStore } from '../stores/whs';
 import { StockRequested } from '../ts/Stock.ts';
 import Login from '../components/Login.vue';
@@ -71,7 +71,7 @@ export default defineComponent({
         label: 'Fecha Petición',
         field: 'createDate',
         sortable: false,
-        format: (val, row) => {
+        format: (val) => {
           return moment(String(val)).format('DD/MM/YYYY');
         },
       },
@@ -82,7 +82,7 @@ export default defineComponent({
         label: 'Hora Petición',
         field: 'createDate',
         sortable: false,
-        format: (val, row) => {
+        format: (val) => {
           return moment(String(val)).format('hh:mm');
         },
       },
@@ -167,7 +167,7 @@ export default defineComponent({
           this.stockRequested = x.data;
           this.hideLoading();
         })
-        .catch((err) => {
+        .catch(() => {
           this.hideLoading();
         });
     },
@@ -199,7 +199,7 @@ export default defineComponent({
             {},
             config
           )
-          .then((data) => {
+          .then(() => {
             this.$q.notify({
               type: 'positive',
               message: 'Se ha solicitado con éxito',
@@ -210,7 +210,7 @@ export default defineComponent({
             this.getList();
             this.hideLoading();
           })
-          .catch((err) => {
+          .catch(() => {
             this.$q.notify({
               type: 'negative',
               message: 'Error al solicitar el envío',

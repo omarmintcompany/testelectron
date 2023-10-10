@@ -270,7 +270,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toValue } from 'vue';
+import { defineComponent } from 'vue';
 import { useWhsStore } from '../stores/whs';
 import { Reservation } from '../ts/Reservation.ts';
 import { ReservationCategory } from '../interfaces/ReservationCategory.ts';
@@ -444,7 +444,7 @@ export default defineComponent({
             );
             this.hideLoading();
           })
-          .catch((err) => {
+          .catch(() => {
             this.hideLoading();
           });
       } else {
@@ -473,7 +473,7 @@ export default defineComponent({
             this.newItemCode.toUpperCase(),
             this.store.options['ApiEndPoint']
           )
-          .then((result) => {
+          .then(() => {
             this.$q.notify({
               type: 'positive',
               message:
@@ -483,7 +483,7 @@ export default defineComponent({
             });
             this.newItemCode = '';
           })
-          .catch((error) => {
+          .catch(() => {
             this.$q.notify({
               type: 'negative',
               message:
@@ -497,7 +497,7 @@ export default defineComponent({
     },
     deleteLine(props) {
       let itemcode: string = props.row.itemCode;
-      this.reservationData.delLine(itemcode).then((result) => {
+      this.reservationData.delLine(itemcode).then(() => {
         this.$q.notify({
           type: 'positive',
           message: 'El código ' + itemcode + ' se ha eliminado correctamente',
@@ -518,14 +518,14 @@ export default defineComponent({
       } else
         this.reservationData
           .createReservation(this.store.options['ApiEndPoint'], token)
-          .then((result) => {
+          .then(() => {
             this.$q.notify({
               type: 'positive',
               message: 'Reserva creada con éxito',
             });
             this.$router.push({ path: '/reservas' });
           })
-          .catch((error) => {
+          .catch(() => {
             this.$q.notify({
               type: 'negative',
               message: 'No se ha podido crear la reserva, intentelo más tarde',
@@ -535,14 +535,14 @@ export default defineComponent({
     update(token: string) {
       this.reservationData
         .updateReservation(this.store.options['ApiEndPoint'], token)
-        .then((result) => {
+        .then(() => {
           this.$q.notify({
             type: 'positive',
             message: 'Reserva modificada con éxito',
           });
           this.$router.push({ path: '/reservas' });
         })
-        .catch((error) => {
+        .catch(() => {
           this.$q.notify({
             type: 'negative',
             message:
@@ -553,14 +553,14 @@ export default defineComponent({
     cancel(token: string) {
       this.reservationData
         .cancelReservation(this.store.options['ApiEndPoint'], token)
-        .then((result) => {
+        .then(() => {
           this.$q.notify({
             type: 'positive',
             message: 'Reserva cancelada con éxito',
           });
           this.$router.push({ path: '/reservas' });
         })
-        .catch((error) => {
+        .catch(() => {
           this.$q.notify({
             type: 'negative',
             message: 'No se ha podido cancelar la reserva, intentelo más tarde',
@@ -570,14 +570,14 @@ export default defineComponent({
     confirm(token: string) {
       this.reservationData
         .confirmReservation(this.store.options['ApiEndPoint'], token)
-        .then((result) => {
+        .then(() => {
           this.$q.notify({
             type: 'positive',
             message: 'Reserva confirmada con éxito',
           });
           this.$router.push({ path: '/reservas' });
         })
-        .catch((error) => {
+        .catch(() => {
           this.$q.notify({
             type: 'negative',
             message:

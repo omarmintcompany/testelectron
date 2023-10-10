@@ -138,6 +138,14 @@
                   <q-avatar icon="groups" />
                   <q-item-section>Permisos de Usuarios</q-item-section>
                 </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/profiles')"
+                >
+                  <q-avatar icon="manage_accounts" />
+                  <q-item-section>Perfiles de usuarios</q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-tab>
@@ -157,7 +165,7 @@
 <script lang="ts">
 import NotificationBadges from '../components/NotificationBadges.vue';
 import { useWhsStore } from '../stores/whs';
-import axios, { AxiosError } from 'axios';
+
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
@@ -168,11 +176,16 @@ export default defineComponent({
   setup() {
     const store = useWhsStore();
     const clientIp = '' as string;
-
     return {
       tab: ref('Disponibilidad'),
       store,
       clientIp,
+      showLoading() {
+        $q.loading.show();
+      },
+      hideLoading() {
+        $q.loading.hide();
+      },
     };
   },
   mounted() {

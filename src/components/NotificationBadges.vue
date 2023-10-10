@@ -50,7 +50,6 @@
 import { useWhsStore } from '../stores/whs';
 import { defineComponent } from 'vue';
 import axios from 'axios';
-import { watch } from 'fs';
 export default defineComponent({
   name: 'NotificationBadges',
   setup() {
@@ -60,7 +59,7 @@ export default defineComponent({
     };
   },
   data() {
-    this.store.$subscribe((mutation, state) => {
+    this.store.$subscribe(() => {
       this.getNotifications();
     });
     return {

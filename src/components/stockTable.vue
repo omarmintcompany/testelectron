@@ -84,7 +84,7 @@
   </div>
 </template>
 <script lang="ts">
-import { stockTable, whsconfig } from 'src/Interfaces/TransferInterfaces';
+import { stockTable } from 'src/Interfaces/TransferInterfaces';
 import { useWhsStore } from '../stores/whs';
 import { defineComponent, PropType } from 'vue';
 import Login from '../components/Login.vue';
@@ -257,10 +257,7 @@ export default defineComponent({
         const config = {
           headers: { Authorization: `Bearer ${token}` },
         };
-        const params = {
-          WhsCode: this.store.getCurrentWhsCode.whsCode,
-          ItemCode: this.itemcode,
-        };
+
         return axios
           .put(
             `${this.store.options['ApiEndPoint']}/Stock/Requested/create`,
@@ -270,7 +267,7 @@ export default defineComponent({
             },
             config
           )
-          .then((data) => {
+          .then(() => {
             this.$q.notify({
               type: 'positive',
               message: 'Se ha confirmado con éxito',
@@ -280,7 +277,7 @@ export default defineComponent({
             this.showlogin = false;
             this.hideLoading();
           })
-          .catch((err) => {
+          .catch(() => {
             this.$q.notify({
               type: 'negative',
               message: 'Error al confirmar el envío',

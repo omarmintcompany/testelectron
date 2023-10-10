@@ -30,6 +30,7 @@
               dense
               debounce="300"
               v-model="filter"
+              color="black"
               placeholder="Buscador"
             >
               <template v-slot:append>
@@ -187,7 +188,7 @@ export default defineComponent({
           this.SList = x.data;
           this.hideLoading();
         })
-        .catch((err) => {
+        .catch(() => {
           this.hideLoading();
         });
     },

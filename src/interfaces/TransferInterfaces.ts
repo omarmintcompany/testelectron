@@ -43,13 +43,6 @@ export interface SalesRep {
   govid: string;
 }
 
-export interface SalesRepResources {
-  govid: string;
-  id: number;
-  description: string;
-  resourceEnable: boolean;
-}
-
 export type TodoErrorResponse = {
   error: string;
 };

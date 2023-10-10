@@ -299,7 +299,7 @@ export default defineComponent({
           this.RList = x.data;
           this.hideLoading();
         })
-        .catch((err) => {
+        .catch(() => {
           this.hideLoading();
         });
     },

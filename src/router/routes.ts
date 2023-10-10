@@ -42,6 +42,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'config', component: () => import('pages/Config.vue') },
       { path: 'mapping', component: () => import('pages/Mapping.vue') },
       { path: 'users', component: () => import('pages/Users.vue') },
+      { path: 'profiles', component: () => import('pages/Profiles.vue') },
     ],
   },
 

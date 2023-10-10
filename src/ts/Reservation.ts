@@ -129,7 +129,7 @@ export class Reservation implements IReservation {
         },
         config
       )
-      .then((data) => {
+      .then(() => {
         return true;
       })
       .catch((err) => {
@@ -162,7 +162,7 @@ export class Reservation implements IReservation {
         },
         config
       )
-      .then((data) => {
+      .then(() => {
         return true;
       })
       .catch((err) => {
@@ -179,7 +179,7 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(`${apiendpoint}/Reservation/cancel/${this.id}`, {}, config)
-      .then((data) => {
+      .then(() => {
         return true;
       })
       .catch((err) => {
@@ -195,7 +195,7 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(`${apiendpoint}/Reservation/confirm/${this.id}`, {}, config)
-      .then((data) => {
+      .then(() => {
         return true;
       })
       .catch((err) => {

@@ -6,9 +6,9 @@
       <div class="col">
         <div class="row q-pa-md mint-search">
           <div class="col" align="right">
-            <q-icon name="groups" size="md" />
+            <q-icon name="manage_accounts" size="md" />
             <q-separator vertical />
-            <b>PERMISOS DE USUARIOS</b>
+            <b>PERFILES DE DE USUARIOS</b>
           </div>
         </div>
       </div>
@@ -17,20 +17,38 @@
     <div class="row">
       <div class="col-8">
         <q-table
-          title="Usuarios"
           dense
           table-header-class="mint-reverse"
           flat
           bordered
-          :rows="salesreps"
+          :rows="profiles"
           :columns="RCol"
           :filter="filter"
           row-key="code"
           :rows-per-page-options="[0]"
           virtual-scroll
-          style="height: 75vh"
-          no-data-label="No hay usuarios definidos"
+          style="height: 70vh"
+          no-data-label="No hay perfiles definidos"
         >
+          <template v-slot:top-left>
+            <q-input
+              label="Nombre del perfil"
+              dense
+              bg-color="white"
+              color="black"
+              v-model="newProfile"
+              required
+            >
+              <template v-slot:append>
+                <q-btn
+                  class="mint-reverse full-width"
+                  title="Guardar Permisos"
+                  icon="add"
+                  dense
+                  @click="newProfileResources()"
+              /></template>
+            </q-input>
+          </template>
           <template v-slot:top-right>
             <q-input
               dense
@@ -53,7 +71,16 @@
                 color="black"
                 icon="edit"
                 title="Editar permisos"
-                @click="viewSaleRep(props)"
+                @click="viewProfile(props)"
+              ></q-btn>
+              <q-btn
+                dense
+                round
+                flat
+                color="black"
+                icon="delete"
+                title="Eliminar perfil"
+                @click="deleteProfile(props)"
               ></q-btn>
             </q-td>
           </template>
@@ -64,46 +91,39 @@
         <q-table
           selection="multiple"
           v-model:selected="selected"
-          :title="userSelected != '' ? userSelected : 'Seleccione un usuario'"
           dense
           table-header-class="mint-reverse"
           flat
           bordered
-          :rows="salesresources"
+          :rows="profileResources"
           :columns="RColResources"
           row-key="id"
           :rows-per-page-options="[0]"
           virtual-scroll
-          style="height: 69vh"
-          color="black"
+          style="height: 70vh"
           no-data-label="No hay permisos definidos"
-          title-class="font-md"
         >
-          <template v-slot:top-right>
-            <q-select
-              v-model="profileSelected"
-              :options="profiles"
-              label="Perfil"
-              label-color="black"
+          <template v-slot:top>
+            <q-input
+              label="Nombre del perfil"
               dense
+              bg-color="white"
               color="black"
-              option-value="id"
-              option-label="name"
-              map-options
-              :disable="userSelected == ''"
-              style="min-width: 100px"
-            />
+              v-model="profileNameSelected"
+            >
+              <template v-slot:append>
+                <q-btn
+                  class="mint-reverse full-width"
+                  :disable="profileIdSelected == ''"
+                  title="Guardar Permisos"
+                  icon="save"
+                  dense
+                  @click="saveProfileResources()"
+                />
+              </template>
+            </q-input>
           </template>
         </q-table>
-
-        <q-separator spaced />
-        <q-btn
-          class="mint-reverse full-width"
-          :disable="userSelected == ''"
-          title="Guardar Permisos"
-          icon="save"
-          @click="saveUserResources()"
-        />
       </div>
     </div>
   </div>
@@ -112,41 +132,22 @@
 <script lang="ts">
 import { useWhsStore } from '../stores/whs';
 import Login from '../components/Login.vue';
-import { WhsInfo } from '../interfaces/WhsInfo';
-import { SalesRep } from '../interfaces/Transfers';
-import {
-  SalesRepResources,
-  Profiles,
-  ProfileResources,
-} from '../interfaces/Resources';
+
+import { Profiles, ProfileResources } from '../interfaces/Resources';
 import { useQuasar } from 'quasar';
 import axios from 'axios';
 
 export default {
-  name: 'Users',
+  name: 'Profiles',
   components: { Login },
   setup() {
     const store = useWhsStore();
 
     const RCol = [
       {
-        name: 'code',
-        align: 'center',
-        label: 'Código',
-        field: 'code',
-        sortable: true,
-      },
-      {
-        name: 'govId',
-        align: 'center',
-        label: 'NºDocumento',
-        field: 'govId',
-        sortable: true,
-      },
-      {
         name: 'name',
         align: 'left',
-        label: 'Nombre',
+        label: 'Descripción',
         field: 'name',
         sortable: true,
       },
@@ -154,7 +155,7 @@ export default {
         name: 'actions',
         label: '',
         field: '',
-        align: 'center',
+        align: 'right',
       },
     ];
 
@@ -183,8 +184,9 @@ export default {
   data() {
     return {
       profiles: [] as Profiles[],
-      salesreps: [] as SalesRep[],
-      salesresources: [] as SalesRepResources[],
+      profileResources: [] as ProfileResources[],
+      profileNameSelected: '' as string,
+      profileIdSelected: 0 as number,
       showlogin: false as boolean,
       userSelected: '' as string,
       govIdSelected: '' as string,
@@ -192,7 +194,7 @@ export default {
       resourceid: 0 as number,
       showUser: false as boolean,
       filter: '' as string,
-      profileSelected: '' as string,
+      newProfile: '' as string,
     };
   },
   methods: {
@@ -201,14 +203,6 @@ export default {
         .get(`${this.store.options['ApiEndPoint']}/resources/profiles`)
         .then((x) => {
           this.profiles = x.data;
-        })
-        .catch((err) => console.log('Axios err: ', err));
-    },
-    getSalesRep() {
-      axios
-        .get(`${this.store.options['ApiEndPoint']}/salesrep`)
-        .then((x) => {
-          this.salesreps = x.data;
         })
         .catch((err) => console.log('Axios err: ', err));
     },
@@ -223,23 +217,21 @@ export default {
         });
         this.$router.push({ path: '/' });
       } else {
-        this.getSalesRep();
         this.getProfiles();
         this.showUser = true;
       }
       this.showlogin = false;
     },
-    viewSaleRep(props) {
-      this.profileSelected = null;
-      this.userSelected = props.row.name;
-      this.govIdSelected = props.row.govId;
+    viewProfile(props) {
+      this.profileNameSelected = props.row.name;
+      this.profileIdSelected = props.row.id;
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/resources/salesrep/${props.row.govId}`
+          `${this.store.options['ApiEndPoint']}/resources/profiles/${props.row.id}`
         )
         .then((x) => {
-          this.salesresources = x.data;
-          this.selected = this.salesresources.filter((e) => e.resourceEnable);
+          this.profileResources = x.data;
+          this.selected = this.profileResources.filter((e) => e.resourceEnable);
         })
         .catch(() => {
           this.$q.notify({
@@ -248,23 +240,38 @@ export default {
           });
         });
     },
-    saveUserResources() {
+    deleteProfile(props) {
       axios
-        .post(`${this.store.options['ApiEndPoint']}/resources/salesrep/save`, {
-          govId: this.govIdSelected,
-          resources: this.selected.map((e) => e.id),
+        .get(
+          `${this.store.options['ApiEndPoint']}/resources/profiles/delete/${props.row.id}`
+        )
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Perfil eliminado con éxito',
+          });
+          this.getProfiles();
         })
-        .then((x) => {
+        .catch(() => {
+          this.$q.notify({
+            type: 'negative',
+            message: 'Error al intentar eliminar el perfil',
+          });
+        });
+    },
+    saveProfileResources() {
+      axios
+        .post(`${this.store.options['ApiEndPoint']}/resources/profiles/save`, {
+          Id: this.profileIdSelected,
+          resources: this.selected.map((e) => e.id),
+          name: this.profileNameSelected,
+        })
+        .then(() => {
           this.$q.notify({
             type: 'positive',
             message: 'Permisos guardados con éxito',
           });
-          this.userSelected = '';
-          this.govIdSelected = '';
-          this.selected = [];
-          this.resourceid = 0;
-          this.profileSelected = '';
-          this.salesresources = [];
+          this.getProfiles();
         })
         .catch(() => {
           this.$q.notify({
@@ -273,37 +280,36 @@ export default {
           });
         });
     },
-  },
-  mounted() {
-    this.showlogin = true;
-  },
-  watch: {
-    profileSelected() {
-      if (this.profileSelected.id != undefined) {
+    newProfileResources() {
+      if (this.newProfile == '' || this.newProfile == undefined)
+        this.$q.notify({
+          type: 'negative',
+          message: 'Debe especificar un nombre para el perfil',
+        });
+      else
         axios
-          .get(
-            `${this.store.options['ApiEndPoint']}/resources/profiles/${this.profileSelected.id}`
-          )
-          .then((x) => {
-            this.salesresources = x.data.map((i) => {
-              let t = {
-                govId: 'asdfasf',
-                id: i.id,
-                description: i.description,
-                resourceEnable: i.resourceEnable,
-              } as SalesRepResources;
-              return t;
+          .post(`${this.store.options['ApiEndPoint']}/resources/profiles/new`, {
+            Id: 0,
+            resources: [],
+            name: this.newProfile,
+          })
+          .then(() => {
+            this.$q.notify({
+              type: 'positive',
+              message: 'Perfil creado con éxito',
             });
-            this.selected = this.salesresources.filter((e) => e.resourceEnable);
+            this.getProfiles();
           })
           .catch(() => {
             this.$q.notify({
               type: 'negative',
-              message: 'Error al obtener los permisos',
+              message: 'Error al intentar crear el perfil',
             });
           });
-      }
     },
+  },
+  mounted() {
+    this.showlogin = true;
   },
 };
 </script>

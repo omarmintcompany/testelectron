@@ -219,7 +219,7 @@ export default defineComponent({
         label: 'F.Creación',
         field: 'dateCreated',
         sortable: true,
-        format: (val, row) => {
+        format: (val) => {
           return moment(String(val)).format('DD/MM/YYYY');
         },
       },
@@ -229,7 +229,7 @@ export default defineComponent({
         label: 'F.Límite',
         field: 'needDateTime',
         sortable: true,
-        format: (val, row) => {
+        format: (val) => {
           return moment(String(val)).format('DD/MM/YYYY');
         },
       },
@@ -291,7 +291,7 @@ export default defineComponent({
           this.TOList = x.data;
           this.hideLoading();
         })
-        .catch((err) => {
+        .catch(() => {
           this.hideLoading();
         });
     },
