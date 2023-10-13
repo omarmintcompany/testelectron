@@ -1,6 +1,9 @@
 import { app, BrowserWindow, nativeTheme } from 'electron';
+import { initialize, enable } from '@electron/remote/main'; // <-- add this
 import path from 'path';
 import os from 'os';
+
+initialize(); // <-- add this
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -20,16 +23,17 @@ function createWindow() {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 1000,
     height: 600,
     useContentSize: true,
+    frame: false, // <-- add this
     webPreferences: {
-      contextIsolation: true,
-      // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+      sandbox: false,
+      preload: path.join(__dirname, 'electron-preload.js'),
     },
   });
+
+  enable(mainWindow.webContents); // <-- add this
 
   mainWindow.loadURL(process.env.APP_URL);
 

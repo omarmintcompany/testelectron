@@ -1,6 +1,14 @@
 <template>
   <q-layout view="hHh lpR fFf" class="fondomint">
-    <q-header elevated class="bg-primary text-white" height-hint="98">
+    <q-header elevated class="mint-reverse text-white" height-hint="98">
+      <q-bar class="q-electron-drag">
+        <q-icon name="laptop_chromebook" />
+        <div>Mint Store Manager 2023</div>
+        <q-space />
+        <q-btn dense flat icon="minimize" @click="minimize" />
+        <q-btn dense flat icon="crop_square" @click="toggleMaximize" />
+        <q-btn dense flat icon="close" @click="closeApp" />
+      </q-bar>
       <q-toolbar class="mint">
         <q-toolbar-title>
           <q-img
@@ -176,10 +184,26 @@ export default defineComponent({
   setup() {
     const store = useWhsStore();
     const clientIp = '' as string;
+
+    function minimize() {
+      console.log('minimize');
+      window.myWindowAPI?.minimize();
+    }
+
+    function toggleMaximize() {
+      window.myWindowAPI?.toggleMaximize();
+    }
+
+    function closeApp() {
+      window.myWindowAPI?.close();
+    }
     return {
       tab: ref('Disponibilidad'),
       store,
       clientIp,
+      minimize,
+      toggleMaximize,
+      closeApp,
       showLoading() {
         $q.loading.show();
       },
@@ -189,6 +213,7 @@ export default defineComponent({
     };
   },
   mounted() {
+    window.myWindowAPI?.toggleMaximize();
     this.store.setWhsList();
   },
 });
