@@ -164,8 +164,8 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
     electron: {
-      // extendElectronMainConf (esbuildConf)
-      // extendElectronPreloadConf (esbuildConf)
+      //extendElectronMainConf (esbuildConf){},
+      //extendElectronPreloadConf (esbuildConf){},
 
       inspectPort: 5858,
 
