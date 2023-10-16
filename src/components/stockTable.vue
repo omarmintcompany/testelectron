@@ -78,13 +78,13 @@
         icon="local_shipping"
         label="Solicitar"
         class="mint-reverse"
-        @click="createTransfer()"
+        @click="requestTransfer()"
       />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { stockTable } from 'src/Interfaces/TransferInterfaces';
+import { stockTable, whsconfig } from 'src/Interfaces/TransferInterfaces';
 import { useWhsStore } from '../stores/whs';
 import { defineComponent, PropType } from 'vue';
 import Login from '../components/Login.vue';
@@ -119,6 +119,9 @@ export default defineComponent({
       urgent: true as boolean,
       delivery: false as boolean,
       itemcode: '' as string,
+      action: '' as string,
+      whsFrom: '' as string,
+      whsTo: '' as string,
     };
   },
 
@@ -132,7 +135,7 @@ export default defineComponent({
       default: () => [],
     },
     whsconfig: {
-      type: Array as PropType<WhsConfig[]>,
+      type: Array as PropType<whsconfig[]>,
       default: () => [],
     },
   },
@@ -235,11 +238,16 @@ export default defineComponent({
       });
     },
     requestStock(itemcode: string) {
+      this.action = 'requestStock';
       this.itemcode = itemcode;
       this.resourceid = 3;
       this.showlogin = true;
     },
-    createTransfer() {
+    requestTransfer() {
+      this.action = 'requestTransfer';
+      this.itemcode = this.stockSelected.split('-')[0];
+      this.whsFrom = this.stockSelected.split('-')[1];
+      this.whsTo = this.store.getCurrentWhsCode.whsCode;
       this.resourceid = 2;
       this.showlogin = true;
     },
@@ -253,12 +261,32 @@ export default defineComponent({
           message: this.store.getLastError,
         });
       } else {
-        this.showLoading();
+        switch (this.action) {
+          case 'requestStock':
+            this.createRequest();
+            break;
+          case 'requestTransfer':
+            this.createTransfer();
+            break;
+        }
+      }
+    },
+
+    createRequest() {
+      this.showLoading();
+      let token = this.store.getToken as string;
+      if (token == '') {
+        this.showlogin = false;
+        this.$q.notify({
+          type: 'negative',
+          message: this.store.getLastError,
+        });
+      } else {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
         };
-
         return axios
+
           .put(
             `${this.store.options['ApiEndPoint']}/Stock/Requested/create`,
             {
@@ -283,6 +311,55 @@ export default defineComponent({
               message: 'Error al confirmar el envío',
             });
             this.itemcode = '';
+            this.token = '';
+            this.showlogin = false;
+            this.hideLoading();
+          });
+      }
+    },
+    createTransfer() {
+      this.showLoading();
+      let token = this.store.getToken as string;
+      if (token == '') {
+        this.showlogin = false;
+        this.$q.notify({
+          type: 'negative',
+          message: this.store.getLastError,
+        });
+      } else {
+        const config = {
+          headers: { Authorization: `Bearer ${token}` },
+        };
+        //----------------------------------OMAR
+        const params = {
+          WhsCode: this.store.getCurrentWhsCode.whsCode,
+          status: this.status.value != undefined ? this.status.value : 'T',
+          Type: 0,
+        };
+        return axios
+
+          .put(
+            `${this.store.options['ApiEndPoint']}/transfers/create`,
+            {
+              WhsCode: this.store.getCurrentWhsCode.whsCode,
+              ItemCode: this.itemcode,
+            },
+            config
+          )
+          .then(() => {
+            this.$q.notify({
+              type: 'positive',
+              message: 'Se ha creado la transferencia con éxito',
+            });
+            this.token = '';
+            this.showlogin = false;
+            this.hideLoading();
+          })
+          .catch(() => {
+            this.$q.notify({
+              type: 'negative',
+              message: 'Error al crear la transferencia',
+            });
             this.token = '';
             this.showlogin = false;
             this.hideLoading();

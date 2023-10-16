@@ -12,7 +12,10 @@ export interface TransferList {
   NeedDateTime: string;
   TypeName: string;
 }
-
+export interface TransferType {
+  id: number;
+  description: string;
+}
 export interface Transfer {
   id: number;
   title: string;

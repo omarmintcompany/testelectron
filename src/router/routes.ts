@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/TransfersOut.vue'),
       },
       {
+        path: 'transfer/:transferId',
+        component: () => import('pages/Transfer.vue'),
+        props: true,
+      },
+      {
         path: 'reservas',
         component: () => import('pages/Reservas.vue'),
       },

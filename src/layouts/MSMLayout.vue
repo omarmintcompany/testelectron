@@ -186,7 +186,6 @@ export default defineComponent({
     const clientIp = '' as string;
 
     function minimize() {
-      console.log('minimize');
       window.myWindowAPI?.minimize();
     }
 

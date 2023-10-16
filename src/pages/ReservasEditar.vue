@@ -363,7 +363,7 @@ export default defineComponent({
       action: '' as string,
       showlogin: false as boolean,
       token: '' as string,
-      reservationData: new Reservation() as Reservation,
+      reservationData: new Reservation(0) as Reservation,
       newItemCode: '' as string,
       categorylist: [] as ReservationCategory[],
       statuslist: [
@@ -412,7 +412,8 @@ export default defineComponent({
             this.reservationData.reservationLines = x.data.reservationLines;
 
             x.data.reservationLines.map(
-              (a) => (
+              (a: any) => (
+                (a.itemCode = a.itemData.itemCode),
                 (a.brand = a.itemData.brand),
                 (a.itemGroupCode = a.itemData.itemGroupCode),
                 (a.modelCode = a.itemData.modelCode),
@@ -469,10 +470,7 @@ export default defineComponent({
     addItem() {
       if (this.newItemCode != '')
         this.reservationData
-          .addLine(
-            this.newItemCode.toUpperCase(),
-            this.store.options['ApiEndPoint']
-          )
+          .addLine(this.newItemCode.toUpperCase())
           .then(() => {
             this.$q.notify({
               type: 'positive',
@@ -517,7 +515,7 @@ export default defineComponent({
         });
       } else
         this.reservationData
-          .createReservation(this.store.options['ApiEndPoint'], token)
+          .createReservation(token)
           .then(() => {
             this.$q.notify({
               type: 'positive',
@@ -534,7 +532,7 @@ export default defineComponent({
     },
     update(token: string) {
       this.reservationData
-        .updateReservation(this.store.options['ApiEndPoint'], token)
+        .updateReservation(token)
         .then(() => {
           this.$q.notify({
             type: 'positive',
@@ -552,7 +550,7 @@ export default defineComponent({
     },
     cancel(token: string) {
       this.reservationData
-        .cancelReservation(this.store.options['ApiEndPoint'], token)
+        .cancelReservation(token)
         .then(() => {
           this.$q.notify({
             type: 'positive',
@@ -569,7 +567,7 @@ export default defineComponent({
     },
     confirm(token: string) {
       this.reservationData
-        .confirmReservation(this.store.options['ApiEndPoint'], token)
+        .confirmReservation(token)
         .then(() => {
           this.$q.notify({
             type: 'positive',

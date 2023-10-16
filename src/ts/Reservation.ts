@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useWhsStore } from '../stores/whs';
 
 export interface ReservationLine {
   id: number;
@@ -19,10 +20,10 @@ export interface ReservationLine {
 }
 
 export interface IReservation {
-  createReservation(apiendpoint: string, token: string): Promise<boolean>;
-  updateReservation(apiendpoint: string, token: string): Promise<boolean>;
-  confirmReservation(apiendpoint: string, token: string): Promise<boolean>;
-  cancelReservation(apiendpoint: string, token: string): Promise<boolean>;
+  createReservation(token: string): Promise<boolean>;
+  updateReservation(token: string): Promise<boolean>;
+  confirmReservation(token: string): Promise<boolean>;
+  cancelReservation(token: string): Promise<boolean>;
   addLine(itemcode: string): Promise<boolean>;
   delLine(itemcode: string): Promise<boolean>;
 }
@@ -48,6 +49,8 @@ export class Reservation implements IReservation {
   public WhsCode: string;
   public reservationLines: ReservationLine[];
 
+  store = useWhsStore();
+
   constructor(id: number, whscode: string) {
     this.id = id;
     this.categoryId = 1;
@@ -70,7 +73,9 @@ export class Reservation implements IReservation {
         .map((p) => p.quantity++);
     } else {
       return axios
-        .get(`${apiendpoint}/disponibilidad/${itemcode}/itemData`)
+        .get(
+          `${this.store.options['ApiEndPoint']}/disponibilidad/${itemcode}/itemData`
+        )
         .then((x) => {
           this.reservationLines.push({
             id: 0,
@@ -114,7 +119,7 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(
-        `${apiendpoint}/Reservation/create`,
+        `${this.store.options['ApiEndPoint']}/Reservation/create`,
         {
           cardCode: 'C' + this.whsCode,
           cardName: this.cardName,
@@ -146,7 +151,7 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(
-        `${apiendpoint}/Reservation/update`,
+        `${this.store.options['ApiEndPoint']}/Reservation/update`,
         {
           id: this.id,
           cardCode: 'C' + this.whsCode,
@@ -178,7 +183,11 @@ export class Reservation implements IReservation {
       headers: { Authorization: `Bearer ${token}` },
     };
     return axios
-      .put(`${apiendpoint}/Reservation/cancel/${this.id}`, {}, config)
+      .put(
+        `${this.store.options['ApiEndPoint']}/Reservation/cancel/${this.id}`,
+        {},
+        config
+      )
       .then(() => {
         return true;
       })
@@ -194,7 +203,11 @@ export class Reservation implements IReservation {
       headers: { Authorization: `Bearer ${token}` },
     };
     return axios
-      .put(`${apiendpoint}/Reservation/confirm/${this.id}`, {}, config)
+      .put(
+        `${this.store.options['ApiEndPoint']}/Reservation/confirm/${this.id}`,
+        {},
+        config
+      )
       .then(() => {
         return true;
       })
