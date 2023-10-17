@@ -96,7 +96,6 @@ import {
   itemTransit,
 } from 'src/Interfaces/DisponibilidadInterfaces';
 import { ItemInfo } from 'src/Interfaces/ItemData';
-//A785981 -A632499 - A736134
 export default defineComponent({
   name: 'Disponibilidad',
   components: {
@@ -182,8 +181,9 @@ export default defineComponent({
     this.itemCode = this.$route.params.itemcode = !''
       ? this.$route.params.itemcode
       : '';
-    console.log(this.itemcode);
     if (this.itemCode != undefined) this.onSubmit();
+
+    this.itemCode = 'A437145';
   },
   methods: {
     onSubmit() {

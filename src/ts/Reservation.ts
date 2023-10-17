@@ -61,10 +61,7 @@ export class Reservation implements IReservation {
     this.phone = '';
   }
 
-  public async addLine(
-    itemcode: string,
-    apiendpoint: string
-  ): Promise<boolean> {
+  public async addLine(itemcode: string): Promise<boolean> {
     if (
       this.reservationLines.filter((p) => p.itemCode == itemcode).length != 0
     ) {
@@ -102,20 +99,15 @@ export class Reservation implements IReservation {
 
     return true;
   }
-
   public async delLine(itemcode: string): Promise<boolean> {
     this.reservationLines = this.reservationLines.filter(
       (p) => p.itemCode != itemcode
     );
     return true;
   }
-
-  public async createReservation(
-    apiendpoint: string,
-    token: string
-  ): Promise<boolean> {
+  public async createReservation(): Promise<boolean> {
     const config = {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.store.getToken}` },
     };
     return axios
       .put(
@@ -141,13 +133,9 @@ export class Reservation implements IReservation {
         throw err;
       });
   }
-
-  public async updateReservation(
-    apiendpoint: string,
-    token: string
-  ): Promise<boolean> {
+  public async updateReservation(): Promise<boolean> {
     const config = {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.store.getToken}` },
     };
     return axios
       .put(
@@ -174,13 +162,9 @@ export class Reservation implements IReservation {
         throw err;
       });
   }
-
-  public async cancelReservation(
-    apiendpoint: string,
-    token: string
-  ): Promise<boolean> {
+  public async cancelReservation(): Promise<boolean> {
     const config = {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.store.getToken}` },
     };
     return axios
       .put(
@@ -195,12 +179,9 @@ export class Reservation implements IReservation {
         throw err;
       });
   }
-  public async confirmReservation(
-    apiendpoint: string,
-    token: string
-  ): Promise<boolean> {
+  public async confirmReservation(): Promise<boolean> {
     const config = {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.store.getToken}` },
     };
     return axios
       .put(

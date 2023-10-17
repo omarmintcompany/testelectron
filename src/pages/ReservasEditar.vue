@@ -515,7 +515,7 @@ export default defineComponent({
         });
       } else
         this.reservationData
-          .createReservation(token)
+          .createReservation()
           .then(() => {
             this.$q.notify({
               type: 'positive',
@@ -532,7 +532,7 @@ export default defineComponent({
     },
     update(token: string) {
       this.reservationData
-        .updateReservation(token)
+        .updateReservation()
         .then(() => {
           this.$q.notify({
             type: 'positive',
@@ -550,7 +550,7 @@ export default defineComponent({
     },
     cancel(token: string) {
       this.reservationData
-        .cancelReservation(token)
+        .cancelReservation()
         .then(() => {
           this.$q.notify({
             type: 'positive',
@@ -567,7 +567,7 @@ export default defineComponent({
     },
     confirm(token: string) {
       this.reservationData
-        .confirmReservation(token)
+        .confirmReservation()
         .then(() => {
           this.$q.notify({
             type: 'positive',

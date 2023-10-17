@@ -233,7 +233,7 @@ export default {
           .get(
             `${this.store.options['ApiEndPoint']}/whsipmapping/delete/${props.row.id}`
           )
-          .then((x) => {
+          .then(() => {
             this.getMapping();
             this.hideLoading();
             this.$q.notify({
@@ -241,7 +241,7 @@ export default {
               message: 'Se ha eliminado el mapeo con éxito',
             });
           })
-          .catch((error) => {
+          .catch(() => {
             this.hideLoading();
             this.$q.notify({
               type: 'negative',
@@ -261,7 +261,7 @@ export default {
           ip: this.ipAddress,
           isDefault: this.isDefault,
         })
-        .then((x) => {
+        .then(() => {
           this.getMapping();
           this.hideLoading();
           this.$q.notify({
@@ -269,7 +269,7 @@ export default {
             message: 'Se ha creado el mapeo con éxito',
           });
         })
-        .catch((error) => {
+        .catch(() => {
           this.hideLoading();
           this.$q.notify({
             type: 'negative',

@@ -6,6 +6,73 @@
       <div class="row">
         <div class="col-2">
           <q-card>
+            <q-card-section dense class="mint-reverse">
+              <div class="row">
+                <div class="col" align="center">
+                  <q-btn
+                    outline
+                    round
+                    :title="Cancelar"
+                    dense
+                    icon="checklist"
+                    @click="setAll()"
+                    v-if="transferData.id != 0"
+                  />&nbsp;
+                  <q-btn
+                    outline
+                    round
+                    title="Cancelar"
+                    dense
+                    icon="cancel"
+                    @click="actions('cancel')"
+                    v-if="transferData.id != 0 && transferData.status == 'SC'"
+                  />&nbsp;
+                  <q-btn
+                    outline
+                    round
+                    title="Imprimir"
+                    dense
+                    icon="print"
+                    v-if="transferData.id != 0"
+                  />
+                  &nbsp;
+                  <q-btn
+                    outline
+                    round
+                    title="Guardar"
+                    dense
+                    icon="save"
+                    type="submit"
+                    v-if="transferData.id == 0"
+                  />
+                </div>
+              </div>
+            </q-card-section>
+            <q-card-section dense>
+              <q-input
+                dense
+                outlined
+                label-color="black"
+                label="Agregar producto"
+                v-model="newItemCode"
+                input-class="text-right"
+                class="q-ml-md"
+                ref="newItemCodeInput"
+                :disable="transferData.id != 0"
+                v-on:keydown.enter.prevent="onEnter"
+              >
+                <template v-slot:append>
+                  <q-btn
+                    outline
+                    round
+                    title="Añadir producto"
+                    dense
+                    icon="add"
+                    @click="addItem()"
+                  />
+                </template>
+              </q-input>
+            </q-card-section>
             <q-card-section class="mint-reverse">
               <div>Datos de la transferencia</div>
             </q-card-section>
@@ -144,6 +211,18 @@
                   <q-img :src="geturl(props)" fit />
                 </q-td>
               </template>
+              <template v-slot:body-cell-quantity="props">
+                <q-td :props="props" style="width: 120px">
+                  <q-input
+                    type="number"
+                    v-model="props.row.quantity"
+                    dense
+                    outlined
+                    label="uds"
+                    min="0"
+                  ></q-input>
+                </q-td>
+              </template>
             </q-table>
           </q-card>
         </div>
@@ -250,6 +329,7 @@ export default defineComponent({
         label: 'Recibido',
         field: 'recvQty',
       },
+      { name: 'quantity', label: '', field: '', align: 'right' },
     ];
 
     return {

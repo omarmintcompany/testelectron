@@ -69,9 +69,44 @@
     </tbody>
   </table>
   <div class="row">
-    <div class="col">
+    <div class="col-right">
       <q-checkbox v-model="urgent" label="Urgente" color="red" />
-      <q-checkbox v-model="delivery" label="Repartidor" color="black" />
+      <q-checkbox v-model="deliveryMan" label="Repartidor" color="black" />
+    </div>
+    <q-separator inset></q-separator>
+    <div class="col-left">
+      <q-input
+        v-model="needDateTime"
+        mask="time"
+        :rules="['time']"
+        dense
+        label-color="black"
+        label="Hora Recogida"
+        readonly
+        required
+        v-if="deliveryMan"
+      >
+        <template v-slot:append>
+          <q-icon name="access_time" class="cursor-pointer">
+            <q-popup-proxy
+              cover
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-time v-model="needDateTime" color="black">
+                <div class="row items-center justify-end">
+                  <q-btn
+                    v-close-popup
+                    label="Close"
+                    class="mint-reverse"
+                    flat
+                  />
+                </div>
+              </q-time>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
     </div>
     <div class="col text-right">
       <q-btn
@@ -90,6 +125,7 @@ import { defineComponent, PropType } from 'vue';
 import Login from '../components/Login.vue';
 import axios from 'axios';
 import { useQuasar } from 'quasar';
+import { Transfer } from 'src/ts/Transfer';
 
 export default defineComponent({
   name: 'stockTableComponent',
@@ -117,11 +153,12 @@ export default defineComponent({
       token: '' as string,
       stockSelected: '' as string,
       urgent: true as boolean,
-      delivery: false as boolean,
+      deliveryMan: false as boolean,
       itemcode: '' as string,
       action: '' as string,
       whsFrom: '' as string,
       whsTo: '' as string,
+      needDateTime: '09:00' as string,
     };
   },
 
@@ -244,12 +281,20 @@ export default defineComponent({
       this.showlogin = true;
     },
     requestTransfer() {
-      this.action = 'requestTransfer';
-      this.itemcode = this.stockSelected.split('-')[0];
-      this.whsFrom = this.stockSelected.split('-')[1];
-      this.whsTo = this.store.getCurrentWhsCode.whsCode;
-      this.resourceid = 2;
-      this.showlogin = true;
+      if ((this.stockSelected == '') | (this.stockSelected == undefined)) {
+        this.showlogin = false;
+        this.$q.notify({
+          type: 'negative',
+          message: 'Debe seleccionar un artículo',
+        });
+      } else {
+        this.action = 'requestTransfer';
+        this.itemcode = this.stockSelected.split('-')[0];
+        this.whsFrom = this.stockSelected.split('-')[1];
+        this.whsTo = this.store.getCurrentWhsCode.whsCode;
+        this.resourceid = 2;
+        this.showlogin = true;
+      }
     },
     getToken() {
       let token = this.store.getToken as string;
@@ -318,7 +363,6 @@ export default defineComponent({
       }
     },
     createTransfer() {
-      this.showLoading();
       let token = this.store.getToken as string;
       if (token == '') {
         this.showlogin = false;
@@ -327,43 +371,54 @@ export default defineComponent({
           message: this.store.getLastError,
         });
       } else {
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        };
-        //----------------------------------OMAR
-        const params = {
-          WhsCode: this.store.getCurrentWhsCode.whsCode,
-          status: this.status.value != undefined ? this.status.value : 'T',
-          Type: 0,
-        };
-        return axios
+        let TransferData = new Transfer(0);
 
-          .put(
-            `${this.store.options['ApiEndPoint']}/transfers/create`,
-            {
-              WhsCode: this.store.getCurrentWhsCode.whsCode,
-              ItemCode: this.itemcode,
-            },
-            config
-          )
-          .then(() => {
-            this.$q.notify({
-              type: 'positive',
-              message: 'Se ha creado la transferencia con éxito',
+        TransferData.title = this.urgent ? 'Interstore Urgente' : 'Interstore';
+        TransferData.whsFrom = this.whsFrom;
+        TransferData.whsTo = this.whsTo;
+        TransferData.salesPerson = '';
+        TransferData.status = 'SC';
+        TransferData.type = this.urgent ? 3 : 4;
+        TransferData.dateCreated = '';
+        TransferData.dateSend = '';
+        TransferData.dateRec = '';
+        TransferData.urgent = this.urgent;
+        TransferData.salesRepCreate = '';
+        TransferData.salesRepSent = '';
+        TransferData.salesRepReceived = '';
+        TransferData.deliveryMan = this.deliveryMan;
+        TransferData.needDateTime = this.needDateTime;
+        TransferData.addLine(this.itemcode).then(() => {
+          this.showLoading();
+          TransferData.createTransfer()
+            .then(() => {
+              this.$q.notify({
+                type: 'positive',
+                message: 'Transferencia creada con éxito',
+              });
+              this.hideLoading();
+              this.itemcode = '';
+              this.stockSelected = '';
+              this.showlogin = false;
+              this.deliveryMan = false;
+              this.needDateTime = '09:00';
+              this.urgent = true;
+            })
+            .catch(() => {
+              this.hideLoading();
+              this.$q.notify({
+                type: 'negative',
+                message:
+                  'No se ha podido crear la transferencia, intentelo más tarde',
+              });
+              this.itemcode = '';
+              this.stockSelected = '';
+              this.showlogin = false;
+              this.deliveryMan = false;
+              this.needDateTime = '09:00';
+              this.urgent = true;
             });
-            this.token = '';
-            this.showlogin = false;
-            this.hideLoading();
-          })
-          .catch(() => {
-            this.$q.notify({
-              type: 'negative',
-              message: 'Error al crear la transferencia',
-            });
-            this.token = '';
-            this.showlogin = false;
-            this.hideLoading();
-          });
+        });
       }
     },
   },
