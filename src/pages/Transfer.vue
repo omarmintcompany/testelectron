@@ -2,6 +2,66 @@
   <div class="q-pa-md">
     <login :show-login="showlogin" :resourceid="resourceid" @token="getToken">
     </login>
+    <q-dialog
+      v-model="showreasonsform"
+      transition-show="scale"
+      transition-hide="scale"
+      style="min-width: 600px"
+    >
+      <q-card style="width: 700px; max-width: 80vw">
+        <q-card-section class="mint-reverse">
+          <div class="text-h6">Producto solicitado y no enviado</div>
+          <div class="font-xs">
+            Debe especificar un motivo para cada producto
+          </div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-table
+            dense
+            table-header-class="mint-reverse"
+            flat
+            :rows="transferData.transferLines.filter((e) => e.quantity == 0)"
+            :columns="RColReason"
+            row-key="itemcode"
+            :rows-per-page-options="[0]"
+            virtual-scroll
+            class="my-sticky-header-table"
+            style="height: 50vh"
+          >
+            <template v-slot:body-cell-photo="props">
+              <q-td :props="props" style="width: 80px">
+                <q-img :src="geturl(props)" fit />
+              </q-td>
+            </template>
+            <template v-slot:body-cell-reason="props">
+              <q-td :props="props">
+                <q-select
+                  v-model="props.row.reasonId"
+                  :options="reasons"
+                  label="Motivo"
+                  label-color="black"
+                  dense
+                  option-label="description"
+                  option-value="id"
+                  map-options
+                  emit-value
+                />
+              </q-td>
+            </template>
+          </q-table>
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn
+            class="mint-reverse"
+            label="Aceptar"
+            @click="onSubmitReasons()"
+          />
+          <q-btn class="mint-reverse" label="Cancelar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-form @submit="onSubmit" class="q-gutter-md">
       <div class="row">
         <div class="col-2">
@@ -12,30 +72,48 @@
                   <q-btn
                     outline
                     round
-                    :title="Cancelar"
+                    title="Imprimir"
+                    dense
+                    icon="print"
+                    v-if="transferData.id != 0"
+                    @click="printTransfer()"
+                  />
+                </div>
+                <div class="col" align="center">
+                  <q-btn
+                    outline
+                    round
+                    title="Imprimir Etiquetas"
+                    dense
+                    icon="bookmarks"
+                    @click="printLabels()"
+                    v-if="checkVisibility('setAll')"
+                  />
+                </div>
+                <div class="col" align="center">
+                  <q-btn
+                    outline
+                    round
+                    :title="titleSetAll()"
                     dense
                     icon="checklist"
                     @click="setAll()"
-                    v-if="transferData.id != 0"
-                  />&nbsp;
+                    v-if="checkVisibility('setAll')"
+                  />
+                </div>
+                <div class="col" align="center">
                   <q-btn
                     outline
                     round
                     title="Cancelar"
                     dense
                     icon="cancel"
-                    @click="actions('cancel')"
+                    color="red"
+                    @click="cancelTransfer()"
                     v-if="transferData.id != 0 && transferData.status == 'SC'"
-                  />&nbsp;
-                  <q-btn
-                    outline
-                    round
-                    title="Imprimir"
-                    dense
-                    icon="print"
-                    v-if="transferData.id != 0"
                   />
-                  &nbsp;
+                </div>
+                <div class="col" align="center">
                   <q-btn
                     outline
                     round
@@ -43,33 +121,36 @@
                     dense
                     icon="save"
                     type="submit"
-                    v-if="transferData.id == 0"
+                    color="green"
+                    v-if="
+                      transferData.id == 0 ||
+                      transferData.status != 'CN' ||
+                      transferData.status != 'A'
+                    "
                   />
                 </div>
               </div>
             </q-card-section>
             <q-card-section dense>
               <q-input
+                name="inputItem"
+                autofocus
+                color="black"
                 dense
                 outlined
                 label-color="black"
-                label="Agregar producto"
+                :label="labelItem()"
                 v-model="newItemCode"
                 input-class="text-right"
                 class="q-ml-md"
                 ref="newItemCodeInput"
-                :disable="transferData.id != 0"
+                :disable="
+                  transferData.status == 'A' || transferData.status == 'CN'
+                "
                 v-on:keydown.enter.prevent="onEnter"
               >
                 <template v-slot:append>
-                  <q-btn
-                    outline
-                    round
-                    title="Añadir producto"
-                    dense
-                    icon="add"
-                    @click="addItem()"
-                  />
+                  <q-btn outline round dense icon="add" @click="addItem()" />
                 </template>
               </q-input>
             </q-card-section>
@@ -83,6 +164,7 @@
                 type="text"
                 dense
                 disable
+                color="black"
               />
               <q-select
                 v-model="transferData.urgent"
@@ -93,6 +175,7 @@
                 dense
                 map-options
                 emit-value
+                color="black"
               />
               <q-select
                 v-model="transferData.status"
@@ -103,6 +186,7 @@
                 emit-value
                 dense
                 disable
+                color="black"
               />
               <q-input
                 label="Titulo"
@@ -110,6 +194,7 @@
                 type="text"
                 dense
                 :disable="transferId != '0'"
+                color="black"
               />
               <q-select
                 v-model="transferData.type"
@@ -117,11 +202,12 @@
                 label="Tipo"
                 label-color="black"
                 dense
-                :disable="transferId != '0'"
+                disable
                 map-options
                 emit-value
                 option-value="id"
                 option-label="description"
+                color="black"
               />
               <q-select
                 v-model="transferData.whsFrom"
@@ -131,9 +217,10 @@
                 dense
                 map-options
                 emit-value
-                :disable="transferId != '0'"
+                disable
                 option-value="whsCode"
                 option-label="whsName"
+                color="black"
               />
               <q-select
                 v-model="transferData.whsTo"
@@ -146,34 +233,7 @@
                 :disable="transferId != '0'"
                 option-value="whsCode"
                 option-label="whsName"
-              />
-            </q-card-section>
-          </q-card>
-          <q-card>
-            <q-card-section class="mint-reverse">
-              <div>Fechas de la transferencia</div>
-            </q-card-section>
-            <q-card-section>
-              <q-input
-                label="Fecha Creación"
-                v-model="transferData.dateCreated"
-                type="text"
-                dense
-                disable
-              />
-              <q-input
-                label="Fecha Envío"
-                v-model="transferData.dateSend"
-                type="text"
-                dense
-                disable
-              />
-              <q-input
-                label="Fecha Recepción"
-                v-model="transferData.dateRec"
-                type="text"
-                dense
-                disable
+                color="black"
               />
             </q-card-section>
           </q-card>
@@ -189,8 +249,9 @@
               row-key="itemcode"
               :rows-per-page-options="[0]"
               virtual-scroll
-              style="height: 85vh"
+              style="height: 73vh"
               class="my-sticky-header-table"
+              :title="typeTransfer()"
             >
               <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
@@ -220,10 +281,104 @@
                     outlined
                     label="uds"
                     min="0"
-                  ></q-input>
+                    color="black"
+                    :class="
+                      transferData.whsFrom == store.getCurrentWhsCode.whsCode &&
+                      props.row.quantity == 0
+                        ? 'mint-zero'
+                        : (props.row.quantity != props.row.sendQty &&
+                            transferData.whsTo ==
+                              store.getCurrentWhsCode.whsCode) ||
+                          (transferData.whsFrom ==
+                            store.getCurrentWhsCode.whsCode &&
+                            (props.row.quantity > props.row.stock ||
+                              props.row.quantity > props.row.orderQty))
+                        ? 'mint-ecom'
+                        : 'mint-valid'
+                    "
+                  />
+                </q-td>
+              </template>
+              <template v-slot:body-cell-reason="props">
+                <q-td :props="props" style="width: 120px">
+                  {{ getReadonDescription(props.row.reasonId) }}
                 </q-td>
               </template>
             </q-table>
+          </q-card>
+          <q-separator vertical inset />
+          <q-card>
+            <div class="row q-pl-md q-pr-md q-pb-md">
+              <div class="col" style="max-width: 120px">
+                <q-input
+                  label="Fecha Petición"
+                  v-model="transferData.dateCreated"
+                  type="text"
+                  dense
+                  disable
+                />
+              </div>
+              <div class="col">
+                <q-select
+                  v-model="transferData.salesRepCreate"
+                  :options="salesreps"
+                  label="Usuario Petición"
+                  label-color="black"
+                  dense
+                  disabled
+                  readonly
+                  option-label="name"
+                  option-value="code"
+                  map-options
+                />
+              </div>
+              <div class="col" style="max-width: 120px">
+                <q-input
+                  label="Fecha Envío"
+                  v-model="transferData.dateSend"
+                  type="text"
+                  dense
+                  disable
+                />
+              </div>
+              <div class="col">
+                <q-select
+                  v-model="transferData.salesRepSent"
+                  :options="salesreps"
+                  label="Usuario Envío"
+                  label-color="black"
+                  dense
+                  disabled
+                  readonly
+                  option-label="name"
+                  option-value="code"
+                  map-options
+                />
+              </div>
+              <div class="col" style="max-width: 120px">
+                <q-input
+                  label="Fecha Recepción"
+                  v-model="transferData.dateRec"
+                  type="text"
+                  dense
+                  disable
+                />
+              </div>
+              <div class="col">
+                <q-select
+                  v-model="transferData.salesRepReceived"
+                  :options="salesreps"
+                  label="Usuario Recibe"
+                  label-color="black"
+                  dense
+                  disabled
+                  readonly
+                  option-label="name"
+                  option-value="code"
+                  map-options
+                />
+              </div>
+            </div>
           </q-card>
         </div>
       </div>
@@ -235,11 +390,11 @@
 import { defineComponent } from 'vue';
 import { useWhsStore } from '../stores/whs';
 import { Transfer } from '../ts/Transfer.ts';
-import { TransferType } from '../ts/TransferInterfaces.ts';
 import { WhsInfo } from '../interfaces/WhsInfo';
 import Login from '../components/Login.vue';
 import { date, useQuasar } from 'quasar';
 import axios from 'axios';
+import { SalesRep, Reason } from '../interfaces/Transfers';
 
 export default defineComponent({
   name: 'TransferForm',
@@ -248,6 +403,44 @@ export default defineComponent({
   setup() {
     const $q = useQuasar();
     const store = useWhsStore();
+    const RColReason = [
+      { name: 'photo', label: '', field: '', align: 'center' },
+      {
+        name: 'brand',
+        align: 'left',
+        label: 'Marca',
+        field: 'brand',
+        sortable: true,
+      },
+      {
+        name: 'section',
+        align: 'left',
+        label: 'Sección',
+        field: 'section',
+        sortable: true,
+      },
+      {
+        name: 'itemCode',
+        align: 'center',
+        label: 'Artículo',
+        field: 'itemCode',
+        sortable: true,
+        style: 'width: 100px',
+      },
+      {
+        name: 'size',
+        align: 'left',
+        label: 'Talla',
+        field: 'size',
+      },
+      {
+        name: 'reason',
+        label: '',
+        field: '',
+        align: 'center',
+        style: 'min-width:200px',
+      },
+    ];
     const RCol = [
       { name: 'actions', label: '', field: '', align: 'center' },
       { name: 'photo', label: '', field: '', align: 'center' },
@@ -273,18 +466,20 @@ export default defineComponent({
         sortable: true,
       },
       {
+        name: 'supplierReferenceNumber',
+        align: 'center',
+        label: 'Referencia',
+        field: 'supplierReferenceNumber',
+        sortable: true,
+        style: 'width: 100px',
+      },
+      {
         name: 'itemCode',
         align: 'center',
         label: 'Artículo',
         field: 'itemCode',
         sortable: true,
         style: 'width: 100px',
-      },
-      {
-        name: 'itemDescription',
-        align: 'left',
-        label: 'Descripción',
-        field: 'itemDescription',
       },
       {
         name: 'color',
@@ -329,12 +524,14 @@ export default defineComponent({
         label: 'Recibido',
         field: 'recvQty',
       },
+      { name: 'reason', label: '', field: '', align: 'left' },
       { name: 'quantity', label: '', field: '', align: 'right' },
     ];
 
     return {
       store,
       RCol,
+      RColReason,
       showLoading() {
         $q.loading.show();
       },
@@ -348,6 +545,7 @@ export default defineComponent({
       resourceid: 0 as number,
       action: '' as string,
       showlogin: false as boolean,
+      showreasonsform: false as boolean,
       token: '' as string,
       transferData: new Transfer(0) as Transfer,
       newItemCode: '' as string,
@@ -366,6 +564,8 @@ export default defineComponent({
       ],
       whsList: [] as WhsInfo[],
       types: [] as TransferType[],
+      salesreps: [] as SalesRep[],
+      reasons: [] as Reason[],
     };
   },
   props: {
@@ -378,12 +578,30 @@ export default defineComponent({
   },
 
   mounted() {
+    this.getReasons();
+    this.getSalesRep();
     this.getTypes();
     this.getWhs();
     this.loadTransferData();
-    //this.$refs.newItemCodeInput.focus();
+    document.getElementsByName('inputItem')[0].focus();
   },
   methods: {
+    printTransfer() {
+      window.open(
+        'http://192.168.1.25/PrintTransferencia?PONumber=' +
+          this.transferData.id
+      );
+    },
+    printLabels() {
+      window.open(
+        'http://192.168.1.130/intranet_macys/utilities/labels2/Step_02_WS.php?WS_ID=' +
+          this.transferData.id +
+          '&ForStoreID=' +
+          (
+            Number(this.store.getCurrentWhsCode.whsCode.replace('T', '')) - 100
+          ).toString()
+      );
+    },
     getToken() {
       let token = this.store.getToken as string;
 
@@ -393,20 +611,109 @@ export default defineComponent({
           message: this.store.getLastError,
         });
       } else {
-        this.showLoading();
-        /*switch (this.action) {
-        case 'save':
-          if (this.transferData.id == 0) this.save(token);
-          else if (this.transferData.status == 'SC') this.update(token);
-          break;
-        case 'cancel':
-          if (this.transferData.status == 'SC') this.cancel(token);
-          break;
-        case 'confirm':
-          if (this.transferData.status == 'SC') this.confirm(token);
-          break;
-      }*/
-        this.hideLoading();
+        if (this.action == 'Cancel') {
+          this.showLoading();
+          this.transferData
+            .cancelTransfer()
+            .then((x) => {
+              this.hideLoading();
+              if (x) {
+                this.$q.notify({
+                  type: 'positive',
+                  message: 'Transferencia anulada con éxito',
+                });
+                this.$router.push({ path: '/transfersout' });
+              } else {
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'No se ha podido anular la transferencia',
+                });
+              }
+            })
+            .catch((e) => {
+              this.hideLoading();
+              this.$q.notify({
+                type: 'negative',
+                message: e.message,
+              });
+            });
+        }
+        if (this.action != 'Cancel') {
+          if (this.transferData.id == 0 || this.transferData.id == undefined) {
+            this.showLoading();
+            this.transferData
+              .createTransfer()
+              .then(() => {
+                this.hideLoading();
+                this.$q.notify({
+                  type: 'positive',
+                  message: 'Transferencia creada con éxito',
+                });
+                this.$router.push({ path: '/' });
+              })
+              .catch((e) => {
+                this.hideLoading();
+                this.$q.notify({
+                  type: 'negative',
+                  message: e.message,
+                });
+              });
+          } else if (
+            this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
+          ) {
+            this.showLoading();
+            this.transferData
+              .sendTransfer()
+              .then((x) => {
+                this.hideLoading();
+                if (x) {
+                  this.$q.notify({
+                    type: 'positive',
+                    message: 'Transferencia enviada con éxito',
+                  });
+                  this.$router.push({ path: '/transfersout' });
+                } else
+                  this.$q.notify({
+                    type: 'negative',
+                    message:
+                      'Las unidades enviadas superan a las unidades propuestas',
+                  });
+              })
+              .catch((e) => {
+                this.hideLoading();
+                this.$q.notify({
+                  type: 'negative',
+                  message: e.message,
+                });
+              });
+          } else {
+            this.showLoading();
+            this.transferData
+              .recTransfer()
+              .then((x) => {
+                this.hideLoading();
+                if (x) {
+                  this.$q.notify({
+                    type: 'positive',
+                    message: 'Transferencia recibida con éxito',
+                  });
+                  this.$router.push({ path: '/transfersin' });
+                } else
+                  this.$q.notify({
+                    type: 'negative',
+                    message:
+                      'Las unidades recibidas son diferentes a las enviadas',
+                  });
+              })
+              .catch((e) => {
+                this.hideLoading();
+                this.$q.notify({
+                  type: 'negative',
+                  message: e.message,
+                });
+              });
+          }
+        }
       }
 
       this.showlogin = false;
@@ -463,6 +770,22 @@ export default defineComponent({
         })
         .catch((err) => console.log('Axios err: ', err));
     },
+    getSalesRep() {
+      axios
+        .get(`${this.store.options['ApiEndPoint']}/salesrep`)
+        .then((x) => {
+          this.salesreps = x.data;
+        })
+        .catch((err) => console.log('Axios err: ', err));
+    },
+    getReasons() {
+      axios
+        .get(`${this.store.options['ApiEndPoint']}/transfers/reasons`)
+        .then((x) => {
+          this.reasons = x.data;
+        })
+        .catch((err) => console.log('Axios err: ', err));
+    },
     geturl(prop) {
       return prop.row.urlPhoto;
     },
@@ -474,28 +797,48 @@ export default defineComponent({
             `${this.store.options['ApiEndPoint']}/transfers/${this.transferId}/${this.store.getCurrentWhsCode.whsCode}`
           )
           .then((x) => {
-            this.transferData = x.data;
+            this.transferData = new Transfer(x.data.id);
+
+            this.transferData.title = x.data.title;
+            this.transferData.whsFrom = x.data.whsFrom;
+            this.transferData.whsTo = x.data.whsTo;
+            this.transferData.status = x.data.status;
+            this.transferData.salesPerson = x.data.salesPerson;
+            this.transferData.urgent = x.data.urgent;
+            this.transferData.salesRepCreate = x.data.salesRepCreate;
+            this.transferData.salesRepSent = x.data.salesRepSent;
+            this.transferData.salesRepReceived = x.data.salesRepReceived;
+            this.transferData.deliveryMan = x.data.deliveryMan;
+            this.transferData.needDateTime = x.data.needDateTime;
             this.transferData.type = Number(x.data.type);
+            this.transferData.transferLines = x.data.transferLines;
+
             this.transferData.dateCreated = date.formatDate(
-              this.transferData.dateCreated,
+              x.data.dateCreated,
               'YYYY-MM-DD hh:mm'
             );
             this.transferData.dateSend = date.formatDate(
-              this.transferData.dateSend,
+              x.data.dateSend,
               'YYYY-MM-DD hh:mm'
             );
 
             this.transferData.dateRec = date.formatDate(
-              this.transferData.dateRec,
+              x.data.dateRec,
               'YYYY-MM-DD hh:mm'
             );
+
+            this.transferData.transferLines.map((x) => (x.quantity = 0));
+
             this.hideLoading();
           })
           .catch(() => {
             this.hideLoading();
           });
       } else {
-        this.transferData = new Transfer(0);
+        this.transferData = new Transfer(
+          0,
+          this.store.getCurrentWhsCode.whsCode
+        );
         this.hideLoading();
       }
     },
@@ -508,8 +851,218 @@ export default defineComponent({
         });
       });
     },
+    titleSetAll() {
+      return this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
+        ? 'Enviar todo'
+        : 'Recibir todo';
+    },
+    setAll() {
+      if (this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode)
+        this.transferData.transferLines.map(
+          (e) => (e.quantity = e.orderQty <= e.stock ? e.orderQty : e.stock)
+        );
+      else this.transferData.transferLines.map((e) => (e.quantity = e.sendQty));
+    },
+    typeTransfer() {
+      return this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
+        ? 'Transferencia de Salida'
+        : 'Transferencia de Entrada';
+    },
+    labelItem() {
+      return this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
+        ? 'Artículo a enviar'
+        : 'Artículo a recibir';
+    },
+    checkVisibility(action: string) {
+      switch (action) {
+        case 'setAll':
+          if (
+            this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
+          ) {
+            // Enviar todo
+            return (this.transferData.status == 'SC' ||
+              this.transferData.status == 'SB' ||
+              this.transferData.status == 'CB') &&
+              this.transferData.transferLines.length > 0 &&
+              this.transferData.id != 0
+              ? true
+              : false;
+          } else {
+            return this.transferData.status == 'T' ||
+              this.transferData.status == 'EN'
+              ? true
+              : false;
+          }
+
+          break;
+      }
+    },
+    addItem() {
+      if (this.transferData.id == 0) this.addItemToLine();
+      else if (
+        this.transferData.status != 'A' &&
+        this.transferData.status != 'CN'
+      ) {
+        if (this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode) {
+          this.transferData
+            .sentItem(this.newItemCode.toUpperCase())
+            .then((x) => {
+              if (x) {
+                this.$q.notify({
+                  type: 'positive',
+                  message:
+                    'El código ' +
+                    this.newItemCode +
+                    ' se ha procesado correctamente',
+                });
+              } else {
+                this.$q.notify({
+                  type: 'negative',
+                  message:
+                    'El código ' +
+                    this.newItemCode +
+                    ' no existe en la transferencia',
+                });
+              }
+              this.newItemCode = '';
+              document.getElementsByName('inputItem')[0].focus();
+            })
+            .catch((e) => {
+              this.$q.notify({
+                type: 'negative',
+                message: e.message,
+              });
+              this.newItemCode = '';
+              document.getElementsByName('inputItem')[0].focus();
+            });
+        } else {
+          this.transferData
+            .recItem(this.newItemCode.toUpperCase())
+            .then((x) => {
+              if (x) {
+                this.$q.notify({
+                  type: 'positive',
+                  message:
+                    'El código ' +
+                    this.newItemCode +
+                    ' se ha procesado correctamente',
+                });
+              } else {
+                this.$q.notify({
+                  type: 'negative',
+                  message:
+                    'El código ' +
+                    this.newItemCode +
+                    ' no existe en la transferencia',
+                });
+              }
+              this.newItemCode = '';
+              document.getElementsByName('inputItem')[0].focus();
+            })
+            .catch((e) => {
+              this.$q.notify({
+                type: 'negative',
+                message: e.message,
+              });
+              this.newItemCode = '';
+              document.getElementsByName('inputItem')[0].focus();
+            });
+        }
+      }
+    },
+    addItemToLine() {
+      if (this.newItemCode != '') {
+        this.transferData
+          .addLine(this.newItemCode.toUpperCase())
+          .then(() => {
+            this.$q.notify({
+              type: 'positive',
+              message:
+                'El código ' +
+                this.newItemCode +
+                ' se ha añadido correctamente',
+            });
+            this.newItemCode = '';
+          })
+          .catch((e) => {
+            this.$q.notify({
+              type: 'negative',
+              message: e.message,
+            });
+          });
+      }
+    },
+    onEnter() {
+      this.addItem();
+      return false;
+    },
     onSubmit() {
-      console.log('a');
+      if (this.transferData.id == 0 || this.transferData == undefined) {
+        this.resourceid = 11;
+        if (this.transferData.transferLines.length <= 0) {
+          this.resourceid = 0;
+          this.$q.notify({
+            type: 'negative',
+            message: 'Debe añadir productos a la transferencia',
+          });
+        }
+        if (
+          this.transferData.title == '' ||
+          this.transferData.title == undefined
+        ) {
+          this.resourceid = 0;
+          this.$q.notify({
+            type: 'negative',
+            message: 'Debe especificar un título',
+          });
+        }
+        if (
+          this.transferData.whsTo == '' ||
+          this.transferData.whsTo == undefined
+        ) {
+          this.resourceid = 0;
+          this.$q.notify({
+            type: 'negative',
+            message: 'Debe definir un destino',
+          });
+        }
+      } else if (
+        this.transferData.status != 'A' &&
+        this.transferData.status != 'CN'
+      ) {
+        if (this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode) {
+          this.resourceid =
+            this.transferData.transferLines.filter((e) => e.quantity == 0)
+              .length > 0
+              ? 16
+              : 12;
+        } else this.resourceid = 13;
+      }
+
+      if (
+        this.resourceid == 16 &&
+        this.transferData.transferLines.filter((e) => e.quantity == 0).length >
+          0
+      ) {
+        this.transferData.transferLines
+          .filter((e) => e.quantity == 0)
+          .map((e) => (e.reasonId = 1));
+        this.showreasonsform = true;
+      } else if (this.resourceid != 0) this.showlogin = true;
+    },
+    onSubmitReasons() {
+      this.showreasonsform = false;
+      this.showlogin = true;
+    },
+    cancelTransfer() {
+      this.action = 'Cancel';
+      this.resourceid = 14;
+      this.showlogin = true;
+    },
+    getReadonDescription(id: number) {
+      return this.reasons.filter((e) => e.id == id).length > 0
+        ? this.reasons.filter((e) => e.id == id)[0]['description']
+        : '';
     },
   },
 });

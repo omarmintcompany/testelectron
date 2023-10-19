@@ -12,14 +12,13 @@
                   <q-btn
                     outline
                     round
-                    title="Cancelar"
+                    title="Imprimir"
                     dense
-                    icon="cancel"
-                    @click="actions('cancel')"
-                    v-if="
-                      reservationId != '0' && reservationData.status == 'SC'
-                    "
-                  />&nbsp;
+                    icon="print"
+                    v-if="reservationId != '0'"
+                  />
+                </div>
+                <div class="col" align="center">
                   <q-btn
                     outline
                     round
@@ -30,16 +29,23 @@
                     v-if="
                       reservationId != '0' && reservationData.status == 'SC'
                     "
-                  />&nbsp;
+                  />
+                </div>
+                <div class="col" align="center">
                   <q-btn
                     outline
                     round
-                    title="Imprimir"
+                    title="Cancelar"
                     dense
-                    icon="print"
-                    v-if="reservationId != '0'"
+                    icon="cancel"
+                    color="red"
+                    @click="actions('cancel')"
+                    v-if="
+                      reservationId != '0' && reservationData.status == 'SC'
+                    "
                   />
-                  &nbsp;
+                </div>
+                <div class="col" align="center">
                   <q-btn
                     outline
                     round
@@ -47,6 +53,7 @@
                     dense
                     icon="save"
                     type="submit"
+                    color="green"
                     v-if="
                       reservationId == '0' || reservationData.status == 'SC'
                     "
@@ -56,6 +63,8 @@
             </q-card-section>
             <q-card-section dense>
               <q-input
+                name="inputItem"
+                color="black"
                 dense
                 outlined
                 label-color="black"
@@ -412,7 +421,7 @@ export default defineComponent({
             this.reservationData.reservationLines = x.data.reservationLines;
 
             x.data.reservationLines.map(
-              (a: any) => (
+              (a) => (
                 (a.itemCode = a.itemData.itemCode),
                 (a.brand = a.itemData.brand),
                 (a.itemGroupCode = a.itemData.itemGroupCode),
@@ -480,6 +489,7 @@ export default defineComponent({
                 ' se ha añadido correctamente',
             });
             this.newItemCode = '';
+            document.getElementsByName('inputItem')[0].focus();
           })
           .catch(() => {
             this.$q.notify({
@@ -487,6 +497,7 @@ export default defineComponent({
               message:
                 'El código ' + this.newItemCode + ' no se ha podido añadir',
             });
+            document.getElementsByName('inputItem')[0].focus();
           });
     },
     onEnter() {
@@ -507,7 +518,7 @@ export default defineComponent({
       this.resourceid = this.reservationData.status == 'SC' ? 7 : 4;
       this.showlogin = true;
     },
-    save(token: string) {
+    save() {
       if (this.reservationData.reservationLines.length == 0) {
         this.$q.notify({
           type: 'negative',
@@ -530,7 +541,7 @@ export default defineComponent({
             });
           });
     },
-    update(token: string) {
+    update() {
       this.reservationData
         .updateReservation()
         .then(() => {
@@ -548,7 +559,7 @@ export default defineComponent({
           });
         });
     },
-    cancel(token: string) {
+    cancel() {
       this.reservationData
         .cancelReservation()
         .then(() => {
@@ -565,7 +576,7 @@ export default defineComponent({
           });
         });
     },
-    confirm(token: string) {
+    confirm() {
       this.reservationData
         .confirmReservation()
         .then(() => {
@@ -620,7 +631,7 @@ export default defineComponent({
   mounted() {
     this.getCategoryList();
     this.loadReservationData();
-    this.$refs.newItemCodeInput.focus();
+    document.getElementsByName('inputItem')[0].focus();
   },
 });
 </script>

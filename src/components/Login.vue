@@ -15,6 +15,8 @@
             dense
             outlined
             ref="username"
+            autofocus
+            v-on:keydown.enter.prevent="onEnter"
           />
           <q-separator vertical inset></q-separator>
           <q-input
@@ -72,6 +74,31 @@ export default defineComponent({
   },
   methods: {
     accept() {
+      if (this.password == '' || this.password == undefined) this.loginCard();
+      else this.login();
+    },
+    onEnter() {
+      this.accept();
+    },
+    loginCard() {
+      axios
+        .post(`${this.store.options['ApiEndPoint']}/login/card`, {
+          cardCode: this.username,
+          resourceid: this.resourceid,
+        })
+        .then((x) => {
+          this.store.setToken(x.data.token);
+          this.show = false;
+          this.$emit('token', x.data.token);
+        })
+        .catch((err) => {
+          this.store.setToken('');
+          this.store.setLastError(err.response.data);
+          this.show = false;
+          this.$emit('token', '');
+        });
+    },
+    login() {
       axios
         .post(`${this.store.options['ApiEndPoint']}/login`, {
           username: this.username,

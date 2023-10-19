@@ -63,6 +63,22 @@
                   <q-avatar icon="move_up" />
                   <q-item-section>Salidas</q-item-section>
                 </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/transfer/0')"
+                >
+                  <q-avatar icon="edit_square" />
+                  <q-item-section>Crear</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="$router.replace('/packages')"
+                >
+                  <q-avatar icon="local_shipping" />
+                  <q-item-section>Gestión de bultos</q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-tab>

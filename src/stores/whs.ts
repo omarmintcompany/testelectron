@@ -5,7 +5,7 @@ import axios from 'axios';
 export const useWhsStore = defineStore('whs', {
   state: () => ({
     options: {
-      ApiEndPoint: 'http://localhost:32771',
+      ApiEndPoint: 'http://10.0.6.6:32773',
       WhsData: { whsCode: '', whsName: '', isDefault: false } as WhsInfo,
       WhsList: [] as WhsInfo[],
       token: '' as string,
@@ -22,7 +22,6 @@ export const useWhsStore = defineStore('whs', {
           this.options['WhsData'] = this.options['WhsList'].filter((item) => {
             return item.isDefault == true;
           })[0];
-          //  this.hideLoading();
         })
         .catch((err) => console.log('Axios err: ', err));
     },

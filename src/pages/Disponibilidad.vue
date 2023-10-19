@@ -182,8 +182,6 @@ export default defineComponent({
       ? this.$route.params.itemcode
       : '';
     if (this.itemCode != undefined) this.onSubmit();
-
-    this.itemCode = 'A437145';
   },
   methods: {
     onSubmit() {

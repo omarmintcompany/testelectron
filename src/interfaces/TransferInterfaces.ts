@@ -44,6 +44,12 @@ export interface SalesRep {
   code: string;
   name: string;
   govid: string;
+  cardcode: string;
+  password: string;
+}
+export interface Reason {
+  id: number;
+  description: string;
 }
 
 export type TodoErrorResponse = {

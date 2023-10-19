@@ -261,7 +261,7 @@ export default {
     },
     saveProfileResources() {
       axios
-        .post(`${this.store.options['ApiEndPoint']}/resources/profiles/save`, {
+        .put(`${this.store.options['ApiEndPoint']}/resources/profiles/save`, {
           Id: this.profileIdSelected,
           resources: this.selected.map((e) => e.id),
           name: this.profileNameSelected,
@@ -288,7 +288,7 @@ export default {
         });
       else
         axios
-          .post(`${this.store.options['ApiEndPoint']}/resources/profiles/new`, {
+          .put(`${this.store.options['ApiEndPoint']}/resources/profiles/new`, {
             Id: 0,
             resources: [],
             name: this.newProfile,

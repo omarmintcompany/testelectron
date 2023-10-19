@@ -20,10 +20,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import moment from 'moment';
-import {
-  itemReservations,
-  whsconfig,
-} from 'src/Interfaces/DisponibilidadInterfaces';
+import { itemReservations } from 'src/Interfaces/DisponibilidadInterfaces';
 
 export default defineComponent({
   name: 'reservationTableComponent',
@@ -43,7 +40,7 @@ export default defineComponent({
         label: 'Fecha Recogida',
         field: 'dateRec',
         sortable: true,
-        format: (val, row) => {
+        format: (val) => {
           return moment(String(val)).format('DD/MM/YYYY');
         },
       },

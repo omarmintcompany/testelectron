@@ -12,6 +12,14 @@
   background-color: $mint-orange;
   color: $mint-black;
 }
+.mint-valid {
+  background-color: $mint-green;
+  color: $mint-black;
+}
+.mint-zero {
+  background-color: $mint-zero;
+  color: $mint-black;
+}
 .mint-ecom {
   background-color: $mint-red;
   color: $mint-black;
@@ -51,4 +59,14 @@ thead tr th {
 }
 thead tr:first-child th {
   top: 0;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
 }

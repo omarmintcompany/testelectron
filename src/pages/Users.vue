@@ -74,7 +74,7 @@
           row-key="id"
           :rows-per-page-options="[0]"
           virtual-scroll
-          style="height: 69vh"
+          style="height: 62vh"
           color="black"
           no-data-label="No hay permisos definidos"
           title-class="font-md"
@@ -97,6 +97,32 @@
         </q-table>
 
         <q-separator spaced />
+        <div class="row">
+          <div class="col">
+            <q-input
+              dense
+              outlined
+              bg-color="white"
+              label="NºTarjeta"
+              v-model="cardCode"
+              color="black"
+              :disable="userSelected == ''"
+            />
+          </div>
+          <div class="col">
+            <q-input
+              dense
+              outlined
+              bg-color="white"
+              label="Password"
+              v-model="passWord"
+              color="black"
+              :disable="userSelected == ''"
+              type="password"
+            />
+          </div>
+        </div>
+        <q-separator spaced />
         <q-btn
           class="mint-reverse full-width"
           :disable="userSelected == ''"
@@ -112,13 +138,9 @@
 <script lang="ts">
 import { useWhsStore } from '../stores/whs';
 import Login from '../components/Login.vue';
-import { WhsInfo } from '../interfaces/WhsInfo';
+
 import { SalesRep } from '../interfaces/Transfers';
-import {
-  SalesRepResources,
-  Profiles,
-  ProfileResources,
-} from '../interfaces/Resources';
+import { SalesRepResources, Profiles } from '../interfaces/Resources';
 import { useQuasar } from 'quasar';
 import axios from 'axios';
 
@@ -193,6 +215,8 @@ export default {
       showUser: false as boolean,
       filter: '' as string,
       profileSelected: '' as string,
+      cardCode: '' as string,
+      passWord: '' as string,
     };
   },
   methods: {
@@ -240,6 +264,12 @@ export default {
         .then((x) => {
           this.salesresources = x.data;
           this.selected = this.salesresources.filter((e) => e.resourceEnable);
+          this.cardCode = this.salesreps.find(
+            (e) => e.govId == props.row.govId
+          ).cardCode;
+          this.passWord = this.salesreps.find(
+            (e) => e.govId == props.row.govId
+          ).password;
         })
         .catch(() => {
           this.$q.notify({
@@ -249,12 +279,79 @@ export default {
         });
     },
     saveUserResources() {
+      if (
+        this.salesreps.find((e) => e.govId == this.govIdSelected).cardCode !=
+          '' &&
+        this.cardCode == ''
+      ) {
+        axios
+          .delete(
+            `${this.store.options['ApiEndPoint']}/card?cardCode=${
+              this.salesreps.find((e) => e.govId == this.govIdSelected).cardCode
+            }`
+          )
+          .then(() => {
+            this.$q.notify({
+              type: 'positive',
+              message: 'Tarjeta identificativa eliminada con éxito',
+            });
+          })
+          .catch(() => {
+            this.$q.notify({
+              type: 'negative',
+              message: 'Error al eliminar la tarjeta identificativa',
+            });
+          });
+      } else if (
+        this.salesreps.find((e) => e.govId == this.govIdSelected).cardCode != ''
+      ) {
+        // Update
+        axios
+          .put(`${this.store.options['ApiEndPoint']}/card`, {
+            userName: this.govIdSelected,
+            password: this.passWord,
+            cardCode: this.cardCode,
+          })
+          .then(() => {
+            this.$q.notify({
+              type: 'positive',
+              message: 'Tarjeta identificativa modificada con éxito',
+            });
+          })
+          .catch(() => {
+            this.$q.notify({
+              type: 'negative',
+              message: 'Error al modificar la tarjeta identificativa',
+            });
+          });
+      } else {
+        // Create
+        axios
+          .post(`${this.store.options['ApiEndPoint']}/card`, {
+            userName: this.govIdSelected,
+            password: this.passWord,
+            cardCode: this.cardCode,
+          })
+          .then(() => {
+            this.$q.notify({
+              type: 'positive',
+              message: 'Tarjeta identificativa creada con éxito',
+            });
+          })
+          .catch(() => {
+            this.$q.notify({
+              type: 'negative',
+              message: 'Error al crear la tarjeta identificativa',
+            });
+          });
+      }
+
       axios
-        .post(`${this.store.options['ApiEndPoint']}/resources/salesrep/save`, {
+        .put(`${this.store.options['ApiEndPoint']}/resources/salesrep/save`, {
           govId: this.govIdSelected,
           resources: this.selected.map((e) => e.id),
         })
-        .then((x) => {
+        .then(() => {
           this.$q.notify({
             type: 'positive',
             message: 'Permisos guardados con éxito',
@@ -264,7 +361,10 @@ export default {
           this.selected = [];
           this.resourceid = 0;
           this.profileSelected = '';
+          this.cardCode = '';
+          this.passWord = '';
           this.salesresources = [];
+          this.getSalesRep();
         })
         .catch(() => {
           this.$q.notify({
@@ -287,7 +387,7 @@ export default {
           .then((x) => {
             this.salesresources = x.data.map((i) => {
               let t = {
-                govId: 'asdfasf',
+                govId: '',
                 id: i.id,
                 description: i.description,
                 resourceEnable: i.resourceEnable,

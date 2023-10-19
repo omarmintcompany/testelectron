@@ -69,7 +69,7 @@ export class Reservation implements IReservation {
         .filter((p) => p.itemCode == itemcode)
         .map((p) => p.quantity++);
     } else {
-      return axios
+      axios
         .get(
           `${this.store.options['ApiEndPoint']}/disponibilidad/${itemcode}/itemData`
         )
@@ -91,9 +91,11 @@ export class Reservation implements IReservation {
             urlPhoto: x.data.urlPhoto,
             quantity: 1,
           });
+
+          return true;
         })
-        .catch((err) => {
-          throw err;
+        .catch(() => {
+          return false;
         });
     }
 

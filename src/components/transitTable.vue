@@ -21,7 +21,6 @@
 import { defineComponent, PropType } from 'vue';
 import { itemTransit } from 'src/Interfaces/DisponibilidadInterfaces';
 import moment from 'moment';
-import routes from 'src/router/routes';
 
 export default defineComponent({
   name: 'transitTableComponent',
@@ -71,7 +70,7 @@ export default defineComponent({
         label: 'Fencha Envio',
         field: 'sentTime',
         sortable: false,
-        format: (val, row) => {
+        format: (val) => {
           return moment(String(val)).format('DD/MM/YYYY');
         },
       },
@@ -88,7 +87,7 @@ export default defineComponent({
         label: 'Fecha Recepción',
         field: 'requestTime',
         sortable: false,
-        format: (val, row) => {
+        format: (val) => {
           return moment(String(val)).format('DD/MM/YYYY');
         },
       },
