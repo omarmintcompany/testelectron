@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf" class="fondomint">
     <q-header elevated class="mint-reverse text-white" height-hint="98">
-      <q-bar class="q-electron-drag">
+      <q-bar class="q-electron-drag" v-if="1 == 2">
         <q-icon name="laptop_chromebook" />
         <div>Mint Store Manager 2023</div>
         <q-space />

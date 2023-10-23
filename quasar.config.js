@@ -187,6 +187,11 @@ module.exports = configure(function (/* ctx */) {
 
         appId: 'msmdesktop',
       },
+      publish: {
+        provider: 's3',
+        bucket: 'msm-desktop',
+        region: 'eu-west-1',
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
