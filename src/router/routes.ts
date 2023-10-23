@@ -15,6 +15,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/Disponibilidad.vue'),
       },
       {
+        path: 'packages',
+        component: () => import('pages/PackageWizard.vue'),
+      },
+      {
         path: 'transfersin',
         component: () => import('pages/TransfersIn.vue'),
       },

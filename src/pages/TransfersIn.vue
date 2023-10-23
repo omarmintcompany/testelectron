@@ -137,6 +137,7 @@
                     icon="edit_document"
                     title="Editar"
                     @click="onEdit(props)"
+                    v-if="props.row.status == 'T'"
                   ></q-btn>
                 </div>
               </q-td>
@@ -241,11 +242,11 @@ export default defineComponent({
       store,
       RCol,
       statuslist: [
-        { label: 'En espera', value: 'SC' },
-        { label: 'Listo sin bultos', value: 'SB' },
-        { label: 'Listo con bultos', value: 'CB' },
+        { label: 'Solicitado', value: 'SC' },
+        //{ label: 'Listo sin bultos', value: 'SB' },
+        //{ label: 'Listo con bultos', value: 'CB' },
         { label: 'En Tránsito', value: 'T' },
-        { label: 'Entregada', value: 'EN' },
+        //{ label: 'Entregada', value: 'EN' },
         { label: 'Recibida', value: 'CN' },
         { label: 'Anulada', value: 'A' },
       ],

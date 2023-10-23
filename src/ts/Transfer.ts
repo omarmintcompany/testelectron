@@ -82,7 +82,7 @@ export class Transfer implements ITransfer {
         .filter((p) => p.itemCode == itemcode)
         .map((p) => p.orderQty++);
     } else {
-      axios
+      return axios
         .get(
           `${this.store.options['ApiEndPoint']}/disponibilidad/${itemcode}/itemData`
         )

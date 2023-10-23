@@ -31,34 +31,40 @@
               label-color="black"
               color="black"
             />
-            <q-input
-              v-model.number="itemcode"
-              type="text"
-              dense
-              label="Código Producto"
-              label-color="black"
-              color="black"
-            />
-            <q-select
-              v-model="status"
-              :options="statuslist"
-              label="Estado"
-              label-color="black"
-              dense
-              color="black"
-            />
 
             <q-separator inset />
             <q-btn type="submit" class="mint-reverse" icon="search" />
+            <q-separator inset />
+
+            <q-input
+              label="Nº de paquetes"
+              dense
+              bg-color="white"
+              color="black"
+              v-model="newProfile"
+              outlined
+            >
+              <template v-slot:append>
+                <q-btn
+                  class="mint-reverse full-width"
+                  title="Guardar Permisos"
+                  icon="add"
+                  dense
+                  @click="createPackage()"
+              /></template>
+            </q-input>
+
             <div class="col" align="right">
-              <q-icon name="move_up" size="md" />
+              <q-icon name="local_shipping" size="md" />
               <q-separator vertical />
-              <b>LISTADO DE TRANSFERENCIAS DE SALIDA</b>
+              <b>GESTIÓN DE BULTOS</b>
             </div>
           </div>
         </q-form>
 
         <q-table
+          selection="multiple"
+          v-model:selected="selected"
           dense
           table-header-class="mint-reverse"
           flat
@@ -69,79 +75,12 @@
           :rows-per-page-options="[0]"
           virtual-scroll
           style="height: 75vh"
-          no-data-label="No hay transferencias de salida que cumplan los filtros"
+          no-data-label="No hay transferencias de entrada que cumplan los filtros"
         >
-          <template v-slot:body="props">
-            <q-tr
-              :props="props"
-              :class="
-                props.row.whsTo == 'T108' || props.row.whsTo == 'T137'
-                  ? 'mint-ecom'
-                  : props.row.urgent
-                  ? 'mint-urgent'
-                  : ''
-              "
-            >
-              <q-td key="urgent" :props="props">
-                <div>
-                  <q-icon name="warning" size="xs" v-if="props.row.urgent" />
-                </div>
-              </q-td>
-              <q-td key="status" :props="props">
-                <div>
-                  {{ getStatus(props) }}
-                </div>
-              </q-td>
-              <q-td key="id" :props="props">
-                <div>
-                  {{ props.row.id }}
-                </div>
-              </q-td>
-              <q-td key="typeName" :props="props">
-                <div>
-                  {{ props.row.typeName }}
-                </div>
-              </q-td>
-              <q-td key="title" :props="props">
-                <div>
-                  {{ props.row.title }}
-                </div>
-              </q-td>
-              <q-td key="whsFromName" :props="props">
-                <div>
-                  {{ props.row.whsFromName }}
-                </div>
-              </q-td>
-              <q-td key="whsToName" :props="props">
-                <div>
-                  {{ props.row.whsToName }}
-                </div>
-              </q-td>
-              <q-td key="dateCreated" :props="props">
-                <div>
-                  {{ formatDate(props.row.dateCreated) }}
-                </div>
-              </q-td>
-              <q-td key="needDateTime" :props="props">
-                <div>
-                  {{ formatDate(props.row.needDateTime) }}
-                </div>
-              </q-td>
-              <q-td key="actions" :props="props">
-                <div>
-                  <q-btn
-                    dense
-                    round
-                    flat
-                    color="black"
-                    icon="edit_document"
-                    title="Editar"
-                    @click="onEdit(props)"
-                    v-if="props.row.status == 'SC'"
-                  ></q-btn>
-                </div>
-              </q-td>
-            </q-tr>
+          <template v-slot:body-cell-status="props">
+            <q-td :props="props">
+              {{ getStatus(props.row.status) }}
+            </q-td>
           </template>
         </q-table>
       </div>
@@ -158,29 +97,21 @@ import moment from 'moment';
 import { date, useQuasar } from 'quasar';
 
 export default defineComponent({
-  name: 'TransfersOut',
+  name: 'PackageWizard',
   setup() {
     const store = useWhsStore();
 
     const RCol = [
       {
-        name: 'urgent',
-        align: 'center',
-        label: '',
-        field: 'urgent',
-        sortable: true,
-        style: 'width:10px',
-      },
-      {
         name: 'status',
-        align: 'center',
+        align: 'left',
         label: 'Estado',
         field: 'status',
         sortable: true,
       },
       {
         name: 'id',
-        align: 'center',
+        align: 'left',
         label: 'NºTransferencia',
         field: 'id',
         sortable: true,
@@ -264,8 +195,9 @@ export default defineComponent({
       fromdate: '' as string,
       todate: '' as string,
       idtransfer: '' as string,
-      status: 'En espera',
+      status: 'En Tránsito',
       itemcode: '' as string,
+      selected: [] as boolean[],
     };
   },
   methods: {
@@ -273,8 +205,9 @@ export default defineComponent({
       this.showLoading();
       const params = {
         WhsCode: this.store.getCurrentWhsCode.whsCode,
-        status: this.status.value != undefined ? this.status.value : 'SC',
+        status: 'T',
         Type: 1,
+        IdPackage: 0,
       };
 
       if (this.fromdate != '')
@@ -305,10 +238,17 @@ export default defineComponent({
     onEdit(props) {
       this.$router.push('/transfer/' + props.row.id);
     },
-    getStatus(props) {
-      return this.statuslist.filter((p) => p.value == props.row.status)[0][
-        'label'
-      ];
+    getStatus(status: string) {
+      return this.statuslist.filter((p) => p.value == status)[0]['label'];
+    },
+    createPackage() {
+      console.log(this.selected.length);
+      if (this.selected.length == 0) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Debe seleccionar al menos una transferencia',
+        });
+      }
     },
   },
   mounted() {
