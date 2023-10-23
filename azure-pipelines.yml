@@ -16,6 +16,6 @@ steps:
 - script: |
     npm install -g @quasar/cli
     npm install
-    quasar build
+    quasar build --mode electron --publish always
   workingDirectory: $(Build.SourcesDirectory)
   displayName: 'install Quasar CLI and build app'
