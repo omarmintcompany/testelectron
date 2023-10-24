@@ -281,7 +281,7 @@ export default defineComponent({
       this.showlogin = true;
     },
     requestTransfer() {
-      if ((this.stockSelected == '') | (this.stockSelected == undefined)) {
+      if (this.stockSelected == '' || this.stockSelected == undefined) {
         this.showlogin = false;
         this.$q.notify({
           type: 'negative',

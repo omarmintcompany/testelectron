@@ -35,24 +35,13 @@
             <q-separator inset />
             <q-btn type="submit" class="mint-reverse" icon="search" />
             <q-separator inset />
-
-            <q-input
-              label="Nº de paquetes"
-              dense
-              bg-color="white"
-              color="black"
-              v-model="newProfile"
-              outlined
-            >
-              <template v-slot:append>
-                <q-btn
-                  class="mint-reverse full-width"
-                  title="Guardar Permisos"
-                  icon="add"
-                  dense
-                  @click="createPackage()"
-              /></template>
-            </q-input>
+            <q-btn
+              class="mint-reverse"
+              title="Guardar Permisos"
+              icon="add"
+              label="Crear bulto con las transferencias seleccionadas"
+              @click="createPackage()"
+            />
 
             <div class="col" align="right">
               <q-icon name="local_shipping" size="md" />
@@ -195,9 +184,8 @@ export default defineComponent({
       fromdate: '' as string,
       todate: '' as string,
       idtransfer: '' as string,
-      status: 'En Tránsito',
-      itemcode: '' as string,
       selected: [] as boolean[],
+      idPackage: 0 as number,
     };
   },
   methods: {
@@ -214,8 +202,6 @@ export default defineComponent({
         params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
       if (this.todate != '')
         params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD');
-      if (this.idtransfer != '') params.id = this.idtransfer;
-      if (this.itemcode != '') params.itemcode = this.itemcode;
 
       axios
         .get(`${this.store.options['ApiEndPoint']}/transfers`, {

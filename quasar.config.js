@@ -186,11 +186,14 @@ module.exports = configure(function (/* ctx */) {
         // https://www.electron.build/configuration/configuration
 
         appId: 'msmdesktop',
-      },
-      publish: {
-        provider: 's3',
-        bucket: 'msm-desktop',
-        region: 'eu-west-1',
+        win: {
+          target: 'nsis',
+        },
+        publish: {
+          provider: 's3',
+          bucket: 'msm-desktop',
+          region: 'eu-west-1',
+        },
       },
     },
 
