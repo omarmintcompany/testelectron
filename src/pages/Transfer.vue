@@ -30,8 +30,14 @@
             style="height: 50vh"
           >
             <template v-slot:body-cell-photo="props">
-              <q-td :props="props" style="width: 80px">
-                <q-img :src="geturl(props)" fit />
+              <q-td :props="props">
+                <q-img :src="geturl(props)" fit style="min-width: 80px">
+                  <template v-slot:error>
+                    <div class="absolute-full flex flex-center text-white">
+                      <q-icon name="no_photography" size="xs" />
+                    </div>
+                  </template>
+                </q-img>
               </q-td>
             </template>
             <template v-slot:body-cell-reason="props">
@@ -268,8 +274,14 @@
                 </q-td>
               </template>
               <template v-slot:body-cell-photo="props">
-                <q-td :props="props" style="width: 80px">
-                  <q-img :src="geturl(props)" fit />
+                <q-td :props="props">
+                  <q-img :src="geturl(props)" fit style="min-width: 80px">
+                    <template v-slot:error>
+                      <div class="absolute-full flex flex-center text-white">
+                        <q-icon name="no_photography" size="xs" />
+                      </div>
+                    </template>
+                  </q-img>
                 </q-td>
               </template>
               <template v-slot:body-cell-quantity="props">

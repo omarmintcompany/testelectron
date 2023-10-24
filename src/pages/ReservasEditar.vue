@@ -267,7 +267,13 @@
               </template>
               <template v-slot:body-cell-photo="props">
                 <q-td :props="props" style="width: 80px">
-                  <q-img :src="geturl(props)" fit />
+                  <q-img :src="geturl(props)" fit>
+                    <template v-slot:error>
+                      <div class="absolute-full flex flex-center text-white">
+                        <q-icon name="no_photography" size="md" />
+                      </div>
+                    </template>
+                  </q-img>
                 </q-td>
               </template>
             </q-table>
