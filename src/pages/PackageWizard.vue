@@ -66,7 +66,7 @@
             <div class="col" align="right">
               <q-icon name="local_shipping" size="md" />
               <q-separator vertical />
-              <b>GESTIÓN DE BULTOS</b>
+              <b>ASIGNACIÓN DE BULTOS</b>
             </div>
           </div>
         </q-form>

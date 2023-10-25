@@ -68,8 +68,8 @@
                   v-close-popup
                   @click="$router.replace('/transfer/0')"
                 >
-                  <q-avatar icon="edit_square" />
-                  <q-item-section>Crear</q-item-section>
+                  <q-avatar icon="fact_check" />
+                  <q-item-section>Gestor de bultos</q-item-section>
                 </q-item>
                 <q-item
                   clickable
@@ -77,7 +77,7 @@
                   @click="$router.replace('/packages')"
                 >
                   <q-avatar icon="local_shipping" />
-                  <q-item-section>Gestión de bultos</q-item-section>
+                  <q-item-section>Asignación de bultos</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
