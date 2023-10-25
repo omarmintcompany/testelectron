@@ -328,12 +328,9 @@ export default defineComponent({
       this.showLoading();
 
       axios
-        .put(
-          `${this.store.options['ApiEndPoint']}/transfers/package/cancel`,
-          {
-            idTransfer: this.idTransferToCancel,
-            idPackage: this.idPackageToCancel,
-          },
+        .get(
+          `${this.store.options['ApiEndPoint']}/transfers/package/cancel/${this.idTransferToCancel}/${this.idPackageToCancel}`,
+
           config
         )
         .then(() => {
