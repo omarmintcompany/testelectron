@@ -21,6 +21,17 @@ export interface TransferLine {
   reasonId: number;
 }
 
+export interface Package {
+  id: number;
+  dateCreated: string;
+  userCreated: string;
+  dateSent: string;
+  userSent: string;
+  dateReceived: string;
+  userReceived: string;
+  status: number;
+}
+
 export interface ITransfer {
   addLine(itemcode: string): Promise<boolean>;
   delLine(itemcode: string): Promise<boolean>;
@@ -51,6 +62,7 @@ export class Transfer implements ITransfer {
   public needDateTime: string;
   public reasonNotes: string;
   public transferLines: TransferLine[];
+  public packages: Package[];
 
   store = useWhsStore();
 
@@ -74,6 +86,7 @@ export class Transfer implements ITransfer {
     this.needDateTime = '';
     this.reasonNotes = '';
     this.transferLines = [];
+    this.packages = [];
   }
 
   public async addLine(itemcode: string): Promise<boolean> {

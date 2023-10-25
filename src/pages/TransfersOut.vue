@@ -137,7 +137,6 @@
                     icon="edit_document"
                     title="Editar"
                     @click="onEdit(props)"
-                    v-if="props.row.status == 'SC'"
                   ></q-btn>
                 </div>
               </q-td>

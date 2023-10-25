@@ -93,7 +93,7 @@
                     dense
                     icon="bookmarks"
                     @click="printLabels()"
-                    v-if="checkVisibility('setAll')"
+                    v-if="checkVisibility('printLabels')"
                   />
                 </div>
                 <div class="col" align="center">
@@ -116,7 +116,11 @@
                     icon="cancel"
                     color="red"
                     @click="cancelTransfer()"
-                    v-if="transferData.id != 0 && transferData.status == 'SC'"
+                    v-if="
+                      transferData.id != 0 &&
+                      transferData.status == 'SC' &&
+                      transferData.whsTo == store.getCurrentWhsCode.whsCode
+                    "
                   />
                 </div>
                 <div class="col" align="center">
@@ -128,11 +132,7 @@
                     icon="save"
                     type="submit"
                     color="green"
-                    v-if="
-                      transferData.id == 0 ||
-                      transferData.status != 'CN' ||
-                      transferData.status != 'A'
-                    "
+                    v-if="checkSaveStatus()"
                   />
                 </div>
               </div>
@@ -905,7 +905,9 @@ export default defineComponent({
               ? true
               : false;
           }
-
+          break;
+        default:
+          return this.transferData.transferLines.length > 0 ? true : false;
           break;
       }
     },
@@ -1075,6 +1077,15 @@ export default defineComponent({
       return this.reasons.filter((e) => e.id == id).length > 0
         ? this.reasons.filter((e) => e.id == id)[0]['description']
         : '';
+    },
+    checkSaveStatus() {
+      return (this.transferData.whsFrom ==
+        this.store.getCurrentWhsCode.whsCode &&
+        this.transferData.status == 'SC') ||
+        (this.transferData.whsTo == this.store.getCurrentWhsCode.whsCode &&
+          this.transferData.status == 'T')
+        ? true
+        : false;
     },
   },
 });
