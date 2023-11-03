@@ -50,6 +50,14 @@
                 <q-item
                   clickable
                   v-close-popup
+                  @click="$router.replace('/transfer/0')"
+                >
+                  <q-avatar icon="create_new_folder" />
+                  <q-item-section>Nueva transferencia</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
                   @click="$router.replace('/transfersin')"
                 >
                   <q-avatar icon="move_down" />
@@ -66,7 +74,7 @@
                 <q-item
                   clickable
                   v-close-popup
-                  @click="$router.replace('/transfer/0')"
+                  @click="$router.replace('/package')"
                 >
                   <q-avatar icon="fact_check" />
                   <q-item-section>Gestor de bultos</q-item-section>
@@ -74,7 +82,7 @@
                 <q-item
                   clickable
                   v-close-popup
-                  @click="$router.replace('/packages')"
+                  @click="$router.replace('/packagewizard')"
                 >
                   <q-avatar icon="local_shipping" />
                   <q-item-section>Asignación de bultos</q-item-section>

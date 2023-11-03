@@ -15,7 +15,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/Disponibilidad.vue'),
       },
       {
-        path: 'packages',
+        path: 'package',
+        component: () => import('pages/Packages.vue'),
+      },
+      {
+        path: 'packagewizard',
         component: () => import('pages/PackageWizard.vue'),
       },
       {

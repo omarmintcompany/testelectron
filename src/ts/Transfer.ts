@@ -336,8 +336,8 @@ export class Transfer implements ITransfer {
         .then(() => {
           return true;
         })
-        .catch((err) => {
-          throw err;
+        .catch((error) => {
+          throw error.response.data;
         });
     }
   }

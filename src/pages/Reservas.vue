@@ -288,7 +288,7 @@ export default defineComponent({
       if (this.fromdate != '')
         params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
       if (this.todate != '')
-        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD');
+        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD 23:59:59');
       if (this.itemcode != '') params.ItemCode = this.itemcode;
 
       axios

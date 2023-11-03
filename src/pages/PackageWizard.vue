@@ -236,13 +236,14 @@ export default defineComponent({
         WhsCode: this.store.getCurrentWhsCode.whsCode,
         status: 'T',
         Type: 1,
-        IdPackage: 0,
+        IdPackage: true,
       };
 
+      if (this.idtransfer != 0) params.id = this.idtransfer;
       if (this.fromdate != '')
         params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
       if (this.todate != '')
-        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD');
+        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD  23:59:59');
 
       axios
         .get(`${this.store.options['ApiEndPoint']}/transfers`, {
@@ -276,17 +277,19 @@ export default defineComponent({
 
       axios
         .post(
-          `${this.store.options['ApiEndPoint']}/transfers/package`,
+          `${this.store.options['ApiEndPoint']}/packages/create`,
           {
-            ids: this.selected.map((e) => e.id),
-            idPackage:
-              this.idPackage != '' && this.idPackage != undefined
+            transfersIds: this.selected.map((e) => e.id),
+            packageId:
+              this.idPackage != 0 && this.idPackage != undefined
                 ? this.idPackage
                 : 0,
           },
           config
         )
         .then(() => {
+          this.selected = [];
+          this.idPackage = 0;
           this.getTransfersList();
           this.hideLoading();
           this.$q.notify({
@@ -294,11 +297,11 @@ export default defineComponent({
             message: 'Se ha creado el bulto con éxito',
           });
         })
-        .catch(() => {
+        .catch((error) => {
           this.hideLoading();
           this.$q.notify({
             type: 'negative',
-            message: 'No se ha podido crear el bulto',
+            message: error.response.data.messages,
           });
         });
     },
@@ -328,9 +331,12 @@ export default defineComponent({
       this.showLoading();
 
       axios
-        .get(
-          `${this.store.options['ApiEndPoint']}/transfers/package/cancel/${this.idTransferToCancel}/${this.idPackageToCancel}`,
-
+        .put(
+          `${this.store.options['ApiEndPoint']}/packages/delete`,
+          {
+            transferId: this.idTransferToCancel,
+            packageId: this.idPackageToCancel,
+          },
           config
         )
         .then(() => {

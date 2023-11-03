@@ -15,7 +15,19 @@
                     title="Imprimir"
                     dense
                     icon="print"
-                    v-if="reservationId != '0'"
+                    v-if="reservationIdLocal != 0"
+                  />
+                </div>
+
+                <div class="col" align="center">
+                  <q-btn
+                    outline
+                    round
+                    title="Duplicar"
+                    dense
+                    icon="file_copy"
+                    v-if="reservationIdLocal != 0"
+                    @click="preduplicate()"
                   />
                 </div>
                 <div class="col" align="center">
@@ -27,7 +39,7 @@
                     icon="check"
                     @click="actions('confirm')"
                     v-if="
-                      reservationId != '0' && reservationData.status == 'SC'
+                      reservationIdLocal != 0 && reservationData.status == 'SC'
                     "
                   />
                 </div>
@@ -41,7 +53,7 @@
                     color="red"
                     @click="actions('cancel')"
                     v-if="
-                      reservationId != '0' && reservationData.status == 'SC'
+                      reservationIdLocal != 0 && reservationData.status == 'SC'
                     "
                   />
                 </div>
@@ -55,7 +67,7 @@
                     type="submit"
                     color="green"
                     v-if="
-                      reservationId == '0' || reservationData.status == 'SC'
+                      reservationIdLocal == 0 || reservationData.status == 'SC'
                     "
                   />
                 </div>
@@ -73,7 +85,7 @@
                 input-class="text-right"
                 class="q-ml-md"
                 ref="newItemCodeInput"
-                :disable="reservationId != '0'"
+                :disable="reservationIdLocal != 0"
                 v-on:keydown.enter.prevent="onEnter"
               >
                 <template v-slot:append>
@@ -119,7 +131,7 @@
                 option-label="name"
                 emit-value
                 map-options
-                :disable="reservationId != '0'"
+                :disable="reservationIdLocal != 0"
                 color="black"
               />
               <q-input
@@ -129,7 +141,7 @@
                 v-model="reservationData.pickDate"
                 mask="date"
                 :rules="['date']"
-                :disable="reservationId != '0'"
+                :disable="reservationIdLocal != 0"
                 readonly
                 required
               >
@@ -161,7 +173,7 @@
                 dense
                 label-color="black"
                 label="Hora Recogida"
-                :disable="reservationId != '0'"
+                :disable="reservationIdLocal != 0"
                 readonly
                 required
               >
@@ -261,7 +273,7 @@
                     icon="delete"
                     title="Eliminar linea"
                     @click="deleteLine(props)"
-                    :disable="reservationId != '0'"
+                    :disable="reservationIdLocal != 0"
                   />
                 </q-td>
               </template>
@@ -386,10 +398,14 @@ export default defineComponent({
         { label: 'Cancelada', value: 'C' },
         { label: 'Confirmada', value: 'CN' },
       ],
+      reservationIdLocal: 0 as number,
     };
   },
   props: {
-    reservationId: String,
+    reservationId: {
+      type: Number,
+      default: 0,
+    },
   },
   watch: {
     reservationId() {
@@ -397,15 +413,17 @@ export default defineComponent({
         0,
         this.store.getCurrentWhsCode.whsCode
       );
+      this.reservationIdLocal = this.reservationId;
     },
   },
   methods: {
     loadReservationData() {
       this.showLoading();
-      if (this.reservationId != 0) {
+      console.log(this.reservationId);
+      if (this.reservationIdLocal != 0) {
         axios
           .get(
-            `${this.store.options['ApiEndPoint']}/Reservation/${this.reservationId}`
+            `${this.store.options['ApiEndPoint']}/Reservation/${this.reservationIdLocal}`
           )
           .then((x) => {
             this.reservationData = new Reservation(
@@ -547,6 +565,29 @@ export default defineComponent({
             });
           });
     },
+    preduplicate() {
+      this.action = 'duplicate';
+      this.resourceid = 21;
+      this.showlogin = true;
+    },
+    duplicate() {
+      this.reservationData
+        .cancelReservation()
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Reserva cancelada con éxito',
+          });
+          this.reservationData.id = 0;
+          this.reservationIdLocal = 0;
+        })
+        .catch(() => {
+          this.$q.notify({
+            type: 'negative',
+            message: 'No se ha podido cancelar la reserva, intentelo más tarde',
+          });
+        });
+    },
     update() {
       this.reservationData
         .updateReservation()
@@ -612,14 +653,17 @@ export default defineComponent({
         this.showLoading();
         switch (this.action) {
           case 'save':
-            if (this.reservationData.id == 0) this.save(token);
-            else if (this.reservationData.status == 'SC') this.update(token);
+            if (this.reservationData.id == 0) this.save();
+            else if (this.reservationData.status == 'SC') this.update();
             break;
           case 'cancel':
-            if (this.reservationData.status == 'SC') this.cancel(token);
+            if (this.reservationData.status == 'SC') this.cancel();
             break;
           case 'confirm':
-            if (this.reservationData.status == 'SC') this.confirm(token);
+            if (this.reservationData.status == 'SC') this.confirm();
+            break;
+          case 'duplicate':
+            if (this.reservationData.id != 0) this.duplicate();
             break;
         }
         this.hideLoading();
@@ -635,6 +679,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.reservationIdLocal = this.reservationId;
     this.getCategoryList();
     this.loadReservationData();
     document.getElementsByName('inputItem')[0].focus();

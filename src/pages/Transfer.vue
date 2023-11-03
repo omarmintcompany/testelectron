@@ -642,11 +642,11 @@ export default defineComponent({
                 });
               }
             })
-            .catch((e) => {
+            .catch((error) => {
               this.hideLoading();
               this.$q.notify({
                 type: 'negative',
-                message: e.message,
+                message: error.response.data.messages,
               });
             });
         }
@@ -691,11 +691,12 @@ export default defineComponent({
                       'Las unidades enviadas superan a las unidades propuestas',
                   });
               })
-              .catch((e) => {
+              .catch((error) => {
+                console.log(error);
                 this.hideLoading();
                 this.$q.notify({
                   type: 'negative',
-                  message: e.message,
+                  message: error,
                 });
               });
           } else {
@@ -717,11 +718,11 @@ export default defineComponent({
                       'Las unidades recibidas son diferentes a las enviadas',
                   });
               })
-              .catch((e) => {
+              .catch((error) => {
                 this.hideLoading();
                 this.$q.notify({
                   type: 'negative',
-                  message: e.message,
+                  message: error,
                 });
               });
           }
