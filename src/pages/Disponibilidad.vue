@@ -29,9 +29,10 @@
             </div>
           </div>
         </q-form>
+
         <div
           class="row mint-white q-pr-md q-pl-md q-pb-md"
-          v-if="stockInfo != ''"
+          v-if="refData.brand != ''"
         >
           <div class="col-4 q-pt-md q-pr-md">
             <q-card bordered flat>
@@ -45,9 +46,28 @@
           </div>
           <div class="col-8 q-pt-md">
             <q-card bordered flat>
-              <q-card-section class="mint-reverse q-pa-xs"
-                >Stock del producto</q-card-section
-              >
+              <q-card-section class="mint-reverse q-pa-xs">
+                <div class="row">
+                  <div class="col-9">Stock del producto</div>
+
+                  <div class="col">
+                    <q-select
+                      v-model="itemCodeAlt"
+                      :options="refData.itemCodesAlt"
+                      label="Otros colores"
+                      label-color="white"
+                      color="white"
+                      dense
+                      dark
+                      option-value="itemCode"
+                      option-label="color"
+                      map-options
+                      class="mint-reverse font-xs"
+                      @update:model-value="itemCodeAltLoad()"
+                    />
+                  </div>
+                </div>
+              </q-card-section>
               <q-card-section>
                 <stockTableComponent
                   :stock="stockTable"
@@ -60,7 +80,7 @@
         </div>
       </div>
     </div>
-    <div class="row mint-white q-pr-md q-pl-md" v-if="stockInfo != ''">
+    <div class="row mint-white q-pr-md q-pl-md" v-if="refData.brand != ''">
       <div class="col">
         <reservationTableComponent
           :reservations="itemReservations"
@@ -68,7 +88,7 @@
         ></reservationTableComponent>
       </div>
     </div>
-    <div class="row mint-white q-pa-md" v-if="stockInfo != ''">
+    <div class="row mint-white q-pa-md" v-if="refData.brand != ''">
       <div class="col">
         <transitTableComponent :transit="itemTransit"></transitTableComponent>
       </div>
@@ -137,7 +157,9 @@ export default defineComponent({
         rprov: '',
         section: '',
         itemCodes: [],
+        itemCodesAlt: [],
       } as refData,
+      itemCodeAlt: '' as string,
     };
   },
   computed: {
@@ -290,6 +312,11 @@ export default defineComponent({
           });
           this.$q.loading.hide();
         });
+    },
+    itemCodeAltLoad() {
+      console.log('asgf');
+      this.itemCode = this.itemCodeAlt.itemCode;
+      this.onSubmit();
     },
   },
 });

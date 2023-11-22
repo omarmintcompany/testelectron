@@ -87,11 +87,17 @@ export interface refData {
   rprov: string;
   section: string;
   itemCodes: itemCodeData[];
+  itemCodesAlt: itemCodeDataAlt[];
 }
 
 export interface itemCodeData {
   itemCode: string;
   size: string;
+}
+
+export interface itemCodeDataAlt {
+  itemCode: string;
+  color: string;
 }
 
 export interface stockInfo {
