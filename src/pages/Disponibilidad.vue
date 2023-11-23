@@ -183,7 +183,12 @@ export default defineComponent({
             const r = this.stockInfo.find(
               (x) => x.itemCode == i.itemCode && x.whsCode == w
             );
-            if (r != undefined) return r;
+            if (r != undefined)
+              return {
+                whsCode: r.whsCode,
+                itemCode: r.itemCode,
+                onHand: r.onHand,
+              } as stockInfo;
             return { whsCode: w, itemCode: i.itemCode, onHand: 0 } as stockInfo;
           });
 
@@ -203,7 +208,7 @@ export default defineComponent({
     this.itemCode = this.$route.params.itemcode = !''
       ? this.$route.params.itemcode
       : '';
-    if (this.itemCode != undefined) this.onSubmit();
+    if (this.itemCode != undefined && this.itemCode != '') this.onSubmit();
   },
   methods: {
     onSubmit() {
@@ -314,7 +319,6 @@ export default defineComponent({
         });
     },
     itemCodeAltLoad() {
-      console.log('asgf');
       this.itemCode = this.itemCodeAlt.itemCode;
       this.onSubmit();
     },

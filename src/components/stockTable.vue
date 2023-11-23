@@ -24,46 +24,48 @@
         <td
           :class="{
             'text-right table-border mint-cell':
-              wItem.whsCode != currentStore && !isWarehouse(wItem.whsCode),
+              whsCode != currentStore && !isWarehouse(whsCode),
             'text-right table-border store-cell mint-cell':
-              wItem.whsCode == currentStore,
-            'text-right table-border mint-green': isWarehouse(wItem.whsCode),
+              whsCode == currentStore,
+            'text-right table-border mint-green': isWarehouse(whsCode),
           }"
-          v-for="(wItem, index) in item.stockInfo"
-          :key="item.itemCode + '-' + index"
+          v-for="whsCode in sortedTitles"
+          :key="whsCode"
         >
-          <template v-if="wItem.onHand != 0">
-            <div v-if="wItem.whsCode == currentStore">
-              <div class="row">
-                <div class="col-1">
-                  <q-btn
-                    title="Solicitar a almacen de tienda"
-                    icon="warehouse"
-                    class="mint"
-                    dense
-                    @click="requestStock(wItem.itemCode)"
-                  ></q-btn>
-                </div>
-                <div class="col">
-                  {{ wItem.onHand }}
-                </div>
+          <div v-if="whsCode == currentStore">
+            <div class="row">
+              <div class="col-1" v-if="getStock(item.itemCode, whsCode) > 0">
+                <q-btn
+                  title="Solicitar a almacen de tienda"
+                  icon="warehouse"
+                  class="mint"
+                  dense
+                  @click="requestStock(item.itemCode)"
+                ></q-btn>
               </div>
+              <div class="col" v-if="getStock(item.itemCode, whsCode) > 0">
+                {{ getStock(item.itemCode, whsCode) }}
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div v-if="availableWhs(whsCode)">
+              <q-radio
+                v-model="stockSelected"
+                :val="item.itemCode + '-' + whsCode"
+                :label="getStock(item.itemCode, whsCode).toString()"
+                dense
+                color="black"
+                size="xs"
+                v-if="getStock(item.itemCode, whsCode) > 0"
+              />
             </div>
             <div v-else>
-              <div v-if="availableWhs(wItem.whsCode)">
-                <q-radio
-                  v-model="stockSelected"
-                  :val="wItem.itemCode + '-' + wItem.whsCode"
-                  :label="wItem.onHand.toString()"
-                  dense
-                  color="black"
-                  size="xs"
-                  v-if="wItem.onHand > 0"
-                />
+              <div v-if="getStock(item.itemCode, whsCode) > 0">
+                {{ getStock(item.itemCode, whsCode) }}
               </div>
-              <div v-else>{{ wItem.onHand }}</div>
             </div>
-          </template>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -190,6 +192,16 @@ export default defineComponent({
     );
   },
   methods: {
+    getStock(itemcode: string, whscode: string) {
+      var data = this.stock
+        .filter((p) => p.itemCode == itemcode)
+        .map((x) => x.stockInfo.filter((y) => y.whsCode == whscode));
+
+      let value: number =
+        data[0][0].onHand != undefined ? data[0][0].onHand : 0;
+
+      return value;
+    },
     getWhsName(whscode: string) {
       if (whscode != '') {
         let filteredArray = this.whsconfig
