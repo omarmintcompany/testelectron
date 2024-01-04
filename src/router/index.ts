@@ -1,7 +1,7 @@
-import { route } from 'quasar/wrappers';
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { route } from "quasar/wrappers";
+import { createRouter, createWebHashHistory } from "vue-router";
 
-import routes from './routes';
+import routes from "./routes";
 
 export default route(function (/* { store, ssrContext } */) {
   /*const createHistory = process.env.SERVER

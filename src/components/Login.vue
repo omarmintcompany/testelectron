@@ -41,12 +41,12 @@
   </div>
 </template>
 <script lang="ts">
-import { useWhsStore } from '../stores/whs';
-import { defineComponent } from 'vue';
-import axios from 'axios';
+import { useWhsStore } from "../stores/whs";
+import { defineComponent } from "vue";
+import axios from "axios";
 
 export default defineComponent({
-  name: 'Login',
+  name: "Login",
 
   setup() {
     const store = useWhsStore();
@@ -57,8 +57,8 @@ export default defineComponent({
   data() {
     return {
       show: false as boolean,
-      username: '' as string,
-      password: '' as string,
+      username: "" as string,
+      password: "" as string,
     };
   },
   props: {
@@ -68,13 +68,13 @@ export default defineComponent({
   watch: {
     showLogin() {
       this.show = this.showLogin;
-      this.username = '44322255j';
-      this.password = 'Temporal2';
+      this.username = "44322255j";
+      this.password = "Temporal2";
     },
   },
   methods: {
     accept() {
-      if (this.password == '' || this.password == undefined) this.loginCard();
+      if (this.password == "" || this.password == undefined) this.loginCard();
       else this.login();
     },
     onEnter() {
@@ -82,25 +82,25 @@ export default defineComponent({
     },
     loginCard() {
       axios
-        .post(`${this.store.options['ApiEndPoint']}/login/card`, {
+        .post(`${this.store.options["ApiEndPoint"]}/login/card`, {
           cardCode: this.username,
           resourceid: this.resourceid,
         })
         .then((x) => {
           this.store.setToken(x.data.token);
           this.show = false;
-          this.$emit('token', x.data.token);
+          this.$emit("token", x.data.token);
         })
         .catch((err) => {
-          this.store.setToken('');
+          this.store.setToken("");
           this.store.setLastError(err.response.data);
           this.show = false;
-          this.$emit('token', '');
+          this.$emit("token", "");
         });
     },
     login() {
       axios
-        .post(`${this.store.options['ApiEndPoint']}/login`, {
+        .post(`${this.store.options["ApiEndPoint"]}/login`, {
           username: this.username,
           password: this.password,
           resourceid: this.resourceid,
@@ -108,13 +108,13 @@ export default defineComponent({
         .then((x) => {
           this.store.setToken(x.data.token);
           this.show = false;
-          this.$emit('token', x.data.token);
+          this.$emit("token", x.data.token);
         })
         .catch((err) => {
-          this.store.setToken('');
+          this.store.setToken("");
           this.store.setLastError(err.response.data);
           this.show = false;
-          this.$emit('token', '');
+          this.$emit("token", "");
         });
     },
   },

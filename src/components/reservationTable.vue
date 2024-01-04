@@ -18,58 +18,58 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import moment from 'moment';
-import { itemReservations } from 'src/Interfaces/DisponibilidadInterfaces';
+import { defineComponent, PropType } from "vue";
+import moment from "moment";
+import { itemReservations } from "src/Interfaces/DisponibilidadInterfaces";
 
 export default defineComponent({
-  name: 'reservationTableComponent',
+  name: "reservationTableComponent",
 
   setup() {
     const RCol = [
       {
-        name: 'docNum',
-        align: 'center',
-        label: 'NºReserva',
-        field: 'docNum',
+        name: "docNum",
+        align: "center",
+        label: "NºReserva",
+        field: "docNum",
         sortable: true,
       },
       {
-        name: 'dateRec',
-        align: 'center',
-        label: 'Fecha Recogida',
-        field: 'dateRec',
+        name: "dateRec",
+        align: "center",
+        label: "Fecha Recogida",
+        field: "dateRec",
         sortable: true,
         format: (val) => {
-          return moment(String(val)).format('DD/MM/YYYY');
+          return moment(String(val)).format("DD/MM/YYYY");
         },
       },
       {
-        name: 'daysRec',
-        align: 'center',
-        label: 'Días Reservado',
-        field: 'daysRec',
+        name: "daysRec",
+        align: "center",
+        label: "Días Reservado",
+        field: "daysRec",
         sortable: true,
       },
       {
-        name: 'whsName',
-        align: 'center',
-        label: 'Tienda',
-        field: (row) => row.whsCode + ' - ' + row.whsName,
+        name: "whsName",
+        align: "center",
+        label: "Tienda",
+        field: (row) => row.whsCode + " - " + row.whsName,
         sortable: true,
       },
       {
-        name: 'itemCode',
-        align: 'center',
-        label: 'Itemcode',
-        field: 'itemCode',
+        name: "itemCode",
+        align: "center",
+        label: "Itemcode",
+        field: "itemCode",
         sortable: true,
       },
       {
-        name: 'quantity',
-        align: 'center',
-        label: 'Cantidad',
-        field: 'quantity',
+        name: "quantity",
+        align: "center",
+        label: "Cantidad",
+        field: "quantity",
         sortable: false,
       },
     ];

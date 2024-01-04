@@ -65,98 +65,98 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { Stock } from '../ts/Stock.ts';
-import { useQuasar } from 'quasar';
-import axios from 'axios';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { Stock } from "../ts/Stock.ts";
+import { useQuasar } from "quasar";
+import axios from "axios";
 
 export default defineComponent({
-  name: 'Stock',
+  name: "Stock",
   setup() {
     const store = useWhsStore();
 
     const RCol = [
-      { name: 'photo', label: '', field: '', align: 'center' },
+      { name: "photo", label: "", field: "", align: "center" },
       {
-        name: 'fullSeason',
-        align: 'left',
-        label: 'Temporada',
-        field: 'fullSeason',
+        name: "fullSeason",
+        align: "left",
+        label: "Temporada",
+        field: "fullSeason",
         sortable: true,
       },
       {
-        name: 'brand',
-        align: 'left',
-        label: 'Marca',
-        field: 'brand',
+        name: "brand",
+        align: "left",
+        label: "Marca",
+        field: "brand",
         sortable: true,
       },
       {
-        name: 'section',
-        align: 'left',
-        label: 'Sección',
-        field: 'section',
+        name: "section",
+        align: "left",
+        label: "Sección",
+        field: "section",
         sortable: true,
       },
       {
-        name: 'family',
-        align: 'left',
-        label: 'Familia',
-        field: 'family',
+        name: "family",
+        align: "left",
+        label: "Familia",
+        field: "family",
         sortable: true,
       },
       {
-        name: 'gamma',
-        align: 'left',
-        label: 'Gama',
-        field: 'gamma',
+        name: "gamma",
+        align: "left",
+        label: "Gama",
+        field: "gamma",
         sortable: true,
       },
       {
-        name: 'supplierReferenceNumber',
-        align: 'left',
-        label: 'Referencia',
-        field: 'supplierReferenceNumber',
+        name: "supplierReferenceNumber",
+        align: "left",
+        label: "Referencia",
+        field: "supplierReferenceNumber",
         sortable: true,
       },
       {
-        name: 'itemCode',
-        align: 'left',
-        label: 'ItemCode',
-        field: 'itemCode',
+        name: "itemCode",
+        align: "left",
+        label: "ItemCode",
+        field: "itemCode",
         sortable: true,
       },
       {
-        name: 'itemDescription',
-        align: 'left',
-        label: 'Descripción',
-        field: 'itemDescription',
+        name: "itemDescription",
+        align: "left",
+        label: "Descripción",
+        field: "itemDescription",
         sortable: true,
       },
       {
-        name: 'size',
-        align: 'left',
-        label: 'Talla',
-        field: 'size',
+        name: "size",
+        align: "left",
+        label: "Talla",
+        field: "size",
         sortable: true,
       },
       {
-        name: 'booking',
-        align: 'right',
-        label: 'Reservado',
-        field: 'booking',
+        name: "booking",
+        align: "right",
+        label: "Reservado",
+        field: "booking",
         sortable: true,
       },
       {
-        name: 'stock',
-        align: 'right',
-        label: 'Stock físico',
-        field: 'stock',
+        name: "stock",
+        align: "right",
+        label: "Stock físico",
+        field: "stock",
         sortable: true,
       },
 
-      { name: 'actions', label: '', field: '', align: 'center' },
+      { name: "actions", label: "", field: "", align: "center" },
     ];
     const $q = useQuasar();
     return {
@@ -173,7 +173,7 @@ export default defineComponent({
   data() {
     return {
       SList: [] as Stock[],
-      filter: '' as string,
+      filter: "" as string,
     };
   },
   methods: {
@@ -181,7 +181,7 @@ export default defineComponent({
       this.showLoading();
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/Stock/${this.store.getCurrentWhsCode.whsCode}`,
+          `${this.store.options["ApiEndPoint"]}/Stock/${this.store.getCurrentWhsCode.whsCode}`,
           {}
         )
         .then((x) => {

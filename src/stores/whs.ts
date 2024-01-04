@@ -1,52 +1,52 @@
-import { WhsInfo } from '../interfaces/WhsInfo';
-import { defineStore } from 'pinia';
-import axios from 'axios';
+import { WhsInfo } from "../interfaces/WhsInfo";
+import { defineStore } from "pinia";
+import axios from "axios";
 
-export const useWhsStore = defineStore('whs', {
+export const useWhsStore = defineStore("whs", {
   state: () => ({
     options: {
-      ApiEndPoint: 'http://10.0.6.6:32771',
-      WhsData: { whsCode: '', whsName: '', isDefault: false } as WhsInfo,
+      ApiEndPoint: "http://10.0.6.6:32769",
+      WhsData: { whsCode: "", whsName: "", isDefault: false } as WhsInfo,
       WhsList: [] as WhsInfo[],
-      token: '' as string,
-      lastError: '' as string,
+      token: "" as string,
+      lastError: "" as string,
     },
   }),
   actions: {
     setWhsList() {
       axios
-        .get(`${this.options['ApiEndPoint']}/whsipmapping/`)
+        .get(`${this.options["ApiEndPoint"]}/whsipmapping/`)
         .then((x) => {
-          this.options['token'] = '';
-          this.options['WhsList'] = x.data as WhsInfo[];
-          this.options['WhsData'] = this.options['WhsList'].filter((item) => {
+          this.options["token"] = "";
+          this.options["WhsList"] = x.data as WhsInfo[];
+          this.options["WhsData"] = this.options["WhsList"].filter((item) => {
             return item.isDefault == true;
           })[0];
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     setWhsCode(value: WhsInfo) {
-      this.options['WhsData'] = value;
+      this.options["WhsData"] = value;
     },
     setToken(value: string) {
-      this.options['token'] = value;
+      this.options["token"] = value;
     },
     setLastError(value: string) {
-      this.options['lastError'] = value;
+      this.options["lastError"] = value;
     },
   },
   getters: {
     getLastError(): string {
-      return this.options['lastError'];
+      return this.options["lastError"];
     },
     getCurrentWhsCode(): WhsInfo {
-      return this.options['WhsData'];
+      return this.options["WhsData"];
     },
     getWhsList(): WhsInfo[] {
-      return this.options['WhsList'];
+      return this.options["WhsList"];
     },
     getToken(): string {
-      return this.options['token'];
+      return this.options["token"];
     },
   },
 });

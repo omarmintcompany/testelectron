@@ -1,9 +1,9 @@
-import { contextBridge } from 'electron';
-import { BrowserWindow } from '@electron/remote';
+import { contextBridge } from "electron";
+import { BrowserWindow } from "@electron/remote";
 
-contextBridge.exposeInMainWorld('myWindowAPI', {
+contextBridge.exposeInMainWorld("myWindowAPI", {
   minimize() {
-    console.group('aaaaa');
+    console.group("aaaaa");
     BrowserWindow.getFocusedWindow()?.minimize();
   },
 

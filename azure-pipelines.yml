@@ -4,18 +4,18 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - script: echo Hello, world!
+    displayName: "Run a one-line script"
 
-- script: |
-    npm install -g @quasar/cli
-    npm install
-    quasar build --mode electron --publish always
-  workingDirectory: $(Build.SourcesDirectory)
-  displayName: 'install Quasar CLI and build app'
+  - script: |
+      npm install -g @quasar/cli
+      npm install
+      quasar build --mode electron --publish always
+    workingDirectory: $(Build.SourcesDirectory)
+    displayName: "install Quasar CLI and build app"

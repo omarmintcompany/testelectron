@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { useWhsStore } from '../stores/whs';
-import { date } from 'quasar';
+import axios from "axios";
+import { useWhsStore } from "../stores/whs";
+import { date } from "quasar";
 
 export interface TransferLine {
   supplierReferenceNumber: string;
@@ -69,22 +69,22 @@ export class Transfer implements ITransfer {
   constructor(id: number, whsfrom: string) {
     this.id = id;
     this.whsFrom = whsfrom;
-    this.title = '';
-    this.whsTo = '';
-    this.status = 'SC';
+    this.title = "";
+    this.whsTo = "";
+    this.status = "SC";
     this.type = 11;
-    this.title = 'Transferencia manual';
-    this.salesPerson = '';
-    this.dateCreated = '';
-    this.dateSend = '';
-    this.dateRec = '';
+    this.title = "Transferencia manual";
+    this.salesPerson = "";
+    this.dateCreated = "";
+    this.dateSend = "";
+    this.dateRec = "";
     this.urgent = false;
-    this.salesRepCreate = '';
-    this.salesRepSent = '';
-    this.salesRepReceived = '';
+    this.salesRepCreate = "";
+    this.salesRepSent = "";
+    this.salesRepReceived = "";
     this.deliveryMan = false;
-    this.needDateTime = '';
-    this.reasonNotes = '';
+    this.needDateTime = "";
+    this.reasonNotes = "";
     this.transferLines = [];
     this.packages = [];
   }
@@ -97,15 +97,15 @@ export class Transfer implements ITransfer {
     } else {
       return axios
         .get(
-          `${this.store.options['ApiEndPoint']}/disponibilidad/${itemcode}/itemData`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${itemcode}/itemData`
         )
         .then((x) => {
           this.transferLines.push({
             supplierReferenceNumber: x.data.supplierReferenceNumber,
             itemCode: x.data.itemCode,
             itemDescription: x.data.itemDescription,
-            color: '',
-            size: '',
+            color: "",
+            size: "",
             brand: x.data.brand,
             section: x.data.section,
             family: x.data.family,
@@ -157,15 +157,15 @@ export class Transfer implements ITransfer {
       headers: { Authorization: `Bearer ${this.store.getToken}` },
     };
     const hour = new Date();
-    if (this.needDateTime != '' && this.needDateTime != null) {
+    if (this.needDateTime != "" && this.needDateTime != null) {
       hour.setHours(
-        Number(this.needDateTime.split(':')[0]),
-        Number(this.needDateTime.split(':')[1])
+        Number(this.needDateTime.split(":")[0]),
+        Number(this.needDateTime.split(":")[1])
       );
     }
     return axios
       .post(
-        `${this.store.options['ApiEndPoint']}/transfers`,
+        `${this.store.options["ApiEndPoint"]}/transfers`,
         {
           id: this.id,
           title: this.title,
@@ -179,20 +179,20 @@ export class Transfer implements ITransfer {
           salesRepSent: this.salesRepSent,
           salesRepReceived: this.salesRepReceived,
           dateCreated: date
-            .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+            .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
             .toString(),
           dateSend: date
-            .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+            .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
             .toString(),
           dateRec: date
-            .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+            .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
             .toString(),
           deliveryMan: this.deliveryMan,
           needDateTime: !this.deliveryMan
             ? date
-                .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+                .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
                 .toString()
-            : date.formatDate(hour, 'YYYY-MM-DDTHH:MM').toString(),
+            : date.formatDate(hour, "YYYY-MM-DDTHH:MM").toString(),
           transferLines: this.transferLines,
         },
         config
@@ -216,22 +216,22 @@ export class Transfer implements ITransfer {
         headers: { Authorization: `Bearer ${this.store.getToken}` },
       };
       const hour = new Date();
-      if (this.needDateTime != '' && this.needDateTime != null) {
+      if (this.needDateTime != "" && this.needDateTime != null) {
         hour.setHours(
-          Number(this.needDateTime.split(':')[0]),
-          Number(this.needDateTime.split(':')[1])
+          Number(this.needDateTime.split(":")[0]),
+          Number(this.needDateTime.split(":")[1])
         );
       }
-      this.salesPerson = this.salesPerson == null ? '' : this.salesPerson;
+      this.salesPerson = this.salesPerson == null ? "" : this.salesPerson;
       this.salesRepReceived =
-        this.salesRepReceived == null ? '' : this.salesRepReceived;
-      this.salesRepSent = this.salesRepSent == null ? '' : this.salesRepSent;
+        this.salesRepReceived == null ? "" : this.salesRepReceived;
+      this.salesRepSent = this.salesRepSent == null ? "" : this.salesRepSent;
       this.transferLines.forEach(function (obj) {
         obj.sendQty = obj.quantity;
       });
       return axios
         .put(
-          `${this.store.options['ApiEndPoint']}/transfers/send/${this.id}`,
+          `${this.store.options["ApiEndPoint"]}/transfers/send/${this.id}`,
           {
             id: this.id,
             title: this.title,
@@ -245,23 +245,23 @@ export class Transfer implements ITransfer {
             salesRepSent: this.salesRepSent,
             salesRepReceived: this.salesRepReceived,
             dateCreated: date
-              .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+              .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
               .toString(),
             dateSend: date
-              .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+              .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
               .toString(),
             dateRec: date
-              .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+              .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
               .toString(),
             deliveryMan: this.deliveryMan,
             needDateTime: !this.deliveryMan
               ? date
                   .formatDate(
                     new Date(Date.UTC(1900, 0, 1)),
-                    'YYYY-MM-DDTHH:MM'
+                    "YYYY-MM-DDTHH:MM"
                   )
                   .toString()
-              : date.formatDate(hour, 'YYYY-MM-DDTHH:MM').toString(),
+              : date.formatDate(hour, "YYYY-MM-DDTHH:MM").toString(),
             transferLines: this.transferLines,
           },
           config
@@ -282,23 +282,23 @@ export class Transfer implements ITransfer {
         headers: { Authorization: `Bearer ${this.store.getToken}` },
       };
       const hour = new Date();
-      if (this.needDateTime != '' && this.needDateTime != null) {
+      if (this.needDateTime != "" && this.needDateTime != null) {
         hour.setHours(
-          Number(this.needDateTime.split(':')[0]),
-          Number(this.needDateTime.split(':')[1])
+          Number(this.needDateTime.split(":")[0]),
+          Number(this.needDateTime.split(":")[1])
         );
       }
-      this.salesPerson = this.salesPerson == null ? '' : this.salesPerson;
+      this.salesPerson = this.salesPerson == null ? "" : this.salesPerson;
       this.salesRepReceived =
-        this.salesRepReceived == null ? '' : this.salesRepReceived;
-      this.salesRepSent = this.salesRepSent == null ? '' : this.salesRepSent;
+        this.salesRepReceived == null ? "" : this.salesRepReceived;
+      this.salesRepSent = this.salesRepSent == null ? "" : this.salesRepSent;
       this.transferLines.forEach(function (obj) {
         obj.recvQty = obj.quantity;
       });
 
       return axios
         .put(
-          `${this.store.options['ApiEndPoint']}/transfers/recieve/${this.id}`,
+          `${this.store.options["ApiEndPoint"]}/transfers/recieve/${this.id}`,
           {
             id: this.id,
             title: this.title,
@@ -312,23 +312,23 @@ export class Transfer implements ITransfer {
             salesRepSent: this.salesRepSent,
             salesRepReceived: this.salesRepReceived,
             dateCreated: date
-              .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+              .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
               .toString(),
             dateSend: date
-              .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+              .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
               .toString(),
             dateRec: date
-              .formatDate(new Date(Date.UTC(1900, 0, 1)), 'YYYY-MM-DDTHH:MM')
+              .formatDate(new Date(Date.UTC(1900, 0, 1)), "YYYY-MM-DDTHH:MM")
               .toString(),
             deliveryMan: this.deliveryMan,
             needDateTime: !this.deliveryMan
               ? date
                   .formatDate(
                     new Date(Date.UTC(1900, 0, 1)),
-                    'YYYY-MM-DDTHH:MM'
+                    "YYYY-MM-DDTHH:MM"
                   )
                   .toString()
-              : date.formatDate(hour, 'YYYY-MM-DDTHH:MM').toString(),
+              : date.formatDate(hour, "YYYY-MM-DDTHH:MM").toString(),
             transferLines: this.transferLines,
           },
           config
@@ -347,7 +347,7 @@ export class Transfer implements ITransfer {
     };
     return axios
       .put(
-        `${this.store.options['ApiEndPoint']}/transfers/cancel/${this.id}`,
+        `${this.store.options["ApiEndPoint"]}/transfers/cancel/${this.id}`,
         {},
         config
       )

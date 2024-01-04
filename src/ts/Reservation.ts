@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { useWhsStore } from '../stores/whs';
+import axios from "axios";
+import { useWhsStore } from "../stores/whs";
 
 export interface ReservationLine {
   id: number;
@@ -30,35 +30,35 @@ export interface IReservation {
 
 export class Reservation implements IReservation {
   public id: number;
-  public dateCreated: string;
-  public cardCode: string;
-  public cardName: string;
+  public dateCreated: string | undefined;
+  public cardCode: string | undefined;
+  public cardName: string | undefined;
   public phone: string;
   public email: string;
-  public pickDateTime: string;
-  public pickDate: string;
-  public pickTime: string;
-  public salesPerson: string;
-  public salesPersonaName: string;
+  public pickDateTime: string | undefined;
+  public pickDate: string | undefined;
+  public pickTime: string | undefined;
+  public salesPerson: string | undefined;
+  public salesPersonaName: string | undefined;
   public whsCode: string;
   public status: string;
-  public notes: string;
+  public notes: string | undefined;
   public categoryId: string;
-  public categoryName: string;
-  public ticketId: string;
-  public WhsCode: string;
+  public categoryName: string | undefined;
+  public ticketId: string | undefined;
+  public WhsCode: string | undefined;
   public reservationLines: ReservationLine[];
 
   store = useWhsStore();
 
   constructor(id: number, whscode: string) {
     this.id = id;
-    this.categoryId = 1;
-    this.status = 'SC';
+    this.categoryId = "1";
+    this.status = "SC";
     this.whsCode = whscode;
     this.reservationLines = [];
-    this.email = '';
-    this.phone = '';
+    this.email = "";
+    this.phone = "";
   }
 
   public async addLine(itemcode: string): Promise<boolean> {
@@ -71,7 +71,7 @@ export class Reservation implements IReservation {
     } else {
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/disponibilidad/${itemcode}/itemData`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${itemcode}/itemData`
         )
         .then((x) => {
           this.reservationLines.push({
@@ -113,17 +113,17 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(
-        `${this.store.options['ApiEndPoint']}/Reservation/create`,
+        `${this.store.options["ApiEndPoint"]}/Reservation/create`,
         {
-          cardCode: 'C' + this.whsCode,
+          cardCode: "C" + this.whsCode,
           cardName: this.cardName,
           categoryId: this.categoryId,
-          email: this.email != '' && this.email != null ? this.email : ' ',
-          phone: this.phone != '' && this.phone != null ? this.phone : ' ',
-          pickDateTime: new Date(this.pickDate + ' ' + this.pickTime),
+          email: this.email != "" && this.email != null ? this.email : " ",
+          phone: this.phone != "" && this.phone != null ? this.phone : " ",
+          pickDateTime: new Date(this.pickDate + " " + this.pickTime),
           status: this.status,
           whsCode: this.whsCode,
-          notes: (this.notes = !'' ? this.notes : ' '),
+          notes: (this.notes = !"" ? this.notes : " "),
           reservationLines: this.reservationLines,
         },
         config
@@ -141,18 +141,18 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(
-        `${this.store.options['ApiEndPoint']}/Reservation/update`,
+        `${this.store.options["ApiEndPoint"]}/Reservation/update`,
         {
           id: this.id,
-          cardCode: 'C' + this.whsCode,
+          cardCode: "C" + this.whsCode,
           cardName: this.cardName,
           categoryId: this.categoryId,
-          email: this.email != '' && this.email != null ? this.email : ' ',
-          phone: this.phone != '' && this.phone != null ? this.phone : ' ',
-          pickDateTime: new Date(this.pickDate + ' ' + this.pickTime),
+          email: this.email != "" && this.email != null ? this.email : " ",
+          phone: this.phone != "" && this.phone != null ? this.phone : " ",
+          pickDateTime: new Date(this.pickDate + " " + this.pickTime),
           status: this.status,
           whsCode: this.whsCode,
-          notes: (this.notes = !'' ? this.notes : ' '),
+          notes: (this.notes = !"" ? this.notes : " "),
           reservationLines: this.reservationLines,
         },
         config
@@ -170,7 +170,7 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(
-        `${this.store.options['ApiEndPoint']}/Reservation/cancel/${this.id}`,
+        `${this.store.options["ApiEndPoint"]}/Reservation/cancel/${this.id}`,
         {},
         config
       )
@@ -187,7 +187,7 @@ export class Reservation implements IReservation {
     };
     return axios
       .put(
-        `${this.store.options['ApiEndPoint']}/Reservation/confirm/${this.id}`,
+        `${this.store.options["ApiEndPoint"]}/Reservation/confirm/${this.id}`,
         {},
         config
       )

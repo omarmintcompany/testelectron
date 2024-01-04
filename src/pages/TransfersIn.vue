@@ -89,7 +89,7 @@
               </q-td>
               <q-td key="status" :props="props">
                 <div>
-                  {{ getStatus(props) }}
+                  {{ getStatus(props.row.status) }}
                 </div>
               </q-td>
               <q-td key="id" :props="props">
@@ -136,7 +136,7 @@
                     color="black"
                     icon="edit_document"
                     title="Editar"
-                    @click="onEdit(props)"
+                    @click="onEdit(props.row.id)"
                   ></q-btn>
                 </div>
               </q-td>
@@ -149,105 +149,105 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { TransferList } from '.axios./ts/TransferInterfaces.ts';
-import axios from 'axios';
-import moment from 'moment';
-import { date, useQuasar } from 'quasar';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { TransferList } from "src/Interfaces/TransferInterfaces";
+import axios from "axios";
+import moment from "moment";
+import { date, useQuasar } from "quasar";
 
 export default defineComponent({
-  name: 'TransfersOut',
+  name: "TransfersOut",
   setup() {
     const store = useWhsStore();
 
     const RCol = [
       {
-        name: 'urgent',
-        align: 'center',
-        label: '',
-        field: 'urgent',
+        name: "urgent",
+        align: "center",
+        label: "",
+        field: "urgent",
         sortable: true,
-        style: 'width:10px',
+        style: "width:10px",
       },
       {
-        name: 'status',
-        align: 'center',
-        label: 'Estado',
-        field: 'status',
-        sortable: true,
-      },
-      {
-        name: 'id',
-        align: 'center',
-        label: 'NºTransferencia',
-        field: 'id',
+        name: "status",
+        align: "center",
+        label: "Estado",
+        field: "status",
         sortable: true,
       },
       {
-        name: 'typeName',
-        align: 'left',
-        label: 'Tipo',
-        field: 'typeName',
+        name: "id",
+        align: "center",
+        label: "NºTransferencia",
+        field: "id",
         sortable: true,
       },
       {
-        name: 'title',
-        align: 'left',
-        label: 'Título',
-        field: 'title',
+        name: "typeName",
+        align: "left",
+        label: "Tipo",
+        field: "typeName",
+        sortable: true,
+      },
+      {
+        name: "title",
+        align: "left",
+        label: "Título",
+        field: "title",
         sortable: true,
       },
 
       {
-        name: 'whsFromName',
-        align: 'left',
-        label: 'Desde',
-        field: 'whsFromName',
+        name: "whsFromName",
+        align: "left",
+        label: "Desde",
+        field: "whsFromName",
         sortable: true,
       },
       {
-        name: 'whsToName',
-        align: 'left',
-        label: 'Hasta',
-        field: 'whsToName',
+        name: "whsToName",
+        align: "left",
+        label: "Hasta",
+        field: "whsToName",
         sortable: true,
       },
       {
-        name: 'dateCreated',
-        align: 'center',
-        label: 'F.Creación',
-        field: 'dateCreated',
+        name: "dateCreated",
+        align: "center",
+        label: "F.Creación",
+        field: "dateCreated",
         sortable: true,
-        format: (val) => {
-          return moment(String(val)).format('DD/MM/YYYY');
+        format: (val :string) => {
+          return moment(String(val)).format("DD/MM/YYYY");
         },
       },
       {
-        name: 'needDateTime',
-        align: 'center',
-        label: 'F.Límite',
-        field: 'needDateTime',
+        name: "needDateTime",
+        align: "center",
+        label: "F.Límite",
+        field: "needDateTime",
         sortable: true,
-        format: (val) => {
-          return moment(String(val)).format('DD/MM/YYYY');
+        format: (val:string) => {
+          return moment(String(val)).format("DD/MM/YYYY");
         },
       },
 
-      { name: 'actions', label: '', field: '', align: 'center' },
+      { name: "actions", label: "", field: "", align: "center" },
     ];
     const $q = useQuasar();
     return {
       store,
       RCol,
       statuslist: [
-        { label: 'Solicitado', value: 'SC' },
+        { label: "Solicitado", value: "SC" },
         //{ label: 'Listo sin bultos', value: 'SB' },
         //{ label: 'Listo con bultos', value: 'CB' },
-        { label: 'En Tránsito', value: 'T' },
+        { label: "En Tránsito", value: "T" },
         //{ label: 'Entregada', value: 'EN' },
-        { label: 'Recibida', value: 'CN' },
-        { label: 'Anulada', value: 'A' },
+        { label: "Recibida", value: "CN" },
+        { label: "Anulada", value: "A" },
       ],
       showLoading() {
         $q.loading.show();
@@ -260,11 +260,11 @@ export default defineComponent({
   data() {
     return {
       TOList: [] as TransferList[],
-      fromdate: '' as string,
-      todate: '' as string,
-      idtransfer: '' as string,
-      status: 'En Tránsito',
-      itemcode: '' as string,
+      fromdate: "" as string,
+      todate: "" as string,
+      idtransfer: "" as string,
+      status: {label: 'En Tránsito', value :"T"},
+      itemcode: "" as string,
     };
   },
   methods: {
@@ -272,19 +272,29 @@ export default defineComponent({
       this.showLoading();
       const params = {
         WhsCode: this.store.getCurrentWhsCode.whsCode,
-        status: this.status.value != undefined ? this.status.value : 'T',
+        status: this.status.value != undefined ? this.status.value : "T",
         Type: 0,
       };
 
-      if (this.fromdate != '')
-        params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
-      if (this.todate != '')
-        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD 23:59:59');
-      if (this.idtransfer != '') params.id = this.idtransfer;
-      if (this.itemcode != '') params.itemcode = this.itemcode;
+      if (this.fromdate != "")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.FromDate = date.formatDate(this.fromdate, "YYYY-MM-DD");
+      if (this.todate != "")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.ToDate = date.formatDate(this.todate, "YYYY-MM-DD 23:59:59");
+      if (this.idtransfer != "")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.id = this.idtransfer;
+      if (this.itemcode != "")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.itemcode = this.itemcode;
 
       axios
-        .get(`${this.store.options['ApiEndPoint']}/transfers`, {
+        .get(`${this.store.options["ApiEndPoint"]}/transfers`, {
           params: params,
         })
         .then((x) => {
@@ -299,14 +309,14 @@ export default defineComponent({
       this.getTransfersList();
     },
     formatDate(value: string) {
-      return date.formatDate(value, 'DD-MM-YYYY');
+      return date.formatDate(value, "DD-MM-YYYY");
     },
-    onEdit(props) {
-      this.$router.push('/transfer/' + props.row.id);
+    onEdit(id: string) {
+      this.$router.push("/transfer/" + id);
     },
-    getStatus(props) {
-      return this.statuslist.filter((p) => p.value == props.row.status)[0][
-        'label'
+    getStatus(status: string) {
+      return this.statuslist.filter((p) => p.value == status)[0][
+        "label"
       ];
     },
   },
@@ -314,8 +324,8 @@ export default defineComponent({
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 5);
-    this.fromdate = moment(String(yesterday)).format('YYYY-MM-DD');
-    this.todate = moment(String(today)).format('YYYY-MM-DD');
+    this.fromdate = moment(String(yesterday)).format("YYYY-MM-DD");
+    this.todate = moment(String(today)).format("YYYY-MM-DD");
 
     this.getTransfersList();
   },

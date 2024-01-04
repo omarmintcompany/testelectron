@@ -121,16 +121,16 @@
   </div>
 </template>
 <script lang="ts">
-import { stockTable, whsconfig } from 'src/Interfaces/TransferInterfaces';
-import { useWhsStore } from '../stores/whs';
-import { defineComponent, PropType } from 'vue';
-import Login from '../components/Login.vue';
-import axios from 'axios';
-import { useQuasar } from 'quasar';
-import { Transfer } from 'src/ts/Transfer';
+//import { stockTable, whsconfig } from 'src/Interfaces/TransferInterfaces';
+import { useWhsStore } from "../stores/whs";
+import { defineComponent, PropType } from "vue";
+import Login from "../components/Login.vue";
+import axios from "axios";
+import { useQuasar } from "quasar";
+import { Transfer } from "src/ts/Transfer";
 
 export default defineComponent({
-  name: 'stockTableComponent',
+  name: "stockTableComponent",
   components: { Login },
   setup() {
     const store = useWhsStore();
@@ -148,19 +148,19 @@ export default defineComponent({
   data() {
     return {
       scrollPosition: 0 as number,
-      currentStore: '' as string,
+      currentStore: "" as string,
       sortedTitles: [] as string[],
       showlogin: false as boolean,
       resourceid: 0 as number,
-      token: '' as string,
-      stockSelected: '' as string,
+      token: "" as string,
+      stockSelected: "" as string,
       urgent: true as boolean,
       deliveryMan: false as boolean,
-      itemcode: '' as string,
-      action: '' as string,
-      whsFrom: '' as string,
-      whsTo: '' as string,
-      needDateTime: '09:00' as string,
+      itemcode: "" as string,
+      action: "" as string,
+      whsFrom: "" as string,
+      whsTo: "" as string,
+      needDateTime: "09:00" as string,
     };
   },
 
@@ -187,7 +187,7 @@ export default defineComponent({
     this.currentStore = this.store.getCurrentWhsCode.whsCode as string;
     this.sortTitles();
     window.addEventListener(
-      'scroll',
+      "scroll",
       () => (this.scrollPosition = window.scrollY)
     );
   },
@@ -203,7 +203,7 @@ export default defineComponent({
       return value;
     },
     getWhsName(whscode: string) {
-      if (whscode != '') {
+      if (whscode != "") {
         let filteredArray = this.whsconfig
           .filter((element) =>
             element.whsCodes.some((subElement) => subElement.whsCode == whscode)
@@ -212,13 +212,13 @@ export default defineComponent({
             return element.whsCodes.filter((x) => x.whsCode == whscode);
           });
 
-        return filteredArray[0][0]['whsName'] != undefined
-          ? filteredArray[0][0]['whsName']
-          : '';
+        return filteredArray[0][0]["whsName"] != undefined
+          ? filteredArray[0][0]["whsName"]
+          : "";
       }
     },
     availableWhs(whscode: string) {
-      if (whscode != '') {
+      if (whscode != "") {
         let filteredArray = this.whsconfig
           .filter((e) => e.businessUnitId != 5)
           .filter((element) =>
@@ -229,7 +229,7 @@ export default defineComponent({
           });
 
         if (filteredArray.length > 0) {
-          if (filteredArray[0][0]['type'] != 'A') {
+          if (filteredArray[0][0]["type"] != "A") {
             return 1;
           }
         }
@@ -238,7 +238,7 @@ export default defineComponent({
       }
     },
     isWarehouse(whscode: string) {
-      if (whscode != '') {
+      if (whscode != "") {
         let filteredArray = this.whsconfig
           .filter((e) => e.businessUnitId != 5)
           .filter((element) =>
@@ -249,7 +249,7 @@ export default defineComponent({
           });
 
         if (filteredArray.length > 0) {
-          if (filteredArray[0][0]['type'] == 'A') {
+          if (filteredArray[0][0]["type"] == "A") {
             return 1;
           }
         }
@@ -258,7 +258,7 @@ export default defineComponent({
       }
     },
     showWhs(whscode: string) {
-      if (whscode != '') {
+      if (whscode != "") {
         let filteredArray = this.whsconfig
           .filter((e) => e.businessUnitId != 5)
           .filter((element) =>
@@ -287,22 +287,22 @@ export default defineComponent({
       });
     },
     requestStock(itemcode: string) {
-      this.action = 'requestStock';
+      this.action = "requestStock";
       this.itemcode = itemcode;
       this.resourceid = 3;
       this.showlogin = true;
     },
     requestTransfer() {
-      if (this.stockSelected == '' || this.stockSelected == undefined) {
+      if (this.stockSelected == "" || this.stockSelected == undefined) {
         this.showlogin = false;
         this.$q.notify({
-          type: 'negative',
-          message: 'Debe seleccionar un artículo',
+          type: "negative",
+          message: "Debe seleccionar un artículo",
         });
       } else {
-        this.action = 'requestTransfer';
-        this.itemcode = this.stockSelected.split('-')[0];
-        this.whsFrom = this.stockSelected.split('-')[1];
+        this.action = "requestTransfer";
+        this.itemcode = this.stockSelected.split("-")[0];
+        this.whsFrom = this.stockSelected.split("-")[1];
         this.whsTo = this.store.getCurrentWhsCode.whsCode;
         this.resourceid = 2;
         this.showlogin = true;
@@ -311,18 +311,18 @@ export default defineComponent({
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.showlogin = false;
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
         switch (this.action) {
-          case 'requestStock':
+          case "requestStock":
             this.createRequest();
             break;
-          case 'requestTransfer':
+          case "requestTransfer":
             this.createTransfer();
             break;
         }
@@ -332,10 +332,10 @@ export default defineComponent({
     createRequest() {
       this.showLoading();
       let token = this.store.getToken as string;
-      if (token == '') {
+      if (token == "") {
         this.showlogin = false;
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
@@ -345,7 +345,7 @@ export default defineComponent({
         return axios
 
           .put(
-            `${this.store.options['ApiEndPoint']}/Stock/Requested/create`,
+            `${this.store.options["ApiEndPoint"]}/Stock/Requested/create`,
             {
               WhsCode: this.store.getCurrentWhsCode.whsCode,
               ItemCode: this.itemcode,
@@ -354,21 +354,21 @@ export default defineComponent({
           )
           .then(() => {
             this.$q.notify({
-              type: 'positive',
-              message: 'Se ha confirmado con éxito',
+              type: "positive",
+              message: "Se ha confirmado con éxito",
             });
-            this.itemcode = '';
-            this.token = '';
+            this.itemcode = "";
+            this.token = "";
             this.showlogin = false;
             this.hideLoading();
           })
           .catch(() => {
             this.$q.notify({
-              type: 'negative',
-              message: 'Error al confirmar el envío',
+              type: "negative",
+              message: "Error al confirmar el envío",
             });
-            this.itemcode = '';
-            this.token = '';
+            this.itemcode = "";
+            this.token = "";
             this.showlogin = false;
             this.hideLoading();
           });
@@ -376,28 +376,28 @@ export default defineComponent({
     },
     createTransfer() {
       let token = this.store.getToken as string;
-      if (token == '') {
+      if (token == "") {
         this.showlogin = false;
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
         let TransferData = new Transfer(0);
 
-        TransferData.title = this.urgent ? 'Interstore Urgente' : 'Interstore';
+        TransferData.title = this.urgent ? "Interstore Urgente" : "Interstore";
         TransferData.whsFrom = this.whsFrom;
         TransferData.whsTo = this.whsTo;
-        TransferData.salesPerson = '';
-        TransferData.status = 'SC';
+        TransferData.salesPerson = "";
+        TransferData.status = "SC";
         TransferData.type = this.urgent ? 3 : 4;
-        TransferData.dateCreated = '';
-        TransferData.dateSend = '';
-        TransferData.dateRec = '';
+        TransferData.dateCreated = "";
+        TransferData.dateSend = "";
+        TransferData.dateRec = "";
         TransferData.urgent = this.urgent;
-        TransferData.salesRepCreate = '';
-        TransferData.salesRepSent = '';
-        TransferData.salesRepReceived = '';
+        TransferData.salesRepCreate = "";
+        TransferData.salesRepSent = "";
+        TransferData.salesRepReceived = "";
         TransferData.deliveryMan = this.deliveryMan;
         TransferData.needDateTime = this.needDateTime;
         TransferData.addLine(this.itemcode).then(() => {
@@ -405,29 +405,29 @@ export default defineComponent({
           TransferData.createTransfer()
             .then(() => {
               this.$q.notify({
-                type: 'positive',
-                message: 'Transferencia creada con éxito',
+                type: "positive",
+                message: "Transferencia creada con éxito",
               });
               this.hideLoading();
-              this.itemcode = '';
-              this.stockSelected = '';
+              this.itemcode = "";
+              this.stockSelected = "";
               this.showlogin = false;
               this.deliveryMan = false;
-              this.needDateTime = '09:00';
+              this.needDateTime = "09:00";
               this.urgent = true;
             })
             .catch(() => {
               this.hideLoading();
               this.$q.notify({
-                type: 'negative',
+                type: "negative",
                 message:
-                  'No se ha podido crear la transferencia, intentelo más tarde',
+                  "No se ha podido crear la transferencia, intentelo más tarde",
               });
-              this.itemcode = '';
-              this.stockSelected = '';
+              this.itemcode = "";
+              this.stockSelected = "";
               this.showlogin = false;
               this.deliveryMan = false;
-              this.needDateTime = '09:00';
+              this.needDateTime = "09:00";
               this.urgent = true;
             });
         });

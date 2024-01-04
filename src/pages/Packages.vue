@@ -1,10 +1,13 @@
 <template>
+
   <div class="q-pa-md q-a-md">
     <login
       :show-login="showlogin"
       :resourceid="resourceid"
       @token="getToken"
     ></login>
+
+
     <div class="row">
       <div class="col">
         <q-form @submit="getPackagesList">
@@ -169,7 +172,7 @@
                     color="black"
                     icon="print"
                     title="Imprimir etiqueta del bulto"
-                    @click="printLabel(props)"
+                    @click="printLabel(props.row.id)"
                   ></q-btn>
                 </div>
               </q-td>
@@ -225,7 +228,7 @@
                 color="black"
                 icon="print"
                 title="Imprimir etiqueta"
-                @click="printLabel(props)"
+                @click="printLabel(props.row.id)"
               ></q-btn>
             </q-td>
           </template>
@@ -282,106 +285,106 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { Packages } from '../interfaces/Packages.ts';
-import { WhsInfo } from '../interfaces/WhsInfo';
-import Login from '../components/Login.vue';
-import axios from 'axios';
-import moment from 'moment';
-import { date, useQuasar } from 'quasar';
-import { TransferList } from 'src/Interfaces/TransferInterfaces';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { Packages } from "../interfaces/Packages.ts";
+import { WhsInfo } from "../interfaces/WhsInfo";
+import Login from "../components/Login.vue";
+import axios from "axios";
+import moment from "moment";
+import { date, useQuasar } from "quasar";
+import { TransferList } from "src/Interfaces/TransferInterfaces";
 
 export default defineComponent({
-  name: 'Packages',
-  components: { Login },
+  name: "Packages",
+  components: { Login  },
   setup() {
     const store = useWhsStore();
     const $q = useQuasar();
 
     const RColT = [
       {
-        name: 'id',
-        align: 'left',
-        label: 'NºTransferencia',
-        field: 'id',
+        name: "id",
+        align: "left",
+        label: "NºTransferencia",
+        field: "id",
         sortable: true,
       },
       {
-        name: 'title',
-        align: 'left',
-        label: 'Título',
-        field: 'title',
+        name: "title",
+        align: "left",
+        label: "Título",
+        field: "title",
         sortable: true,
       },
-      { name: 'actions', label: '', field: '', align: 'right' },
+      { name: "actions", label: "", field: "", align: "right" },
     ];
     const RCol = [
       {
-        name: 'status',
-        align: 'left',
-        label: 'Estado',
-        field: 'status',
+        name: "status",
+        align: "left",
+        label: "Estado",
+        field: "status",
         sortable: true,
       },
       {
-        name: 'id',
-        align: 'center',
-        label: 'NºBulto',
-        field: 'id',
+        name: "id",
+        align: "center",
+        label: "NºBulto",
+        field: "id",
         sortable: true,
       },
       {
-        name: 'dateCreated',
-        align: 'center',
-        label: 'F.Creación',
-        field: 'dateCreated',
+        name: "dateCreated",
+        align: "center",
+        label: "F.Creación",
+        field: "dateCreated",
         sortable: true,
-        format: (val) => {
-          return val != null ? moment(String(val)).format('DD/MM/YYYY') : '';
+        format: (val :string) => {
+          return val != null ? moment(String(val)).format("DD/MM/YYYY") : "";
         },
       },
       {
-        name: 'dateSent',
-        align: 'center',
-        label: 'F.Envío',
-        field: 'dateSent',
+        name: "dateSent",
+        align: "center",
+        label: "F.Envío",
+        field: "dateSent",
         sortable: true,
-        format: (val) => {
-          return val != null ? moment(String(val)).format('DD/MM/YYYY') : '';
+        format: (val : string) => {
+          return val != null ? moment(String(val)).format("DD/MM/YYYY") : "";
         },
       },
       {
-        name: 'dateReceived',
-        align: 'center',
-        label: 'F.Recepción',
-        field: 'dateReceived',
+        name: "dateReceived",
+        align: "center",
+        label: "F.Recepción",
+        field: "dateReceived",
         sortable: true,
-        format: (val) => {
-          return val != null ? moment(String(val)).format('DD/MM/YYYY') : '';
+        format: (val : string) => {
+          return val != null ? moment(String(val)).format("DD/MM/YYYY") : "";
         },
       },
       {
-        name: 'whsFrom',
-        align: 'left',
-        label: 'Desde',
-        field: 'whsFrom',
+        name: "whsFrom",
+        align: "left",
+        label: "Desde",
+        field: "whsFrom",
         sortable: true,
       },
       {
-        name: 'whsTo',
-        align: 'left',
-        label: 'Hasta',
-        field: 'whsTo',
+        name: "whsTo",
+        align: "left",
+        label: "Hasta",
+        field: "whsTo",
         sortable: true,
       },
       {
-        name: 'ntransfers',
-        align: 'center',
-        label: 'Nº de Transferencias',
-        field: 'ntransfers',
+        name: "ntransfers",
+        align: "center",
+        label: "Nº de Transferencias",
+        field: "ntransfers",
       },
-      { name: 'actions', label: '', field: '', align: 'right' },
+      { name: "actions", label: "", field: "", align: "right" },
     ];
 
     return {
@@ -389,9 +392,9 @@ export default defineComponent({
       RCol,
       RColT,
       statuslist: [
-        { label: 'En preparación', value: 1 },
-        { label: 'Enviado', value: 2 },
-        { label: 'Recibido', value: 3 },
+        { label: "En preparación", value: 1 },
+        { label: "Enviado", value: 2 },
+        { label: "Recibido", value: 3 },
       ],
       showLoading() {
         $q.loading.show();
@@ -403,25 +406,30 @@ export default defineComponent({
   },
   data() {
     return {
+      barcodeData: '',
       packagesList: [] as Packages[],
-      fromdate: '' as string,
-      todate: '' as string,
-      idtransfer: '' as string,
+      fromdate: "" as string,
+      todate: "" as string,
+      idtransfer: "" as string,
       selected: [] as Packages[],
       idPackage: 0 as number,
       idTransferToCancel: 0 as number,
       idPackageToCancel: 0 as number,
       resourceid: 0 as number,
-      action: '' as string,
+      action: "" as string,
       showlogin: false as boolean,
       whsList: [] as WhsInfo[],
       packageSelected: 0 as number,
       transfersList: [] as TransferList[],
-      status: 'En Preparación',
+      status: "En Preparación",
       idTransfer: 0 as number,
     };
   },
   methods: {
+    generateBarcode() {
+      console.log('hola');
+      // Puedes realizar otras acciones si es necesario
+    },
     getPackagesList() {
       this.packageSelected = 0;
       this.transfersList = [];
@@ -433,15 +441,25 @@ export default defineComponent({
         idTransfer: 0,
       };
 
-      if (this.idPackage != 0) params.id = this.idPackage;
-      if (this.idTransfer != 0) params.idTransfer = this.idTransfer;
-      if (this.fromdate != '')
-        params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
-      if (this.todate != '')
-        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD 23:59:59');
+      if (this.idPackage != 0)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.id = this.idPackage;
+      if (this.idTransfer != 0)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.idTransfer = this.idTransfer;
+      if (this.fromdate != "")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.FromDate = date.formatDate(this.fromdate, "YYYY-MM-DD");
+      if (this.todate != "")
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        params.ToDate = date.formatDate(this.todate, "YYYY-MM-DD 23:59:59");
 
       axios
-        .get(`${this.store.options['ApiEndPoint']}/packages/list`, {
+        .get(`${this.store.options["ApiEndPoint"]}/packages/list`, {
           params: params,
         })
         .then((x) => {
@@ -453,18 +471,18 @@ export default defineComponent({
         });
     },
     getStatus(status: number) {
-      return this.statuslist.filter((p) => p.value == status)[0]['label'];
+      return this.statuslist.filter((p) => p.value == status)[0]["label"];
     },
     getWhs() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/whs`)
+        .get(`${this.store.options["ApiEndPoint"]}/whs`)
         .then((x) => {
           Object.values(x.data).forEach((val) => {
             Object.values(val.whsCodes).forEach((valx) => {
               let x = {
                 id: 0,
-                whsCode: valx['whsCode'],
-                whsName: valx['whsName'],
+                whsCode: valx["whsCode"],
+                whsName: valx["whsName"],
                 isDefault: false,
               } as WhsInfo;
 
@@ -472,22 +490,22 @@ export default defineComponent({
             });
           });
           this.whsList.sort((a, b) => {
-            if (a['whsName'] < b['whsName']) {
+            if (a["whsName"] < b["whsName"]) {
               return -1;
             }
-            if (a['whsName'] > b['whsName']) {
+            if (a["whsName"] > b["whsName"]) {
               return 1;
             }
             return 0;
           });
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     getWhsName(whscode: string) {
-      if (whscode != '')
+      if (whscode != "")
         return (
           whscode +
-          ' - ' +
+          " - " +
           this.whsList.filter((e) => e.whsCode == whscode)[0].whsName
         );
     },
@@ -501,21 +519,21 @@ export default defineComponent({
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
         this.showLoading();
         switch (this.action) {
-          case 'cancel':
+          case "cancel":
             this.cancelPackage();
             break;
-          case 'send':
+          case "send":
             this.sendPackage();
             break;
-          case 'receive':
+          case "receive":
             this.receivePackage();
             break;
         }
@@ -523,15 +541,15 @@ export default defineComponent({
       }
 
       this.showlogin = false;
-      this.action = '';
+      this.action = "";
     },
     onEdit(props) {
-      this.$router.push('/transfer/' + props.row.id);
+      this.$router.push("/transfer/" + props.row.id);
     },
     precancelPackage(idTransfer: number, idPackage: number) {
       this.idTransferToCancel = idTransfer;
       this.idPackageToCancel = idPackage;
-      this.action = 'cancel';
+      this.action = "cancel";
       this.resourceid = 18;
       this.showlogin = true;
     },
@@ -543,7 +561,7 @@ export default defineComponent({
 
       axios
         .put(
-          `${this.store.options['ApiEndPoint']}/packages/delete`,
+          `${this.store.options["ApiEndPoint"]}/packages/delete`,
           {
             transferId: this.idTransferToCancel,
             packageId: this.idPackageToCancel,
@@ -556,15 +574,15 @@ export default defineComponent({
           this.getPackagesList();
           this.hideLoading();
           this.$q.notify({
-            type: 'positive',
-            message: 'Se ha desligado el bulto con éxito',
+            type: "positive",
+            message: "Se ha desligado el bulto con éxito",
           });
         })
         .catch(() => {
           this.hideLoading();
           this.$q.notify({
-            type: 'negative',
-            message: 'No se ha podido desligar el bulto',
+            type: "negative",
+            message: "No se ha podido desligar el bulto",
           });
         });
     },
@@ -576,7 +594,7 @@ export default defineComponent({
     },
     preSendPackage(idPackage: number) {
       this.idPackageToCancel = idPackage;
-      this.action = 'send';
+      this.action = "send";
       this.resourceid = 19;
       this.showlogin = true;
     },
@@ -588,7 +606,7 @@ export default defineComponent({
 
       axios
         .put(
-          `${this.store.options['ApiEndPoint']}/packages/send/${this.idPackageToCancel}`,
+          `${this.store.options["ApiEndPoint"]}/packages/send/${this.idPackageToCancel}`,
           {},
           config
         )
@@ -598,21 +616,21 @@ export default defineComponent({
           this.getPackagesList();
           this.hideLoading();
           this.$q.notify({
-            type: 'positive',
-            message: 'Se ha enviado el bulto con éxito',
+            type: "positive",
+            message: "Se ha enviado el bulto con éxito",
           });
         })
         .catch(() => {
           this.hideLoading();
           this.$q.notify({
-            type: 'negative',
-            message: 'No se ha podido enviar el bulto',
+            type: "negative",
+            message: "No se ha podido enviar el bulto",
           });
         });
     },
     preReceivePackage(idPackage: number) {
       this.idPackageToCancel = idPackage;
-      this.action = 'receive';
+      this.action = "receive";
       this.resourceid = 20;
       this.showlogin = true;
     },
@@ -624,7 +642,7 @@ export default defineComponent({
 
       axios
         .put(
-          `${this.store.options['ApiEndPoint']}/packages/receive/${this.idPackageToCancel}`,
+          `${this.store.options["ApiEndPoint"]}/packages/receive/${this.idPackageToCancel}`,
           {},
           config
         )
@@ -634,31 +652,35 @@ export default defineComponent({
           this.getPackagesList();
           this.hideLoading();
           this.$q.notify({
-            type: 'positive',
-            message: 'Se ha enviado el bulto con éxito',
+            type: "positive",
+            message: "Se ha enviado el bulto con éxito",
           });
         })
         .catch(() => {
           this.hideLoading();
           this.$q.notify({
-            type: 'negative',
-            message: 'No se ha podido enviar el bulto',
+            type: "negative",
+            message: "No se ha podido enviar el bulto",
           });
         });
     },
-    formatDate(val) {
-      return val != null ? moment(String(val)).format('DD/MM/YYYY') : '';
+    formatDate(val : string) {
+      return val != null ? moment(String(val)).format("DD/MM/YYYY") : "";
     },
-    printLabel(props) {
-      console.log(props);
+    printLabel(id : string) {
+
+
+      const newTab = window.open('', '_blank');
+      newTab.location.href = this.$router.resolve('/packagelabel/'+id).href;
+
     },
   },
   mounted() {
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 5);
-    this.fromdate = moment(String(yesterday)).format('YYYY-MM-DD');
-    this.todate = moment(String(today)).format('YYYY-MM-DD');
+    this.fromdate = moment(String(yesterday)).format("YYYY-MM-DD");
+    this.todate = moment(String(today)).format("YYYY-MM-DD");
 
     this.getWhs();
     this.getPackagesList();

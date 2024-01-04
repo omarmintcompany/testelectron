@@ -44,29 +44,29 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import EssentialLink from 'components/EssentialLink.vue';
+import { defineComponent, ref } from "vue";
+import EssentialLink from "components/EssentialLink.vue";
 
 const linksList = [
   {
-    title: 'Search',
-    caption: 'quasar.dev',
-    icon: 'book_online',
-    link: 'https://quasar.dev',
+    title: "Search",
+    caption: "quasar.dev",
+    icon: "book_online",
+    link: "https://quasar.dev",
     level: 0,
     children: [
       {
-        title: 'Documents',
-        caption: 'quasar.dev',
-        icon: 'school',
-        link: 'https://quasar.dev',
+        title: "Documents",
+        caption: "quasar.dev",
+        icon: "school",
+        link: "https://quasar.dev",
         level: 1,
         children: [
           {
-            title: 'Search (level 3)',
-            caption: 'quasar.dev',
-            icon: 'school',
-            link: 'https://quasar.dev',
+            title: "Search (level 3)",
+            caption: "quasar.dev",
+            icon: "school",
+            link: "https://quasar.dev",
             level: 2,
             children: [],
           },
@@ -75,34 +75,34 @@ const linksList = [
     ],
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
+    title: "Github",
+    caption: "github.com/quasarframework",
+    icon: "code",
+    link: "https://github.com/quasarframework",
     level: 0,
     children: [
       {
-        title: 'Github Level 2',
-        caption: 'quasar.dev',
-        icon: 'school',
-        link: 'https://quasar.dev',
+        title: "Github Level 2",
+        caption: "quasar.dev",
+        icon: "school",
+        link: "https://quasar.dev",
         level: 1,
         children: [],
       },
     ],
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'school',
-    link: 'prueba',
+    title: "Forum",
+    caption: "forum.quasar.dev",
+    icon: "school",
+    link: "prueba",
     level: 0,
     children: [],
   },
 ];
 
 export default defineComponent({
-  name: 'MainLayout',
+  name: "MainLayout",
 
   components: {
     EssentialLink,

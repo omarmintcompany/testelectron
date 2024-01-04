@@ -19,9 +19,9 @@
           MSM - Mint Store Manager
           <b>
             {{
-              store.getCurrentWhsCode.whsName != ''
-                ? ' - ' + store.getCurrentWhsCode.whsName
-                : ''
+              store.getCurrentWhsCode.whsName != ""
+                ? " - " + store.getCurrentWhsCode.whsName
+                : ""
             }}
           </b>
         </q-toolbar-title>
@@ -195,19 +195,19 @@
   </q-layout>
 </template>
 <script lang="ts">
-import NotificationBadges from '../components/NotificationBadges.vue';
-import { useWhsStore } from '../stores/whs';
+import NotificationBadges from "../components/NotificationBadges.vue";
+import { useWhsStore } from "../stores/whs";
 
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: 'MSMLayout',
+  name: "MSMLayout",
 
   components: { NotificationBadges },
 
   setup() {
     const store = useWhsStore();
-    const clientIp = '' as string;
+    const clientIp = "" as string;
 
     function minimize() {
       window.myWindowAPI?.minimize();
@@ -221,7 +221,7 @@ export default defineComponent({
       window.myWindowAPI?.close();
     }
     return {
-      tab: ref('Disponibilidad'),
+      tab: ref("Disponibilidad"),
       store,
       clientIp,
       minimize,

@@ -26,7 +26,7 @@
           class="my-sticky-header-table"
           ><template v-slot:body-cell-photo="props">
             <q-td :props="props" style="width: 80px">
-              <q-img :src="props.row.urlPhoto" fit />
+              <q-img :src="props.row.urlPhoto" />
             </q-td>
           </template>
           <template v-slot:body-cell-actions="props">
@@ -37,7 +37,7 @@
                 class="mint-reverse"
                 icon="check"
                 title="Confirmar"
-                @click="confirm(props)"
+                @click="confirm(props.value)"
               />
             </q-td>
           </template>
@@ -48,92 +48,92 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { StockRequested } from '../ts/Stock.ts';
-import Login from '../components/Login.vue';
-import moment from 'moment';
-import axios from 'axios';
-import { useQuasar } from 'quasar';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { StockRequested } from "../interfaces/Stock.ts";
+import Login from "../components/Login.vue";
+import moment from "moment";
+import axios from "axios";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
-  name: 'StockRequested',
+  name: "StockRequested",
   components: { Login },
   setup() {
     const store = useWhsStore();
     const $q = useQuasar();
     const RCol = [
-      { name: 'photo', label: '', field: '', align: 'center' },
+      { name: "photo", label: "", field: "", align: "center" },
 
       {
-        name: 'createDate',
-        align: 'center',
-        label: 'Fecha Petición',
-        field: 'createDate',
+        name: "createDate",
+        align: "center",
+        label: "Fecha Petición",
+        field: "createDate",
         sortable: false,
-        format: (val) => {
-          return moment(String(val)).format('DD/MM/YYYY');
+        format: (val: string) => {
+          return moment(String(val)).format("DD/MM/YYYY");
         },
       },
 
       {
-        name: 'createDate',
-        align: 'center',
-        label: 'Hora Petición',
-        field: 'createDate',
+        name: "createDate",
+        align: "center",
+        label: "Hora Petición",
+        field: "createDate",
         sortable: false,
-        format: (val) => {
-          return moment(String(val)).format('hh:mm');
+        format: (val: string) => {
+          return moment(String(val)).format("hh:mm");
         },
       },
       {
-        name: 'itemCode',
-        align: 'center',
-        label: 'Código Producto',
-        field: 'itemCode',
+        name: "itemCode",
+        align: "center",
+        label: "Código Producto",
+        field: "itemCode",
         sortable: false,
       },
       {
-        name: 'season',
-        align: 'center',
-        label: 'Temporada',
-        field: 'season',
+        name: "season",
+        align: "center",
+        label: "Temporada",
+        field: "season",
         sortable: false,
       },
       {
-        name: 'brand',
-        align: 'celeftnter',
-        label: 'Marca',
-        field: 'brand',
+        name: "brand",
+        align: "celeftnter",
+        label: "Marca",
+        field: "brand",
         sortable: true,
       },
       {
-        name: 'itemDescription',
-        align: 'left',
-        label: 'Descripción',
-        field: 'itemDescription',
+        name: "itemDescription",
+        align: "left",
+        label: "Descripción",
+        field: "itemDescription",
         sortable: false,
       },
 
       {
-        name: 'section',
-        align: 'left',
-        label: 'Sección',
-        field: 'section',
+        name: "section",
+        align: "left",
+        label: "Sección",
+        field: "section",
         sortable: true,
       },
       {
-        name: 'quantity',
-        align: 'center',
-        label: 'Cantidad',
-        field: 'quantity',
+        name: "quantity",
+        align: "center",
+        label: "Cantidad",
+        field: "quantity",
         sortable: false,
       },
       {
-        name: 'actions',
-        label: '',
-        field: '',
-        align: 'center',
+        name: "actions",
+        label: "",
+        field: "",
+        align: "center",
       },
     ];
     return {
@@ -151,7 +151,7 @@ export default defineComponent({
     return {
       stockRequested: [] as StockRequested[],
       showlogin: false as boolean,
-      token: '' as string,
+      token: "" as string,
       id: 0 as number,
       resourceid: 0 as number,
     };
@@ -161,7 +161,7 @@ export default defineComponent({
       this.showLoading();
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/Stock/Requested/list/${this.store.getCurrentWhsCode.whsCode}`
+          `${this.store.options["ApiEndPoint"]}/Stock/Requested/list/${this.store.getCurrentWhsCode.whsCode}`
         )
         .then((x) => {
           this.stockRequested = x.data;
@@ -171,21 +171,20 @@ export default defineComponent({
           this.hideLoading();
         });
     },
-    confirm(prop) {
-      this.visible = true;
+    confirm(prop: { row: { id: number } }) {
       this.id = prop.row.id;
-      this.token = '';
+      this.token = "";
       this.resourceid = 15;
       this.showlogin = true;
     },
     getToken(token: string) {
-      if (token == '') {
+      if (token == "") {
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
         this.id = 0;
-        this.token = '';
+        this.token = "";
         this.showlogin = false;
       } else {
         this.showLoading();
@@ -195,28 +194,28 @@ export default defineComponent({
 
         return axios
           .put(
-            `${this.store.options['ApiEndPoint']}/Stock/Requested/confirm/${this.id}`,
+            `${this.store.options["ApiEndPoint"]}/Stock/Requested/confirm/${this.id}`,
             {},
             config
           )
           .then(() => {
             this.$q.notify({
-              type: 'positive',
-              message: 'Se ha solicitado con éxito',
+              type: "positive",
+              message: "Se ha solicitado con éxito",
             });
             this.id = 0;
-            this.token = '';
+            this.token = "";
             this.showlogin = false;
             this.getList();
             this.hideLoading();
           })
           .catch(() => {
             this.$q.notify({
-              type: 'negative',
-              message: 'Error al solicitar el envío',
+              type: "negative",
+              message: "Error al solicitar el envío",
             });
             this.id = 0;
-            this.token = '';
+            this.token = "";
             this.showlogin = false;
             this.hideLoading();
           });

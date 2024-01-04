@@ -112,99 +112,99 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { TransferList } from '.axios./ts/TransferInterfaces.ts';
-import Login from '../components/Login.vue';
-import axios from 'axios';
-import moment from 'moment';
-import { date, useQuasar } from 'quasar';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { TransferList } from ".axios./ts/TransferInterfaces.ts";
+import Login from "../components/Login.vue";
+import axios from "axios";
+import moment from "moment";
+import { date, useQuasar } from "quasar";
 
 export default defineComponent({
-  name: 'PackageWizard',
+  name: "PackageWizard",
   components: { Login },
   setup() {
     const store = useWhsStore();
 
     const RCol = [
       {
-        name: 'status',
-        align: 'left',
-        label: 'Estado',
-        field: 'status',
+        name: "status",
+        align: "left",
+        label: "Estado",
+        field: "status",
         sortable: true,
       },
       {
-        name: 'id',
-        align: 'left',
-        label: 'NºTransferencia',
-        field: 'id',
+        name: "id",
+        align: "left",
+        label: "NºTransferencia",
+        field: "id",
         sortable: true,
       },
       {
-        name: 'typeName',
-        align: 'left',
-        label: 'Tipo',
-        field: 'typeName',
+        name: "typeName",
+        align: "left",
+        label: "Tipo",
+        field: "typeName",
         sortable: true,
       },
       {
-        name: 'title',
-        align: 'left',
-        label: 'Título',
-        field: 'title',
+        name: "title",
+        align: "left",
+        label: "Título",
+        field: "title",
         sortable: true,
       },
 
       {
-        name: 'whsFromName',
-        align: 'left',
-        label: 'Desde',
-        field: 'whsFromName',
+        name: "whsFromName",
+        align: "left",
+        label: "Desde",
+        field: "whsFromName",
         sortable: true,
       },
       {
-        name: 'whsToName',
-        align: 'left',
-        label: 'Hasta',
-        field: 'whsToName',
+        name: "whsToName",
+        align: "left",
+        label: "Hasta",
+        field: "whsToName",
         sortable: true,
       },
       {
-        name: 'dateCreated',
-        align: 'center',
-        label: 'F.Creación',
-        field: 'dateCreated',
+        name: "dateCreated",
+        align: "center",
+        label: "F.Creación",
+        field: "dateCreated",
         sortable: true,
         format: (val) => {
-          return moment(String(val)).format('DD/MM/YYYY');
+          return moment(String(val)).format("DD/MM/YYYY");
         },
       },
       {
-        name: 'needDateTime',
-        align: 'center',
-        label: 'F.Límite',
-        field: 'needDateTime',
+        name: "needDateTime",
+        align: "center",
+        label: "F.Límite",
+        field: "needDateTime",
         sortable: true,
         format: (val) => {
-          return moment(String(val)).format('DD/MM/YYYY');
+          return moment(String(val)).format("DD/MM/YYYY");
         },
       },
 
-      { name: 'actions', label: '', field: '', align: 'center' },
+      { name: "actions", label: "", field: "", align: "center" },
     ];
     const $q = useQuasar();
     return {
       store,
       RCol,
       statuslist: [
-        { label: 'Solicitado', value: 'SC' },
+        { label: "Solicitado", value: "SC" },
         //{ label: 'Listo sin bultos', value: 'SB' },
         //{ label: 'Listo con bultos', value: 'CB' },
-        { label: 'En Tránsito', value: 'T' },
+        { label: "En Tránsito", value: "T" },
         //{ label: 'Entregada', value: 'EN' },
-        { label: 'Recibida', value: 'CN' },
-        { label: 'Anulada', value: 'A' },
+        { label: "Recibida", value: "CN" },
+        { label: "Anulada", value: "A" },
       ],
       showLoading() {
         $q.loading.show();
@@ -217,15 +217,15 @@ export default defineComponent({
   data() {
     return {
       TOList: [] as TransferList[],
-      fromdate: '' as string,
-      todate: '' as string,
-      idtransfer: '' as string,
+      fromdate: "" as string,
+      todate: "" as string,
+      idtransfer: "" as string,
       selected: [] as TransferList[],
       idPackage: 0 as number,
       idTransferToCancel: 0 as number,
       idPackageToCancel: 0 as number,
       resourceid: 0 as number,
-      action: '' as string,
+      action: "" as string,
       showlogin: false as boolean,
     };
   },
@@ -234,19 +234,19 @@ export default defineComponent({
       this.showLoading();
       const params = {
         WhsCode: this.store.getCurrentWhsCode.whsCode,
-        status: 'T',
+        status: "T",
         Type: 1,
         IdPackage: true,
       };
 
       if (this.idtransfer != 0) params.id = this.idtransfer;
-      if (this.fromdate != '')
-        params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
-      if (this.todate != '')
-        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD  23:59:59');
+      if (this.fromdate != "")
+        params.FromDate = date.formatDate(this.fromdate, "YYYY-MM-DD");
+      if (this.todate != "")
+        params.ToDate = date.formatDate(this.todate, "YYYY-MM-DD  23:59:59");
 
       axios
-        .get(`${this.store.options['ApiEndPoint']}/transfers`, {
+        .get(`${this.store.options["ApiEndPoint"]}/transfers`, {
           params: params,
         })
         .then((x) => {
@@ -261,13 +261,13 @@ export default defineComponent({
       this.getTransfersList();
     },
     formatDate(value: string) {
-      return date.formatDate(value, 'DD-MM-YYYY');
+      return date.formatDate(value, "DD-MM-YYYY");
     },
     onEdit(props) {
-      this.$router.push('/transfer/' + props.row.id);
+      this.$router.push("/transfer/" + props.row.id);
     },
     getStatus(status: string) {
-      return this.statuslist.filter((p) => p.value == status)[0]['label'];
+      return this.statuslist.filter((p) => p.value == status)[0]["label"];
     },
     createPackage() {
       const config = {
@@ -277,7 +277,7 @@ export default defineComponent({
 
       axios
         .post(
-          `${this.store.options['ApiEndPoint']}/packages/create`,
+          `${this.store.options["ApiEndPoint"]}/packages/create`,
           {
             transfersIds: this.selected.map((e) => e.id),
             packageId:
@@ -293,14 +293,14 @@ export default defineComponent({
           this.getTransfersList();
           this.hideLoading();
           this.$q.notify({
-            type: 'positive',
-            message: 'Se ha creado el bulto con éxito',
+            type: "positive",
+            message: "Se ha creado el bulto con éxito",
           });
         })
         .catch((error) => {
           this.hideLoading();
           this.$q.notify({
-            type: 'negative',
+            type: "negative",
             message: error.response.data.messages,
           });
         });
@@ -308,11 +308,11 @@ export default defineComponent({
     precreatePackage() {
       if (this.selected.length == 0) {
         this.$q.notify({
-          type: 'negative',
-          message: 'Debe seleccionar al menos una transferencia',
+          type: "negative",
+          message: "Debe seleccionar al menos una transferencia",
         });
       } else {
-        this.action = 'save';
+        this.action = "save";
         this.resourceid = 17;
         this.showlogin = true;
       }
@@ -320,7 +320,7 @@ export default defineComponent({
     precancelPackage(idTransfer: number, idPackage: number) {
       this.idTransferToCancel = idTransfer;
       this.idPackageToCancel = idPackage;
-      this.action = 'cancel';
+      this.action = "cancel";
       this.resourceid = 18;
       this.showlogin = true;
     },
@@ -332,7 +332,7 @@ export default defineComponent({
 
       axios
         .put(
-          `${this.store.options['ApiEndPoint']}/packages/delete`,
+          `${this.store.options["ApiEndPoint"]}/packages/delete`,
           {
             transferId: this.idTransferToCancel,
             packageId: this.idPackageToCancel,
@@ -343,33 +343,33 @@ export default defineComponent({
           this.getTransfersList();
           this.hideLoading();
           this.$q.notify({
-            type: 'positive',
-            message: 'Se ha desligado el bulto con éxito',
+            type: "positive",
+            message: "Se ha desligado el bulto con éxito",
           });
         })
         .catch(() => {
           this.hideLoading();
           this.$q.notify({
-            type: 'negative',
-            message: 'No se ha podido desligar el bulto',
+            type: "negative",
+            message: "No se ha podido desligar el bulto",
           });
         });
     },
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
         this.showLoading();
         switch (this.action) {
-          case 'save':
+          case "save":
             this.createPackage();
             break;
-          case 'cancel':
+          case "cancel":
             this.cancelPackage();
             break;
         }
@@ -377,15 +377,15 @@ export default defineComponent({
       }
 
       this.showlogin = false;
-      this.action = '';
+      this.action = "";
     },
   },
   mounted() {
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 5);
-    this.fromdate = moment(String(yesterday)).format('YYYY-MM-DD');
-    this.todate = moment(String(today)).format('YYYY-MM-DD');
+    this.fromdate = moment(String(yesterday)).format("YYYY-MM-DD");
+    this.todate = moment(String(today)).format("YYYY-MM-DD");
 
     this.getTransfersList();
   },

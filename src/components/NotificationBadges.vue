@@ -47,11 +47,11 @@
 </template>
 
 <script lang="ts">
-import { useWhsStore } from '../stores/whs';
-import { defineComponent } from 'vue';
-import axios from 'axios';
+import { useWhsStore } from "../stores/whs";
+import { defineComponent } from "vue";
+import axios from "axios";
 export default defineComponent({
-  name: 'NotificationBadges',
+  name: "NotificationBadges",
   setup() {
     const store = useWhsStore();
     return {
@@ -74,7 +74,7 @@ export default defineComponent({
     getNotifications() {
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/NotifyWhsStatus/${this.store.getCurrentWhsCode.whsCode}/`
+          `${this.store.options["ApiEndPoint"]}/NotifyWhsStatus/${this.store.getCurrentWhsCode.whsCode}/`
         )
         .then((x) => {
           this.RequestedStock = x.data.requestedStock;
@@ -82,7 +82,7 @@ export default defineComponent({
           this.TransferIn = x.data.transfersIn;
           this.Reservations = x.data.reservations;
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
   },
   mounted() {

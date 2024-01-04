@@ -24,7 +24,7 @@
             <th class="mint-reverse font-xs">Temporada</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center font-xs">{{ data.fullSeason }}</td>
+            <td class="mint-cell text-center font-xs">{{ data.fullseason }}</td>
           </tr>
           <tr>
             <th class="mint-reverse font-xs">Marca</th>
@@ -51,13 +51,75 @@
 </template>
 
 <script lang="ts">
-import { ItemInfo } from '../interfaces/ItemData';
-import { defineComponent } from 'vue';
+import { ItemInfo } from "../interfaces/ItemData";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'refdataTableComponent',
+  name: "refdataTableComponent",
   props: {
-    data: {} as ItemInfo,
+    data: {
+      type: Object as () => ItemInfo, // Especificar el tipo
+      default: {} as ItemInfo, // Valor por defecto
+    },
+  },
+});
+</script>
+<!-- BarcodeDisplay.vue -->
+<template>
+  <div>
+    <VueQrcodeReader @onDecode="onDecode" />
+    <canvas ref="barcodeCanvas" />
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue';
+import { VueQrcodeReader } from 'vue-qrcode-reader';
+import bwipjs from 'bwip-js';
+
+export default defineComponent({
+  components: {
+    VueQrcodeReader,
+  },
+  setup() {
+    const canvasRef = ref<HTMLCanvasElement | null>(null);
+
+    onMounted(() => {
+      // Lógica adicional que puede necesitar al iniciar el componente
+    });
+
+    const onDecode = (data: string) => {
+      generateBarcode(data);
+    };
+
+    const generateBarcode = async (data: string) => {
+      try {
+        const format = 'CODE128';
+
+        const canvas = canvasRef.value;
+        const context = canvas?.getContext('2d');
+
+        if (canvas && context) {
+          // Limpia el canvas antes de generar un nuevo código de barras
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          await bwipjs.toCanvas(canvas, {
+            bcid: format,
+            text: data,
+            scale: 3,
+            includetext: true,
+            textxalign: 'center',
+          });
+        }
+      } catch (error) {
+        console.error(`Error al generar el código de barras: ${error}`);
+      }
+    };
+
+    return {
+      canvasRef,
+      onDecode,
+    };
   },
 });
 </script>

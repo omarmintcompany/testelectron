@@ -272,14 +272,14 @@
                     color="black"
                     icon="delete"
                     title="Eliminar linea"
-                    @click="deleteLine(props)"
+                    @click="deleteLine(props.row.itemCode)"
                     :disable="reservationIdLocal != 0"
                   />
                 </q-td>
               </template>
               <template v-slot:body-cell-photo="props">
                 <q-td :props="props" style="width: 80px">
-                  <q-img :src="geturl(props)" fit>
+                  <q-img :src="props.row.urlPhoto">
                     <template v-slot:error>
                       <div class="absolute-full flex flex-center text-white">
                         <q-icon name="no_photography" size="md" />
@@ -297,79 +297,79 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { Reservation } from '../ts/Reservation.ts';
-import { ReservationCategory } from '../interfaces/ReservationCategory.ts';
-import Login from '../components/Login.vue';
-import { date, useQuasar } from 'quasar';
-import axios from 'axios';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { Reservation } from "../ts/Reservation.ts";
+import { ReservationCategory } from "../interfaces/ReservationCategory.ts";
+import Login from "../components/Login.vue";
+import { date, useQuasar } from "quasar";
+import axios from "axios";
 
 export default defineComponent({
-  name: 'ReservationForm',
+  name: "ReservationForm",
   components: { Login },
   setup() {
     const $q = useQuasar();
     const store = useWhsStore();
     const RCol = [
-      { name: 'actions', label: '', field: '', align: 'center' },
-      { name: 'photo', label: '', field: '', align: 'center' },
+      { name: "actions", label: "", field: "", align: "center" },
+      { name: "photo", label: "", field: "", align: "center" },
       {
-        name: 'itemCode',
-        align: 'center',
-        label: 'Artículo',
-        field: 'itemCode',
+        name: "itemCode",
+        align: "center",
+        label: "Artículo",
+        field: "itemCode",
         sortable: true,
-        style: 'width: 100px',
+        style: "width: 100px",
       },
       {
-        name: 'supplierReferenceNumber',
-        align: 'center',
-        label: 'Referencia',
-        field: 'supplierReferenceNumber',
+        name: "supplierReferenceNumber",
+        align: "center",
+        label: "Referencia",
+        field: "supplierReferenceNumber",
         sortable: false,
       },
 
       {
-        name: 'modelDescription',
-        align: 'center',
-        label: 'Descripción',
-        field: 'itemDescription',
+        name: "modelDescription",
+        align: "center",
+        label: "Descripción",
+        field: "itemDescription",
         sortable: false,
       },
       {
-        name: 'size',
-        align: 'center',
-        label: 'Talla',
-        field: 'size',
+        name: "size",
+        align: "center",
+        label: "Talla",
+        field: "size",
         sortable: false,
       },
       {
-        name: 'brand',
-        align: 'center',
-        label: 'Marca',
-        field: 'brand',
+        name: "brand",
+        align: "center",
+        label: "Marca",
+        field: "brand",
         sortable: false,
       },
       {
-        name: 'section',
-        align: 'center',
-        label: 'Seccion',
-        field: 'section',
+        name: "section",
+        align: "center",
+        label: "Seccion",
+        field: "section",
         sortable: false,
       },
       {
-        name: 'family',
-        align: 'center',
-        label: 'Familia',
-        field: 'family',
+        name: "family",
+        align: "center",
+        label: "Familia",
+        field: "family",
         sortable: false,
       },
       {
-        name: 'quantity',
-        align: 'center',
-        label: 'Cantidad',
-        field: 'quantity',
+        name: "quantity",
+        align: "center",
+        label: "Cantidad",
+        field: "quantity",
         sortable: false,
       },
     ];
@@ -387,16 +387,16 @@ export default defineComponent({
   data() {
     return {
       resourceid: 0 as number,
-      action: '' as string,
+      action: "" as string,
       showlogin: false as boolean,
-      token: '' as string,
-      reservationData: new Reservation(0) as Reservation,
-      newItemCode: '' as string,
+      token: "" as string,
+      reservationData: {} as Reservation,
+      newItemCode: "" as string,
       categorylist: [] as ReservationCategory[],
       statuslist: [
-        { label: 'Abierta', value: 'SC' },
-        { label: 'Cancelada', value: 'C' },
-        { label: 'Confirmada', value: 'CN' },
+        { label: "Abierta", value: "SC" },
+        { label: "Cancelada", value: "C" },
+        { label: "Confirmada", value: "CN" },
       ],
       reservationIdLocal: 0 as number,
     };
@@ -409,21 +409,21 @@ export default defineComponent({
   },
   watch: {
     reservationId() {
-      this.reservationData = new Reservation(
+      let x: Reservation = new Reservation(
         0,
         this.store.getCurrentWhsCode.whsCode
       );
+      this.reservationData = x;
       this.reservationIdLocal = this.reservationId;
     },
   },
   methods: {
     loadReservationData() {
       this.showLoading();
-      console.log(this.reservationId);
       if (this.reservationIdLocal != 0) {
         axios
           .get(
-            `${this.store.options['ApiEndPoint']}/Reservation/${this.reservationIdLocal}`
+            `${this.store.options["ApiEndPoint"]}/Reservation/${this.reservationIdLocal}`
           )
           .then((x) => {
             this.reservationData = new Reservation(
@@ -445,7 +445,37 @@ export default defineComponent({
             this.reservationData.reservationLines = x.data.reservationLines;
 
             x.data.reservationLines.map(
-              (a) => (
+              (a: {
+                itemCode: string;
+                itemData: {
+                  itemCode: string;
+                  brand: string;
+                  itemGroupCode: string;
+                  modelCode: string;
+                  modelDescription: string;
+                  section: string;
+                  size: string;
+                  supplierColor: string;
+                  supplierReferenceNumber: string;
+                  season: string;
+                  itemDescription: string;
+                  family: string;
+                  urlPhoto: string;
+                };
+                brand: string;
+                itemGroupCode: string;
+                modelCode: string;
+                modelDescription: string;
+                section: string;
+                size: string;
+                supplierColor: string;
+                supplierReferenceNumber: string;
+                season: string;
+                itemDescription: string;
+                family: string;
+                urlPhoto: string;
+                whsCode: string;
+              }) => (
                 (a.itemCode = a.itemData.itemCode),
                 (a.brand = a.itemData.brand),
                 (a.itemGroupCode = a.itemData.itemGroupCode),
@@ -466,15 +496,15 @@ export default defineComponent({
 
             this.reservationData.dateCreated = date.formatDate(
               this.reservationData.dateCreated,
-              'YYYY-MM-DD'
+              "YYYY-MM-DD"
             );
             this.reservationData.pickDate = date.formatDate(
               this.reservationData.pickDateTime,
-              'YYYY-MM-DD'
+              "YYYY-MM-DD"
             );
             this.reservationData.pickTime = date.formatDate(
               this.reservationData.pickDateTime,
-              'hh:mm'
+              "hh:mm"
             );
             this.hideLoading();
           })
@@ -489,84 +519,80 @@ export default defineComponent({
         this.hideLoading();
       }
     },
-    geturl(prop) {
-      return prop.row.urlPhoto;
-    },
     getCategoryList() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/Reservation/category`)
+        .get(`${this.store.options["ApiEndPoint"]}/Reservation/category`)
         .then((x) => {
           this.categorylist = x.data;
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     addItem() {
-      if (this.newItemCode != '')
+      if (this.newItemCode != "")
         this.reservationData
           .addLine(this.newItemCode.toUpperCase())
           .then(() => {
             this.$q.notify({
-              type: 'positive',
+              type: "positive",
               message:
-                'El código ' +
+                "El código " +
                 this.newItemCode +
-                ' se ha añadido correctamente',
+                " se ha añadido correctamente",
             });
-            this.newItemCode = '';
-            document.getElementsByName('inputItem')[0].focus();
+            this.newItemCode = "";
+            document.getElementsByName("inputItem")[0].focus();
           })
           .catch(() => {
             this.$q.notify({
-              type: 'negative',
+              type: "negative",
               message:
-                'El código ' + this.newItemCode + ' no se ha podido añadir',
+                "El código " + this.newItemCode + " no se ha podido añadir",
             });
-            document.getElementsByName('inputItem')[0].focus();
+            document.getElementsByName("inputItem")[0].focus();
           });
     },
     onEnter() {
       this.addItem();
       return false;
     },
-    deleteLine(props) {
-      let itemcode: string = props.row.itemCode;
+    deleteLine(itemcode: string) {
       this.reservationData.delLine(itemcode).then(() => {
         this.$q.notify({
-          type: 'positive',
-          message: 'El código ' + itemcode + ' se ha eliminado correctamente',
+          type: "positive",
+          message: "El código " + itemcode + " se ha eliminado correctamente",
         });
       });
     },
     onSubmit() {
-      this.action = 'save';
-      this.resourceid = this.reservationData.status == 'SC' ? 7 : 4;
+      this.action = "save";
+      this.resourceid = this.reservationData.status == "SC" ? 7 : 4;
       this.showlogin = true;
     },
     save() {
       if (this.reservationData.reservationLines.length == 0) {
         this.$q.notify({
-          type: 'negative',
-          message: 'Debe añadir productos a la reserva',
+          type: "negative",
+          message: "Debe añadir productos a la reserva",
         });
       } else
         this.reservationData
           .createReservation()
           .then(() => {
             this.$q.notify({
-              type: 'positive',
-              message: 'Reserva creada con éxito',
+              type: "positive",
+              message: "Reserva creada con éxito",
             });
-            this.$router.push({ path: '/reservas' });
+            this.$router.push({ path: "/reservas" });
           })
           .catch(() => {
             this.$q.notify({
-              type: 'negative',
-              message: 'No se ha podido crear la reserva, intentelo más tarde',
+              type: "negative",
+              message: "No se ha podido crear la reserva, intentelo más tarde",
             });
           });
     },
     preduplicate() {
-      this.action = 'duplicate';
+      this.action = "duplicate";
       this.resourceid = 21;
       this.showlogin = true;
     },
@@ -575,16 +601,16 @@ export default defineComponent({
         .cancelReservation()
         .then(() => {
           this.$q.notify({
-            type: 'positive',
-            message: 'Reserva cancelada con éxito',
+            type: "positive",
+            message: "Reserva cancelada con éxito",
           });
           this.reservationData.id = 0;
           this.reservationIdLocal = 0;
         })
         .catch(() => {
           this.$q.notify({
-            type: 'negative',
-            message: 'No se ha podido cancelar la reserva, intentelo más tarde',
+            type: "negative",
+            message: "No se ha podido cancelar la reserva, intentelo más tarde",
           });
         });
     },
@@ -593,16 +619,16 @@ export default defineComponent({
         .updateReservation()
         .then(() => {
           this.$q.notify({
-            type: 'positive',
-            message: 'Reserva modificada con éxito',
+            type: "positive",
+            message: "Reserva modificada con éxito",
           });
-          this.$router.push({ path: '/reservas' });
+          this.$router.push({ path: "/reservas" });
         })
         .catch(() => {
           this.$q.notify({
-            type: 'negative',
+            type: "negative",
             message:
-              'No se ha podido modificar la reserva, intentelo más tarde',
+              "No se ha podido modificar la reserva, intentelo más tarde",
           });
         });
     },
@@ -611,15 +637,15 @@ export default defineComponent({
         .cancelReservation()
         .then(() => {
           this.$q.notify({
-            type: 'positive',
-            message: 'Reserva cancelada con éxito',
+            type: "positive",
+            message: "Reserva cancelada con éxito",
           });
-          this.$router.push({ path: '/reservas' });
+          this.$router.push({ path: "/reservas" });
         })
         .catch(() => {
           this.$q.notify({
-            type: 'negative',
-            message: 'No se ha podido cancelar la reserva, intentelo más tarde',
+            type: "negative",
+            message: "No se ha podido cancelar la reserva, intentelo más tarde",
           });
         });
     },
@@ -628,41 +654,41 @@ export default defineComponent({
         .confirmReservation()
         .then(() => {
           this.$q.notify({
-            type: 'positive',
-            message: 'Reserva confirmada con éxito',
+            type: "positive",
+            message: "Reserva confirmada con éxito",
           });
-          this.$router.push({ path: '/reservas' });
+          this.$router.push({ path: "/reservas" });
         })
         .catch(() => {
           this.$q.notify({
-            type: 'negative',
+            type: "negative",
             message:
-              'No se ha podido confirmar la reserva, intentelo más tarde',
+              "No se ha podido confirmar la reserva, intentelo más tarde",
           });
         });
     },
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
         this.showLoading();
         switch (this.action) {
-          case 'save':
+          case "save":
             if (this.reservationData.id == 0) this.save();
-            else if (this.reservationData.status == 'SC') this.update();
+            else if (this.reservationData.status == "SC") this.update();
             break;
-          case 'cancel':
-            if (this.reservationData.status == 'SC') this.cancel();
+          case "cancel":
+            if (this.reservationData.status == "SC") this.cancel();
             break;
-          case 'confirm':
-            if (this.reservationData.status == 'SC') this.confirm();
+          case "confirm":
+            if (this.reservationData.status == "SC") this.confirm();
             break;
-          case 'duplicate':
+          case "duplicate":
             if (this.reservationData.id != 0) this.duplicate();
             break;
         }
@@ -670,10 +696,10 @@ export default defineComponent({
       }
 
       this.showlogin = false;
-      this.action = '';
+      this.action = "";
     },
     actions(action: string) {
-      this.resourceid = action == 'cancel' ? 6 : 5;
+      this.resourceid = action == "cancel" ? 6 : 5;
       this.action = action;
       this.showlogin = true;
     },
@@ -682,7 +708,7 @@ export default defineComponent({
     this.reservationIdLocal = this.reservationId;
     this.getCategoryList();
     this.loadReservationData();
-    document.getElementsByName('inputItem')[0].focus();
+    document.getElementsByName("inputItem")[0].focus();
   },
 });
 </script>

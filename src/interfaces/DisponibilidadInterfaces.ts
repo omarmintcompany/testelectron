@@ -21,8 +21,8 @@ export interface itemTransit {
   qtyToRcv: number;
   whsCode1: string;
   whsCode2: string;
-  WhsNameFrom: string;
-  WhsNameTo: string;
+  whsNameFrom: string;
+  whsNameTo: string;
   ponumber: number;
   requestTime: string;
   sentTime: string;

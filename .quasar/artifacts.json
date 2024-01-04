@@ -1,1 +1,6 @@
-{"folders":["E:\\Quasar\\DesktopClient\\dist\\spa","E:\\Quasar\\DesktopClient\\dist\\electron"]}
+{
+  "folders": [
+    "E:\\Quasar\\DesktopClient\\dist\\spa",
+    "E:\\Quasar\\DesktopClient\\dist\\electron"
+  ]
+}

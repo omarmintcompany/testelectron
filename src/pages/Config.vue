@@ -39,14 +39,14 @@
 </template>
 
 <script lang="ts">
-import { useWhsStore } from '../stores/whs';
-import { WhsInfo } from '../interfaces/WhsInfo';
-import Login from '../components/Login.vue';
+import { useWhsStore } from "../stores/whs";
+import { WhsInfo } from "../interfaces/WhsInfo";
+import Login from "../components/Login.vue";
 
-import { useQuasar } from 'quasar';
+import { useQuasar } from "quasar";
 
 export default {
-  name: 'Config',
+  name: "Config",
   components: { Login },
   setup() {
     const store = useWhsStore();
@@ -63,10 +63,10 @@ export default {
   },
   data() {
     return {
-      WhsSelected: { whsCode: '', whsName: '', isDefault: false } as WhsInfo,
+      WhsSelected: { whsCode: "", whsName: "", isDefault: false } as WhsInfo,
       WhsList: [] as WhsInfo[],
       showlogin: false as boolean,
-      token: '' as string,
+      token: "" as string,
       resourceid: 0 as number,
     };
   },
@@ -83,27 +83,27 @@ export default {
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.showlogin = false;
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
         this.showLoading();
         this.store.setWhsCode(this.WhsSelected);
-        this.token = '';
+        this.token = "";
         this.showlogin = false;
         this.hideLoading();
         this.$q.notify({
           message:
-            'Se ha realizado el cambio a ' +
+            "Se ha realizado el cambio a " +
             this.WhsSelected.whsCode +
-            ' - ' +
+            " - " +
             this.WhsSelected.whsName,
-          color: 'green',
+          color: "green",
         });
-        this.$router.push({ path: '/' });
+        this.$router.push({ path: "/" });
       }
     },
   },

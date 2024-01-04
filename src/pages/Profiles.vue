@@ -130,41 +130,41 @@
 </template>
 
 <script lang="ts">
-import { useWhsStore } from '../stores/whs';
-import Login from '../components/Login.vue';
+import { useWhsStore } from "../stores/whs";
+import Login from "../components/Login.vue";
 
-import { Profiles, ProfileResources } from '../interfaces/Resources';
-import { useQuasar } from 'quasar';
-import axios from 'axios';
+import { Profiles, ProfileResources } from "../interfaces/Resources";
+import { useQuasar } from "quasar";
+import axios from "axios";
 
 export default {
-  name: 'Profiles',
+  name: "Profiles",
   components: { Login },
   setup() {
     const store = useWhsStore();
 
     const RCol = [
       {
-        name: 'name',
-        align: 'left',
-        label: 'Descripción',
-        field: 'name',
+        name: "name",
+        align: "left",
+        label: "Descripción",
+        field: "name",
         sortable: true,
       },
       {
-        name: 'actions',
-        label: '',
-        field: '',
-        align: 'right',
+        name: "actions",
+        label: "",
+        field: "",
+        align: "right",
       },
     ];
 
     const RColResources = [
       {
-        name: 'description',
-        align: 'left',
-        label: 'Permiso',
-        field: 'description',
+        name: "description",
+        align: "left",
+        label: "Permiso",
+        field: "description",
         sortable: true,
       },
     ];
@@ -185,37 +185,37 @@ export default {
     return {
       profiles: [] as Profiles[],
       profileResources: [] as ProfileResources[],
-      profileNameSelected: '' as string,
+      profileNameSelected: "" as string,
       profileIdSelected: 0 as number,
       showlogin: false as boolean,
-      userSelected: '' as string,
-      govIdSelected: '' as string,
+      userSelected: "" as string,
+      govIdSelected: "" as string,
       selected: [] as boolean[],
       resourceid: 0 as number,
       showUser: false as boolean,
-      filter: '' as string,
-      newProfile: '' as string,
+      filter: "" as string,
+      newProfile: "" as string,
     };
   },
   methods: {
     getProfiles() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/resources/profiles`)
+        .get(`${this.store.options["ApiEndPoint"]}/resources/profiles`)
         .then((x) => {
           this.profiles = x.data;
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
 
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
-        this.$router.push({ path: '/' });
+        this.$router.push({ path: "/" });
       } else {
         this.getProfiles();
         this.showUser = true;
@@ -227,7 +227,7 @@ export default {
       this.profileIdSelected = props.row.id;
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/resources/profiles/${props.row.id}`
+          `${this.store.options["ApiEndPoint"]}/resources/profiles/${props.row.id}`
         )
         .then((x) => {
           this.profileResources = x.data;
@@ -235,75 +235,75 @@ export default {
         })
         .catch(() => {
           this.$q.notify({
-            type: 'negative',
-            message: 'Error al obtener los permisos',
+            type: "negative",
+            message: "Error al obtener los permisos",
           });
         });
     },
     deleteProfile(props) {
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/resources/profiles/delete/${props.row.id}`
+          `${this.store.options["ApiEndPoint"]}/resources/profiles/delete/${props.row.id}`
         )
         .then(() => {
           this.$q.notify({
-            type: 'positive',
-            message: 'Perfil eliminado con éxito',
+            type: "positive",
+            message: "Perfil eliminado con éxito",
           });
           this.getProfiles();
         })
         .catch(() => {
           this.$q.notify({
-            type: 'negative',
-            message: 'Error al intentar eliminar el perfil',
+            type: "negative",
+            message: "Error al intentar eliminar el perfil",
           });
         });
     },
     saveProfileResources() {
       axios
-        .put(`${this.store.options['ApiEndPoint']}/resources/profiles/save`, {
+        .put(`${this.store.options["ApiEndPoint"]}/resources/profiles/save`, {
           Id: this.profileIdSelected,
           resources: this.selected.map((e) => e.id),
           name: this.profileNameSelected,
         })
         .then(() => {
           this.$q.notify({
-            type: 'positive',
-            message: 'Permisos guardados con éxito',
+            type: "positive",
+            message: "Permisos guardados con éxito",
           });
           this.getProfiles();
         })
         .catch(() => {
           this.$q.notify({
-            type: 'negative',
-            message: 'Error al grabar los permisos',
+            type: "negative",
+            message: "Error al grabar los permisos",
           });
         });
     },
     newProfileResources() {
-      if (this.newProfile == '' || this.newProfile == undefined)
+      if (this.newProfile == "" || this.newProfile == undefined)
         this.$q.notify({
-          type: 'negative',
-          message: 'Debe especificar un nombre para el perfil',
+          type: "negative",
+          message: "Debe especificar un nombre para el perfil",
         });
       else
         axios
-          .put(`${this.store.options['ApiEndPoint']}/resources/profiles/new`, {
+          .put(`${this.store.options["ApiEndPoint"]}/resources/profiles/new`, {
             Id: 0,
             resources: [],
             name: this.newProfile,
           })
           .then(() => {
             this.$q.notify({
-              type: 'positive',
-              message: 'Perfil creado con éxito',
+              type: "positive",
+              message: "Perfil creado con éxito",
             });
             this.getProfiles();
           })
           .catch(() => {
             this.$q.notify({
-              type: 'negative',
-              message: 'Error al intentar crear el perfil',
+              type: "negative",
+              message: "Error al intentar crear el perfil",
             });
           });
     },

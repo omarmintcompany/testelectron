@@ -148,82 +148,82 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { IReservation } from '../ts/Reservation.ts';
-import { ReservationCategory } from '../interfaces/ReservationCategory.ts';
-import axios from 'axios';
-import moment from 'moment';
-import { date, useQuasar } from 'quasar';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { IReservation } from "../ts/Reservation.ts";
+import { ReservationCategory } from "../interfaces/ReservationCategory.ts";
+import axios from "axios";
+import moment from "moment";
+import { date, useQuasar } from "quasar";
 
 export type ReservationList = IReservation[];
 
 export default defineComponent({
-  name: 'Reservations',
+  name: "Reservations",
   setup() {
     const store = useWhsStore();
 
     const RCol = [
-      { name: 'timeout', label: '', field: '', align: 'center' },
+      { name: "timeout", label: "", field: "", align: "center" },
       {
-        name: 'id',
-        align: 'center',
-        label: 'NºReserva',
-        field: 'id',
+        name: "id",
+        align: "center",
+        label: "NºReserva",
+        field: "id",
         sortable: true,
       },
       {
-        name: 'categoryName',
-        align: 'center',
-        label: 'Tipo',
-        field: 'categoryName',
+        name: "categoryName",
+        align: "center",
+        label: "Tipo",
+        field: "categoryName",
         sortable: false,
       },
       {
-        name: 'status',
-        align: 'center',
-        label: 'Estado',
-        field: 'status',
+        name: "status",
+        align: "center",
+        label: "Estado",
+        field: "status",
         sortable: true,
       },
       {
-        name: 'dateCreated',
-        align: 'center',
-        label: 'Fecha Creación',
-        field: 'dateCreated',
+        name: "dateCreated",
+        align: "center",
+        label: "Fecha Creación",
+        field: "dateCreated",
         sortable: true,
       },
       {
-        name: 'pickDateTime',
-        align: 'center',
-        label: 'Fecha Recogida',
-        field: 'pickDateTime',
+        name: "pickDateTime",
+        align: "center",
+        label: "Fecha Recogida",
+        field: "pickDateTime",
         sortable: true,
       },
       {
-        name: 'cardName',
-        align: 'left',
-        label: 'Cliente',
-        field: 'cardName',
+        name: "cardName",
+        align: "left",
+        label: "Cliente",
+        field: "cardName",
         sortable: true,
       },
       {
-        name: 'notes',
-        align: 'left',
-        label: 'Observaciones',
-        field: 'notes',
+        name: "notes",
+        align: "left",
+        label: "Observaciones",
+        field: "notes",
         sortable: false,
       },
-      { name: 'actions', label: '', field: '', align: 'center' },
+      { name: "actions", label: "", field: "", align: "center" },
     ];
     const $q = useQuasar();
     return {
       store,
       RCol,
       statuslist: [
-        { label: 'Abierta', value: 'SC' },
-        { label: 'Cancelada', value: 'C' },
-        { label: 'Confirmada', value: 'CN' },
+        { label: "Abierta", value: "SC" },
+        { label: "Cancelada", value: "C" },
+        { label: "Confirmada", value: "CN" },
       ],
       showLoading() {
         $q.loading.show();
@@ -236,13 +236,13 @@ export default defineComponent({
   data() {
     return {
       RList: [] as ReservationList[],
-      fromdate: '' as string,
-      todate: '' as string,
-      idreservation: '' as string,
-      itemcode: '' as string,
-      status: 'Abierta',
+      fromdate: "" as string,
+      todate: "" as string,
+      idreservation: "" as string,
+      itemcode: "" as string,
+      status: "Abierta",
       categorylist: [] as ReservationCategory[],
-      category: 'Reserva Normal',
+      category: "Reserva Normal",
     };
   },
   methods: {
@@ -253,46 +253,46 @@ export default defineComponent({
       return date < today ? 1 : 0;
     },
     formatDate(value: string) {
-      return moment(String(value)).format('DD/MM/YYYY');
+      return moment(String(value)).format("DD/MM/YYYY");
     },
     getStatus(value: string) {
       switch (value) {
-        case 'SC':
-          return 'Abierta';
+        case "SC":
+          return "Abierta";
           break;
-        case 'CN':
-          return 'Completada';
+        case "CN":
+          return "Completada";
           break;
-        case 'C':
-          return 'Cancelada';
+        case "C":
+          return "Cancelada";
           break;
       }
     },
     getCategoryList() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/Reservation/category`)
+        .get(`${this.store.options["ApiEndPoint"]}/Reservation/category`)
         .then((x) => {
           this.categorylist = x.data;
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     getReservationList() {
       this.showLoading();
       const params = {
         WhsCode: this.store.getCurrentWhsCode.whsCode,
-        status: this.status.value != undefined ? this.status.value : 'SC',
-        category: this.category.id != undefined ? this.category.id : '1',
+        status: this.status.value != undefined ? this.status.value : "SC",
+        category: this.category.id != undefined ? this.category.id : "1",
       };
 
-      if (this.idreservation != '') params.id = this.idreservation;
-      if (this.fromdate != '')
-        params.FromDate = date.formatDate(this.fromdate, 'YYYY-MM-DD');
-      if (this.todate != '')
-        params.ToDate = date.formatDate(this.todate, 'YYYY-MM-DD 23:59:59');
-      if (this.itemcode != '') params.ItemCode = this.itemcode;
+      if (this.idreservation != "") params.id = this.idreservation;
+      if (this.fromdate != "")
+        params.FromDate = date.formatDate(this.fromdate, "YYYY-MM-DD");
+      if (this.todate != "")
+        params.ToDate = date.formatDate(this.todate, "YYYY-MM-DD 23:59:59");
+      if (this.itemcode != "") params.ItemCode = this.itemcode;
 
       axios
-        .get(`${this.store.options['ApiEndPoint']}/Reservation/list/`, {
+        .get(`${this.store.options["ApiEndPoint"]}/Reservation/list/`, {
           params: params,
         })
         .then((x) => {
@@ -307,7 +307,7 @@ export default defineComponent({
       this.getReservationList();
     },
     onEdit(props) {
-      this.$router.push('/reservas/' + props.row.id);
+      this.$router.push("/reservas/" + props.row.id);
     },
   },
   mounted() {

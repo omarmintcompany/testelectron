@@ -399,145 +399,145 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { Transfer } from '../ts/Transfer.ts';
-import { WhsInfo } from '../interfaces/WhsInfo';
-import Login from '../components/Login.vue';
-import { date, useQuasar } from 'quasar';
-import axios from 'axios';
-import { SalesRep, Reason } from '../interfaces/Transfers';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { Transfer } from "../ts/Transfer.ts";
+import { WhsInfo } from "../interfaces/WhsInfo";
+import Login from "../components/Login.vue";
+import { date, useQuasar } from "quasar";
+import axios from "axios";
+import { SalesRep, Reason } from "../interfaces/Transfers";
 
 export default defineComponent({
-  name: 'TransferForm',
+  name: "TransferForm",
   components: { Login },
 
   setup() {
     const $q = useQuasar();
     const store = useWhsStore();
     const RColReason = [
-      { name: 'photo', label: '', field: '', align: 'center' },
+      { name: "photo", label: "", field: "", align: "center" },
       {
-        name: 'brand',
-        align: 'left',
-        label: 'Marca',
-        field: 'brand',
+        name: "brand",
+        align: "left",
+        label: "Marca",
+        field: "brand",
         sortable: true,
       },
       {
-        name: 'section',
-        align: 'left',
-        label: 'Sección',
-        field: 'section',
+        name: "section",
+        align: "left",
+        label: "Sección",
+        field: "section",
         sortable: true,
       },
       {
-        name: 'itemCode',
-        align: 'center',
-        label: 'Artículo',
-        field: 'itemCode',
+        name: "itemCode",
+        align: "center",
+        label: "Artículo",
+        field: "itemCode",
         sortable: true,
-        style: 'width: 100px',
+        style: "width: 100px",
       },
       {
-        name: 'size',
-        align: 'left',
-        label: 'Talla',
-        field: 'size',
+        name: "size",
+        align: "left",
+        label: "Talla",
+        field: "size",
       },
       {
-        name: 'reason',
-        label: '',
-        field: '',
-        align: 'center',
-        style: 'min-width:200px',
+        name: "reason",
+        label: "",
+        field: "",
+        align: "center",
+        style: "min-width:200px",
       },
     ];
     const RCol = [
-      { name: 'actions', label: '', field: '', align: 'center' },
-      { name: 'photo', label: '', field: '', align: 'center' },
+      { name: "actions", label: "", field: "", align: "center" },
+      { name: "photo", label: "", field: "", align: "center" },
       {
-        name: 'brand',
-        align: 'left',
-        label: 'Marca',
-        field: 'brand',
+        name: "brand",
+        align: "left",
+        label: "Marca",
+        field: "brand",
         sortable: true,
       },
       {
-        name: 'section',
-        align: 'left',
-        label: 'Sección',
-        field: 'section',
+        name: "section",
+        align: "left",
+        label: "Sección",
+        field: "section",
         sortable: true,
       },
       {
-        name: 'family',
-        align: 'left',
-        label: 'Familia',
-        field: 'family',
+        name: "family",
+        align: "left",
+        label: "Familia",
+        field: "family",
         sortable: true,
       },
       {
-        name: 'supplierReferenceNumber',
-        align: 'center',
-        label: 'Referencia',
-        field: 'supplierReferenceNumber',
+        name: "supplierReferenceNumber",
+        align: "center",
+        label: "Referencia",
+        field: "supplierReferenceNumber",
         sortable: true,
-        style: 'width: 100px',
+        style: "width: 100px",
       },
       {
-        name: 'itemCode',
-        align: 'center',
-        label: 'Artículo',
-        field: 'itemCode',
+        name: "itemCode",
+        align: "center",
+        label: "Artículo",
+        field: "itemCode",
         sortable: true,
-        style: 'width: 100px',
+        style: "width: 100px",
       },
       {
-        name: 'color',
-        align: 'left',
-        label: 'Color',
-        field: 'color',
+        name: "color",
+        align: "left",
+        label: "Color",
+        field: "color",
       },
       {
-        name: 'size',
-        align: 'left',
-        label: 'Talla',
-        field: 'size',
+        name: "size",
+        align: "left",
+        label: "Talla",
+        field: "size",
       },
       {
-        name: 'season',
-        align: 'left',
-        label: 'Temporada',
-        field: 'season',
+        name: "season",
+        align: "left",
+        label: "Temporada",
+        field: "season",
       },
       {
-        name: 'stock',
-        align: 'right',
-        label: 'Stock',
-        field: 'stock',
+        name: "stock",
+        align: "right",
+        label: "Stock",
+        field: "stock",
       },
       {
-        name: 'orderQty',
-        align: 'right',
-        label: 'A Enviar',
-        field: 'orderQty',
+        name: "orderQty",
+        align: "right",
+        label: "A Enviar",
+        field: "orderQty",
       },
       {
-        name: 'sendQty',
-        align: 'right',
-        label: 'Enviado',
-        field: 'sendQty',
+        name: "sendQty",
+        align: "right",
+        label: "Enviado",
+        field: "sendQty",
       },
 
       {
-        name: 'recvQty',
-        align: 'right',
-        label: 'Recibido',
-        field: 'recvQty',
+        name: "recvQty",
+        align: "right",
+        label: "Recibido",
+        field: "recvQty",
       },
-      { name: 'reason', label: '', field: '', align: 'left' },
-      { name: 'quantity', label: '', field: '', align: 'right' },
+      { name: "reason", label: "", field: "", align: "left" },
+      { name: "quantity", label: "", field: "", align: "right" },
     ];
 
     return {
@@ -555,24 +555,24 @@ export default defineComponent({
   data() {
     return {
       resourceid: 0 as number,
-      action: '' as string,
+      action: "" as string,
       showlogin: false as boolean,
       showreasonsform: false as boolean,
-      token: '' as string,
+      token: "" as string,
       transferData: new Transfer(0) as Transfer,
-      newItemCode: '' as string,
+      newItemCode: "" as string,
       statuslist: [
-        { label: 'En espera', value: 'SC' },
-        { label: 'Listo sin bultos', value: 'SB' },
-        { label: 'Listo con bultos', value: 'CB' },
-        { label: 'En Tránsito', value: 'T' },
-        { label: 'Entregada', value: 'EN' },
-        { label: 'Recibida', value: 'CN' },
-        { label: 'Anulada', value: 'A' },
+        { label: "En espera", value: "SC" },
+        { label: "Listo sin bultos", value: "SB" },
+        { label: "Listo con bultos", value: "CB" },
+        { label: "En Tránsito", value: "T" },
+        { label: "Entregada", value: "EN" },
+        { label: "Recibida", value: "CN" },
+        { label: "Anulada", value: "A" },
       ],
       urgentList: [
-        { label: 'No', value: false },
-        { label: 'Si', value: true },
+        { label: "No", value: false },
+        { label: "Si", value: true },
       ],
       whsList: [] as WhsInfo[],
       types: [] as TransferType[],
@@ -595,35 +595,35 @@ export default defineComponent({
     this.getTypes();
     this.getWhs();
     this.loadTransferData();
-    document.getElementsByName('inputItem')[0].focus();
+    document.getElementsByName("inputItem")[0].focus();
   },
   methods: {
     printTransfer() {
       window.open(
-        'http://192.168.1.25/PrintTransferencia?PONumber=' +
+        "http://192.168.1.25/PrintTransferencia?PONumber=" +
           this.transferData.id
       );
     },
     printLabels() {
       window.open(
-        'http://192.168.1.130/intranet_macys/utilities/labels2/Step_02_WS.php?WS_ID=' +
+        "http://192.168.1.130/intranet_macys/utilities/labels2/Step_02_WS.php?WS_ID=" +
           this.transferData.id +
-          '&ForStoreID=' +
+          "&ForStoreID=" +
           (
-            Number(this.store.getCurrentWhsCode.whsCode.replace('T', '')) - 100
+            Number(this.store.getCurrentWhsCode.whsCode.replace("T", "")) - 100
           ).toString()
       );
     },
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
       } else {
-        if (this.action == 'Cancel') {
+        if (this.action == "Cancel") {
           this.showLoading();
           this.transferData
             .cancelTransfer()
@@ -631,26 +631,26 @@ export default defineComponent({
               this.hideLoading();
               if (x) {
                 this.$q.notify({
-                  type: 'positive',
-                  message: 'Transferencia anulada con éxito',
+                  type: "positive",
+                  message: "Transferencia anulada con éxito",
                 });
-                this.$router.push({ path: '/transfersout' });
+                this.$router.push({ path: "/transfersout" });
               } else {
                 this.$q.notify({
-                  type: 'negative',
-                  message: 'No se ha podido anular la transferencia',
+                  type: "negative",
+                  message: "No se ha podido anular la transferencia",
                 });
               }
             })
             .catch((error) => {
               this.hideLoading();
               this.$q.notify({
-                type: 'negative',
+                type: "negative",
                 message: error.response.data.messages,
               });
             });
         }
-        if (this.action != 'Cancel') {
+        if (this.action != "Cancel") {
           if (this.transferData.id == 0 || this.transferData.id == undefined) {
             this.showLoading();
             this.transferData
@@ -658,15 +658,15 @@ export default defineComponent({
               .then(() => {
                 this.hideLoading();
                 this.$q.notify({
-                  type: 'positive',
-                  message: 'Transferencia creada con éxito',
+                  type: "positive",
+                  message: "Transferencia creada con éxito",
                 });
-                this.$router.push({ path: '/' });
+                this.$router.push({ path: "/" });
               })
               .catch((e) => {
                 this.hideLoading();
                 this.$q.notify({
-                  type: 'negative',
+                  type: "negative",
                   message: e.message,
                 });
               });
@@ -680,22 +680,22 @@ export default defineComponent({
                 this.hideLoading();
                 if (x) {
                   this.$q.notify({
-                    type: 'positive',
-                    message: 'Transferencia enviada con éxito',
+                    type: "positive",
+                    message: "Transferencia enviada con éxito",
                   });
-                  this.$router.push({ path: '/transfersout' });
+                  this.$router.push({ path: "/transfersout" });
                 } else
                   this.$q.notify({
-                    type: 'negative',
+                    type: "negative",
                     message:
-                      'Las unidades enviadas superan a las unidades propuestas',
+                      "Las unidades enviadas superan a las unidades propuestas",
                   });
               })
               .catch((error) => {
                 console.log(error);
                 this.hideLoading();
                 this.$q.notify({
-                  type: 'negative',
+                  type: "negative",
                   message: error,
                 });
               });
@@ -707,21 +707,21 @@ export default defineComponent({
                 this.hideLoading();
                 if (x) {
                   this.$q.notify({
-                    type: 'positive',
-                    message: 'Transferencia recibida con éxito',
+                    type: "positive",
+                    message: "Transferencia recibida con éxito",
                   });
-                  this.$router.push({ path: '/transfersin' });
+                  this.$router.push({ path: "/transfersin" });
                 } else
                   this.$q.notify({
-                    type: 'negative',
+                    type: "negative",
                     message:
-                      'Las unidades recibidas son diferentes a las enviadas',
+                      "Las unidades recibidas son diferentes a las enviadas",
                   });
               })
               .catch((error) => {
                 this.hideLoading();
                 this.$q.notify({
-                  type: 'negative',
+                  type: "negative",
                   message: error,
                 });
               });
@@ -730,18 +730,18 @@ export default defineComponent({
       }
 
       this.showlogin = false;
-      this.action = '';
+      this.action = "";
     },
     getWhs() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/whs`)
+        .get(`${this.store.options["ApiEndPoint"]}/whs`)
         .then((x) => {
           Object.values(x.data).forEach((val) => {
             Object.values(val.whsCodes).forEach((valx) => {
               let x = {
                 id: 0,
-                whsCode: valx['whsCode'],
-                whsName: valx['whsName'],
+                whsCode: valx["whsCode"],
+                whsName: valx["whsName"],
                 isDefault: false,
               } as WhsInfo;
 
@@ -749,20 +749,20 @@ export default defineComponent({
             });
           });
           this.whsList.sort((a, b) => {
-            if (a['whsName'] < b['whsName']) {
+            if (a["whsName"] < b["whsName"]) {
               return -1;
             }
-            if (a['whsName'] > b['whsName']) {
+            if (a["whsName"] > b["whsName"]) {
               return 1;
             }
             return 0;
           });
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     getTypes() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/transfers/types`)
+        .get(`${this.store.options["ApiEndPoint"]}/transfers/types`)
         .then((x) => {
           Object.values(x.data).forEach((val) => {
             let item = {
@@ -772,42 +772,42 @@ export default defineComponent({
             this.types.push(item);
           });
           this.types.sort((a, b) => {
-            if (a['description'] < b['description']) {
+            if (a["description"] < b["description"]) {
               return -1;
             }
-            if (a['description'] > b['description']) {
+            if (a["description"] > b["description"]) {
               return 1;
             }
             return 0;
           });
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     getSalesRep() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/salesrep`)
+        .get(`${this.store.options["ApiEndPoint"]}/salesrep`)
         .then((x) => {
           this.salesreps = x.data;
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     getReasons() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/transfers/reasons`)
+        .get(`${this.store.options["ApiEndPoint"]}/transfers/reasons`)
         .then((x) => {
           this.reasons = x.data;
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     geturl(prop) {
       return prop.row.urlPhoto;
     },
     loadTransferData() {
       this.showLoading();
-      if (this.transferId != '0') {
+      if (this.transferId != "0") {
         axios
           .get(
-            `${this.store.options['ApiEndPoint']}/transfers/${this.transferId}/${this.store.getCurrentWhsCode.whsCode}`
+            `${this.store.options["ApiEndPoint"]}/transfers/${this.transferId}/${this.store.getCurrentWhsCode.whsCode}`
           )
           .then((x) => {
             this.transferData = new Transfer(x.data.id);
@@ -828,16 +828,16 @@ export default defineComponent({
 
             this.transferData.dateCreated = date.formatDate(
               x.data.dateCreated,
-              'YYYY-MM-DD hh:mm'
+              "YYYY-MM-DD hh:mm"
             );
             this.transferData.dateSend = date.formatDate(
               x.data.dateSend,
-              'YYYY-MM-DD hh:mm'
+              "YYYY-MM-DD hh:mm"
             );
 
             this.transferData.dateRec = date.formatDate(
               x.data.dateRec,
-              'YYYY-MM-DD hh:mm'
+              "YYYY-MM-DD hh:mm"
             );
 
             this.transferData.transferLines.map((x) => (x.quantity = 0));
@@ -859,15 +859,15 @@ export default defineComponent({
       let itemcode: string = props.row.itemCode;
       this.transferData.delLine(itemcode).then(() => {
         this.$q.notify({
-          type: 'positive',
-          message: 'El código ' + itemcode + ' se ha eliminado correctamente',
+          type: "positive",
+          message: "El código " + itemcode + " se ha eliminado correctamente",
         });
       });
     },
     titleSetAll() {
       return this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
-        ? 'Enviar todo'
-        : 'Recibir todo';
+        ? "Enviar todo"
+        : "Recibir todo";
     },
     setAll() {
       if (this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode)
@@ -878,31 +878,31 @@ export default defineComponent({
     },
     typeTransfer() {
       return this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
-        ? 'Transferencia de Salida'
-        : 'Transferencia de Entrada';
+        ? "Transferencia de Salida"
+        : "Transferencia de Entrada";
     },
     labelItem() {
       return this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
-        ? 'Artículo a enviar'
-        : 'Artículo a recibir';
+        ? "Artículo a enviar"
+        : "Artículo a recibir";
     },
     checkVisibility(action: string) {
       switch (action) {
-        case 'setAll':
+        case "setAll":
           if (
             this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode
           ) {
             // Enviar todo
-            return (this.transferData.status == 'SC' ||
-              this.transferData.status == 'SB' ||
-              this.transferData.status == 'CB') &&
+            return (this.transferData.status == "SC" ||
+              this.transferData.status == "SB" ||
+              this.transferData.status == "CB") &&
               this.transferData.transferLines.length > 0 &&
               this.transferData.id != 0
               ? true
               : false;
           } else {
-            return this.transferData.status == 'T' ||
-              this.transferData.status == 'EN'
+            return this.transferData.status == "T" ||
+              this.transferData.status == "EN"
               ? true
               : false;
           }
@@ -915,8 +915,8 @@ export default defineComponent({
     addItem() {
       if (this.transferData.id == 0) this.addItemToLine();
       else if (
-        this.transferData.status != 'A' &&
-        this.transferData.status != 'CN'
+        this.transferData.status != "A" &&
+        this.transferData.status != "CN"
       ) {
         if (this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode) {
           this.transferData
@@ -924,31 +924,31 @@ export default defineComponent({
             .then((x) => {
               if (x) {
                 this.$q.notify({
-                  type: 'positive',
+                  type: "positive",
                   message:
-                    'El código ' +
+                    "El código " +
                     this.newItemCode +
-                    ' se ha procesado correctamente',
+                    " se ha procesado correctamente",
                 });
               } else {
                 this.$q.notify({
-                  type: 'negative',
+                  type: "negative",
                   message:
-                    'El código ' +
+                    "El código " +
                     this.newItemCode +
-                    ' no existe en la transferencia',
+                    " no existe en la transferencia",
                 });
               }
-              this.newItemCode = '';
-              document.getElementsByName('inputItem')[0].focus();
+              this.newItemCode = "";
+              document.getElementsByName("inputItem")[0].focus();
             })
             .catch((e) => {
               this.$q.notify({
-                type: 'negative',
+                type: "negative",
                 message: e.message,
               });
-              this.newItemCode = '';
-              document.getElementsByName('inputItem')[0].focus();
+              this.newItemCode = "";
+              document.getElementsByName("inputItem")[0].focus();
             });
         } else {
           this.transferData
@@ -956,52 +956,52 @@ export default defineComponent({
             .then((x) => {
               if (x) {
                 this.$q.notify({
-                  type: 'positive',
+                  type: "positive",
                   message:
-                    'El código ' +
+                    "El código " +
                     this.newItemCode +
-                    ' se ha procesado correctamente',
+                    " se ha procesado correctamente",
                 });
               } else {
                 this.$q.notify({
-                  type: 'negative',
+                  type: "negative",
                   message:
-                    'El código ' +
+                    "El código " +
                     this.newItemCode +
-                    ' no existe en la transferencia',
+                    " no existe en la transferencia",
                 });
               }
-              this.newItemCode = '';
-              document.getElementsByName('inputItem')[0].focus();
+              this.newItemCode = "";
+              document.getElementsByName("inputItem")[0].focus();
             })
             .catch((e) => {
               this.$q.notify({
-                type: 'negative',
+                type: "negative",
                 message: e.message,
               });
-              this.newItemCode = '';
-              document.getElementsByName('inputItem')[0].focus();
+              this.newItemCode = "";
+              document.getElementsByName("inputItem")[0].focus();
             });
         }
       }
     },
     addItemToLine() {
-      if (this.newItemCode != '') {
+      if (this.newItemCode != "") {
         this.transferData
           .addLine(this.newItemCode.toUpperCase())
           .then(() => {
             this.$q.notify({
-              type: 'positive',
+              type: "positive",
               message:
-                'El código ' +
+                "El código " +
                 this.newItemCode +
-                ' se ha añadido correctamente',
+                " se ha añadido correctamente",
             });
-            this.newItemCode = '';
+            this.newItemCode = "";
           })
           .catch((e) => {
             this.$q.notify({
-              type: 'negative',
+              type: "negative",
               message: e.message,
             });
           });
@@ -1017,33 +1017,33 @@ export default defineComponent({
         if (this.transferData.transferLines.length <= 0) {
           this.resourceid = 0;
           this.$q.notify({
-            type: 'negative',
-            message: 'Debe añadir productos a la transferencia',
+            type: "negative",
+            message: "Debe añadir productos a la transferencia",
           });
         }
         if (
-          this.transferData.title == '' ||
+          this.transferData.title == "" ||
           this.transferData.title == undefined
         ) {
           this.resourceid = 0;
           this.$q.notify({
-            type: 'negative',
-            message: 'Debe especificar un título',
+            type: "negative",
+            message: "Debe especificar un título",
           });
         }
         if (
-          this.transferData.whsTo == '' ||
+          this.transferData.whsTo == "" ||
           this.transferData.whsTo == undefined
         ) {
           this.resourceid = 0;
           this.$q.notify({
-            type: 'negative',
-            message: 'Debe definir un destino',
+            type: "negative",
+            message: "Debe definir un destino",
           });
         }
       } else if (
-        this.transferData.status != 'A' &&
-        this.transferData.status != 'CN'
+        this.transferData.status != "A" &&
+        this.transferData.status != "CN"
       ) {
         if (this.transferData.whsFrom == this.store.getCurrentWhsCode.whsCode) {
           this.resourceid =
@@ -1070,21 +1070,21 @@ export default defineComponent({
       this.showlogin = true;
     },
     cancelTransfer() {
-      this.action = 'Cancel';
+      this.action = "Cancel";
       this.resourceid = 14;
       this.showlogin = true;
     },
     getReadonDescription(id: number) {
       return this.reasons.filter((e) => e.id == id).length > 0
-        ? this.reasons.filter((e) => e.id == id)[0]['description']
-        : '';
+        ? this.reasons.filter((e) => e.id == id)[0]["description"]
+        : "";
     },
     checkSaveStatus() {
       return (this.transferData.whsFrom ==
         this.store.getCurrentWhsCode.whsCode &&
-        this.transferData.status == 'SC') ||
+        this.transferData.status == "SC") ||
         (this.transferData.whsTo == this.store.getCurrentWhsCode.whsCode &&
-          this.transferData.status == 'T')
+          this.transferData.status == "T")
         ? true
         : false;
     },

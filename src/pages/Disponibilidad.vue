@@ -97,27 +97,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useWhsStore } from '../stores/whs';
-import { useQuasar } from 'quasar';
-import axios from 'axios';
-import stockTableComponent from '../components/stockTable.vue';
-import reservationTableComponent from '../components/reservationTable.vue';
-import transitTableComponent from '../components/transitTable.vue';
-import refdataTableComponent from '../components/refdataTable.vue';
+import { defineComponent } from "vue";
+import { useWhsStore } from "../stores/whs";
+import { useQuasar } from "quasar";
+import axios from "axios";
+import stockTableComponent from "../components/stockTable.vue";
+import reservationTableComponent from "../components/reservationTable.vue";
+import transitTableComponent from "../components/transitTable.vue";
+import refdataTableComponent from "../components/refdataTable.vue";
 import {
   stockInfo,
   whsconfig,
   refData,
   stockTable,
-} from 'src/Interfaces/TransferInterfaces';
+} from "src/Interfaces/TransferInterfaces";
 import {
   itemReservations,
   itemTransit,
-} from 'src/Interfaces/DisponibilidadInterfaces';
-import { ItemInfo } from 'src/Interfaces/ItemData';
+} from "src/Interfaces/DisponibilidadInterfaces";
+import { ItemInfo } from "src/Interfaces/ItemData";
 export default defineComponent({
-  name: 'Disponibilidad',
+  name: "Disponibilidad",
   components: {
     stockTableComponent,
     refdataTableComponent,
@@ -140,7 +140,7 @@ export default defineComponent({
   },
   data() {
     return {
-      itemCode: '' as string,
+      itemCode: "" as string,
       whsConfig: [] as whsconfig[],
       stockInfo: [] as stockInfo[],
       itemData: {} as ItemInfo,
@@ -151,15 +151,15 @@ export default defineComponent({
       loadConf: false as boolean,
       loadItemData: false as boolean,
       refData: {
-        brand: '',
-        modelCode: '',
-        modelName: '',
-        rprov: '',
-        section: '',
+        brand: "",
+        modelCode: "",
+        modelName: "",
+        rprov: "",
+        section: "",
         itemCodes: [],
         itemCodesAlt: [],
       } as refData,
-      itemCodeAlt: '' as string,
+      itemCodeAlt: "" as string,
     };
   },
   computed: {
@@ -205,10 +205,10 @@ export default defineComponent({
   mounted() {
     this.$refs.ItemCodeInput.focus();
 
-    this.itemCode = this.$route.params.itemcode = !''
+    this.itemCode = this.$route.params.itemcode = !""
       ? this.$route.params.itemcode
-      : '';
-    if (this.itemCode != undefined && this.itemCode != '') this.onSubmit();
+      : "";
+    if (this.itemCode != undefined && this.itemCode != "") this.onSubmit();
   },
   methods: {
     onSubmit() {
@@ -218,21 +218,21 @@ export default defineComponent({
       this.loadStock = false;
       this.loadItemData = false;
       axios
-        .get(`${this.store.options['ApiEndPoint']}/whs`)
+        .get(`${this.store.options["ApiEndPoint"]}/whs`)
         .then((x) => {
           this.whsConfig = x.data as whsconfig[];
           this.loadConf = true;
         })
         .catch(() => {
           this.$q.notify({
-            message: 'Error al obtener informacion de tiendas',
-            type: 'negative',
+            message: "Error al obtener informacion de tiendas",
+            type: "negative",
           });
         });
 
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/disponibilidad/${this.itemCode}/refData`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/refData`
         )
         .then((x) => {
           this.refData = x.data as refData;
@@ -241,14 +241,14 @@ export default defineComponent({
         .catch(() => {
           this.$q.loading.hide();
           this.$q.notify({
-            message: 'Error al obtener informacion de referencia',
-            type: 'negative',
+            message: "Error al obtener informacion de referencia",
+            type: "negative",
           });
         });
 
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/disponibilidad/${this.itemCode}`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}`
         )
         .then((x) => {
           this.stockInfo = x.data as stockInfo[];
@@ -258,15 +258,15 @@ export default defineComponent({
         })
         .catch(() => {
           this.$q.notify({
-            message: 'Error al obtener informacion de stock',
-            type: 'negative',
+            message: "Error al obtener informacion de stock",
+            type: "negative",
           });
           this.$q.loading.hide();
         });
 
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/disponibilidad/${this.itemCode}/itemData`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/itemData`
         )
         .then((x) => {
           this.itemData = x.data as ItemInfo;
@@ -276,15 +276,15 @@ export default defineComponent({
         })
         .catch(() => {
           this.$q.notify({
-            message: 'Error al obtener informacion de stock',
-            type: 'negative',
+            message: "Error al obtener informacion de stock",
+            type: "negative",
           });
           this.$q.loading.hide();
         });
 
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/disponibilidad/${this.itemCode}/reservations`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/reservations`
         )
         .then((x) => {
           this.itemReservations = x.data as itemReservations;
@@ -294,15 +294,15 @@ export default defineComponent({
         })
         .catch(() => {
           this.$q.notify({
-            message: 'Error al obtener las reservas',
-            type: 'negative',
+            message: "Error al obtener las reservas",
+            type: "negative",
           });
           this.$q.loading.hide();
         });
 
       axios
         .get(
-          `${this.store.options['ApiEndPoint']}/disponibilidad/${this.itemCode}/transit`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/transit`
         )
         .then((x) => {
           this.itemTransit = x.data as itemTransit;
@@ -312,8 +312,8 @@ export default defineComponent({
         })
         .catch(() => {
           this.$q.notify({
-            message: 'Error al obtener el tránsito',
-            type: 'negative',
+            message: "Error al obtener el tránsito",
+            type: "negative",
           });
           this.$q.loading.hide();
         });

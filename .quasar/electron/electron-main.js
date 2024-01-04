@@ -6,17 +6,25 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
+  if ((from && typeof from === "object") || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+        __defProp(to, key, {
+          get: () => from[key],
+          enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable,
+        });
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
+var __toESM = (mod, isNodeMode, target) => (
+  (target = mod != null ? __create(__getProtoOf(mod)) : {}),
+  __copyProps(
+    isNodeMode || !mod || !mod.__esModule
+      ? __defProp(target, "default", { value: mod, enumerable: true })
+      : target,
+    mod
+  )
+);
 
 // src-electron/electron-main.ts
 var import_electron = require("electron");
@@ -26,13 +34,18 @@ var import_os = __toESM(require("os"));
 (0, import_main.initialize)();
 var platform = process.platform || import_os.default.platform();
 try {
-  if (platform === "win32" && import_electron.nativeTheme.shouldUseDarkColors === true) {
+  if (
+    platform === "win32" &&
+    import_electron.nativeTheme.shouldUseDarkColors === true
+  ) {
     require("fs").unlinkSync(
-      import_path.default.join(import_electron.app.getPath("userData"), "DevTools Extensions")
+      import_path.default.join(
+        import_electron.app.getPath("userData"),
+        "DevTools Extensions"
+      )
     );
   }
-} catch (_) {
-}
+} catch (_) {}
 var mainWindow;
 function createWindow() {
   mainWindow = new import_electron.BrowserWindow({
@@ -42,8 +55,8 @@ function createWindow() {
     frame: false,
     webPreferences: {
       sandbox: false,
-      preload: import_path.default.join(__dirname, "electron-preload.js")
-    }
+      preload: import_path.default.join(__dirname, "electron-preload.js"),
+    },
   });
   (0, import_main.enable)(mainWindow.webContents);
   mainWindow.loadURL("http://localhost:9300");

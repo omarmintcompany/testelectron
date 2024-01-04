@@ -86,51 +86,51 @@
 </template>
 
 <script lang="ts">
-import { useWhsStore } from '../stores/whs';
-import Login from '../components/Login.vue';
-import { WhsInfo } from '../interfaces/WhsInfo';
-import { useQuasar } from 'quasar';
-import axios from 'axios';
+import { useWhsStore } from "../stores/whs";
+import Login from "../components/Login.vue";
+import { WhsInfo } from "../interfaces/WhsInfo";
+import { useQuasar } from "quasar";
+import axios from "axios";
 
 export default {
-  name: 'Mapping',
+  name: "Mapping",
   components: { Login },
   setup() {
     const store = useWhsStore();
 
     const RCol = [
       {
-        name: 'ip',
-        align: 'center',
-        label: 'IP',
-        field: 'ip',
+        name: "ip",
+        align: "center",
+        label: "IP",
+        field: "ip",
         sortable: true,
       },
       {
-        name: 'whsCode',
-        align: 'left',
-        label: 'Tienda/Almacén',
-        field: 'whsCode',
+        name: "whsCode",
+        align: "left",
+        label: "Tienda/Almacén",
+        field: "whsCode",
         sortable: true,
         format: (val: string, row: WhsInfo) => {
-          return val + ' - ' + row.whsName;
+          return val + " - " + row.whsName;
         },
       },
       {
-        name: 'isDefault',
-        align: 'center',
-        label: '',
-        field: 'isDefault',
+        name: "isDefault",
+        align: "center",
+        label: "",
+        field: "isDefault",
         sortable: false,
         format: (val: string, row: WhsInfo) => {
-          return row.isDefault ? 'Principal' : '';
+          return row.isDefault ? "Principal" : "";
         },
       },
       {
-        name: 'actions',
-        label: '',
-        field: '',
-        align: 'center',
+        name: "actions",
+        label: "",
+        field: "",
+        align: "center",
       },
     ];
     const $q = useQuasar();
@@ -138,9 +138,9 @@ export default {
       store,
       RCol,
       statuslist: [
-        { label: 'Abierta', value: 'SC' },
-        { label: 'Cancelada', value: 'C' },
-        { label: 'Confirmada', value: 'CN' },
+        { label: "Abierta", value: "SC" },
+        { label: "Cancelada", value: "C" },
+        { label: "Confirmada", value: "CN" },
       ],
       showLoading() {
         $q.loading.show();
@@ -155,8 +155,8 @@ export default {
       Mapping: [] as WhsInfo[],
       showlogin: false as boolean,
       whsList: [] as WhsInfo[],
-      ipAddress: '' as string,
-      whsCode: 'T101' as string,
+      ipAddress: "" as string,
+      whsCode: "T101" as string,
       isDefault: false as boolean,
       resourceid: 0 as number,
       showMapping: false as boolean,
@@ -165,22 +165,22 @@ export default {
   methods: {
     getMapping() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/whsipmapping/list`)
+        .get(`${this.store.options["ApiEndPoint"]}/whsipmapping/list`)
         .then((x) => {
           this.Mapping = x.data;
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
     getWhs() {
       axios
-        .get(`${this.store.options['ApiEndPoint']}/whs`)
+        .get(`${this.store.options["ApiEndPoint"]}/whs`)
         .then((x) => {
           Object.values(x.data).forEach((val) => {
             Object.values(val.whsCodes).forEach((valx) => {
               let x = {
                 id: 0,
-                whsCode: valx['whsCode'],
-                whsName: valx['whsName'],
+                whsCode: valx["whsCode"],
+                whsName: valx["whsName"],
                 isDefault: false,
               } as WhsInfo;
 
@@ -188,27 +188,27 @@ export default {
             });
           });
           this.whsList.sort((a, b) => {
-            if (a['whsName'] < b['whsName']) {
+            if (a["whsName"] < b["whsName"]) {
               return -1;
             }
-            if (a['whsName'] > b['whsName']) {
+            if (a["whsName"] > b["whsName"]) {
               return 1;
             }
             return 0;
           });
         })
-        .catch((err) => console.log('Axios err: ', err));
+        .catch((err) => console.log("Axios err: ", err));
     },
 
     getToken() {
       let token = this.store.getToken as string;
 
-      if (token == '') {
+      if (token == "") {
         this.$q.notify({
-          type: 'negative',
+          type: "negative",
           message: this.store.getLastError,
         });
-        this.$router.push({ path: '/' });
+        this.$router.push({ path: "/" });
       } else {
         this.getMapping();
         this.getWhs();
@@ -231,21 +231,21 @@ export default {
         this.showLoading();
         axios
           .get(
-            `${this.store.options['ApiEndPoint']}/whsipmapping/delete/${props.row.id}`
+            `${this.store.options["ApiEndPoint"]}/whsipmapping/delete/${props.row.id}`
           )
           .then(() => {
             this.getMapping();
             this.hideLoading();
             this.$q.notify({
-              type: 'positive',
-              message: 'Se ha eliminado el mapeo con éxito',
+              type: "positive",
+              message: "Se ha eliminado el mapeo con éxito",
             });
           })
           .catch(() => {
             this.hideLoading();
             this.$q.notify({
-              type: 'negative',
-              message: 'No se ha podido eliminar el mapeo',
+              type: "negative",
+              message: "No se ha podido eliminar el mapeo",
             });
           });
       }
@@ -253,10 +253,10 @@ export default {
     createMapping() {
       this.showLoading();
       axios
-        .put(`${this.store.options['ApiEndPoint']}/whsipmapping/create/`, {
+        .put(`${this.store.options["ApiEndPoint"]}/whsipmapping/create/`, {
           whsCode: this.whsCode,
           whsName: this.whsList.filter((e) => e.whsCode == this.whsCode)[0][
-            'whsName'
+            "whsName"
           ],
           ip: this.ipAddress,
           isDefault: this.isDefault,
@@ -265,15 +265,15 @@ export default {
           this.getMapping();
           this.hideLoading();
           this.$q.notify({
-            type: 'positive',
-            message: 'Se ha creado el mapeo con éxito',
+            type: "positive",
+            message: "Se ha creado el mapeo con éxito",
           });
         })
         .catch(() => {
           this.hideLoading();
           this.$q.notify({
-            type: 'negative',
-            message: 'No se ha podido crear el mapeo',
+            type: "negative",
+            message: "No se ha podido crear el mapeo",
           });
         });
     },

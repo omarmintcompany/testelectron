@@ -1,7 +1,7 @@
-import { app, BrowserWindow, nativeTheme } from 'electron';
-import { initialize, enable } from '@electron/remote/main'; // <-- add this
-import path from 'path';
-import os from 'os';
+import { app, BrowserWindow, nativeTheme } from "electron";
+import { initialize, enable } from "@electron/remote/main"; // <-- add this
+import path from "path";
+import os from "os";
 
 initialize(); // <-- add this
 
@@ -9,9 +9,9 @@ initialize(); // <-- add this
 const platform = process.platform || os.platform();
 
 try {
-  if (platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
-    require('fs').unlinkSync(
-      path.join(app.getPath('userData'), 'DevTools Extensions')
+  if (platform === "win32" && nativeTheme.shouldUseDarkColors === true) {
+    require("fs").unlinkSync(
+      path.join(app.getPath("userData"), "DevTools Extensions")
     );
   }
 } catch (_) {}
@@ -29,7 +29,7 @@ function createWindow() {
     frame: false, // <-- add this
     webPreferences: {
       sandbox: false,
-      preload: path.join(__dirname, 'electron-preload.js'),
+      preload: path.join(__dirname, "electron-preload.js"),
     },
   });
 
@@ -42,25 +42,25 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   } else {
     // we're on production; no access to devtools pls
-    mainWindow.webContents.on('devtools-opened', () => {
+    mainWindow.webContents.on("devtools-opened", () => {
       mainWindow?.webContents.closeDevTools();
     });
   }
 
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = undefined;
   });
 }
 
 app.whenReady().then(createWindow);
 
-app.on('window-all-closed', () => {
-  if (platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (mainWindow === undefined) {
     createWindow();
   }
