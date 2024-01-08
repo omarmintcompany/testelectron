@@ -14,5 +14,6 @@ export interface Packages {
   status: string;
   whsFrom: string;
   whsTo: string;
+  CodeBarPackage: number;
   transfers: TransferHeader[];
 }

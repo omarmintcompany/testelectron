@@ -1,16 +1,17 @@
 <template>
   <div>
-    <div class="packagelabel">
+    <div class="packagelabel divTable">
       <q-img src="~assets/mint.png" width="40px"/>
       <div class="barcode-container">
         <canvas ref="barcodeCanvas" style="width: 200px; height: 50px;" />
-        <q-label class="bulto-label"><b>Bulto:</b> {{ packageid }}</q-label>
       </div>
     </div>
+    <q-label class="bulto-label"><b>Bulto:</b> {{ packageid }}</q-label>
   </div>
 </template>
 <script>
 import bwipjs from 'bwip-js';
+import '../css/packagelabel.scss';
 
 export default {
   data() {
@@ -59,25 +60,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Estilos opcionales para el componente */
-.packagelabel {
-  display: flex;
-  align-items: center;
-  margin-left: 20px;
-}
-
-.barcode-container {
-  text-align: center;
-  margin-top: 10px; /* Ajusta según sea necesario */
-}
-
-canvas {
-  margin: 20px;
-}
-
-.bulto-label {
-  margin-top: 5px; /* Ajusta según sea necesario */
-}
-</style>

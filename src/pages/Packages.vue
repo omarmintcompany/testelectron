@@ -172,7 +172,7 @@
                     color="black"
                     icon="print"
                     title="Imprimir etiqueta del bulto"
-                    @click="printLabel(props.row.id)"
+                    @click="printLabel(getCodeBar(props.row.id,props.row.CodeBarPackage))"
                   ></q-btn>
                 </div>
               </q-td>
@@ -674,6 +674,16 @@ export default defineComponent({
       newTab.location.href = this.$router.resolve('/packagelabel/'+id).href;
 
     },
+    getCodeBar(id: number, codebar?: number): number {
+      if (codebar === undefined) {
+        const currentYear = new Date().getFullYear();
+        const lastTwoDigitsOfYear = currentYear % 100;
+        return lastTwoDigitsOfYear * 10000000 + 1000000 + id;
+      } else {
+        return codebar;
+      }
+    }
+
   },
   mounted() {
     const today = new Date();
