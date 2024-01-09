@@ -1,5 +1,4 @@
 <template>
-
   <div class="q-pa-md q-a-md">
     <login
       :show-login="showlogin"
@@ -95,7 +94,7 @@
 
               <q-td key="id" :props="props">
                 <div>
-                  {{ props.row.id }}
+                  {{ getCodeBar(props.row.id,props.row.CodeBarPackage) }}
                 </div>
               </q-td>
               <q-td key="dateCreated" :props="props">
@@ -444,7 +443,7 @@ export default defineComponent({
       if (this.idPackage != 0)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        params.id = this.idPackage;
+        params.CodeBarPackage = this.idPackage;
       if (this.idTransfer != 0)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

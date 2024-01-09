@@ -5,7 +5,7 @@ import axios from "axios";
 export const useWhsStore = defineStore("whs", {
   state: () => ({
     options: {
-      ApiEndPoint: "http://10.0.6.6:32771",
+      ApiEndPoint: "http://10.0.6.6:32773",
       WhsData: { whsCode: "", whsName: "", isDefault: false } as WhsInfo,
       WhsList: [] as WhsInfo[],
       token: "" as string,

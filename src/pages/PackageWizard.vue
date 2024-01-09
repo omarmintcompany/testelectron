@@ -98,7 +98,7 @@
                 <q-btn
                   icon="cancel"
                   class="mint-reverse font-xs"
-                  :label="'Bulto Nº' + x.id"
+                  :label=" getCodeBar(x.id,x.codeBarPackage)"
                   :disable="x.status != 1"
                   @click="precancelPackage(props.row.id, x.id)"
                 /><q-separator inset vertical />
@@ -379,6 +379,15 @@ export default defineComponent({
       this.showlogin = false;
       this.action = "";
     },
+    getCodeBar(id: number, codebar?: number): number {
+      if (codebar === undefined || codebar == 0) {
+        const currentYear = new Date().getFullYear();
+        const lastTwoDigitsOfYear = currentYear % 100;
+        return lastTwoDigitsOfYear * 10000000 + 1000000 + id;
+      } else {
+        return codebar;
+      }
+    }
   },
   mounted() {
     const today = new Date();
