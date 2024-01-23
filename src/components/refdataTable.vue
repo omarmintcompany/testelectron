@@ -13,36 +13,44 @@
       <table style="width: 100%">
         <thead>
           <tr>
-            <th class="mint-reverse font-xs">Referencia</th>
+            <th class="mint-reverse font-xs" colspan="2">Referencia</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center font-xs">
+            <td class="mint-cell text-center font-xs" colspan="2">
               {{ data.supplierReferenceNumber }}
             </td>
           </tr>
           <tr>
-            <th class="mint-reverse font-xs">Temporada</th>
+            <th class="mint-reverse font-xs" colspan="2">Temporada</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center font-xs">{{ data.fullseason }}</td>
+            <td class="mint-cell text-center font-xs" colspan="2">{{ data.fullSeason }}</td>
           </tr>
           <tr>
-            <th class="mint-reverse font-xs">Marca</th>
+            <th class="mint-reverse font-xs" colspan="2">Marca</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center font-xs">{{ data.brand }}</td>
+            <td class="mint-cell text-center font-xs" colspan="2">{{ data.brand }}</td>
           </tr>
           <tr>
-            <th class="mint-reverse font-xs">Sección</th>
+            <th class="mint-reverse font-xs" colspan="2">Sección</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center font-xs">{{ data.section }}</td>
+            <td class="mint-cell text-center font-xs" colspan="2">{{ data.section }}</td>
           </tr>
           <tr>
-            <th class="mint-reverse font-xs">Family</th>
+            <th class="mint-reverse font-xs" colspan="2">Family</th>
           </tr>
           <tr>
-            <td class="mint-cell text-center font-xs">{{ data.family }}</td>
+            <td class="mint-cell text-center font-xs" colspan="2">{{ data.family }}</td>
+          </tr>
+          <tr>
+            <th class="mint-reverse font-xs">PVP</th>
+            <th class="mint-reverse font-xs">PVP Rebaja</th>
+          </tr>
+          <tr>
+            <td class="mint-cell text-center font-xs">{{ data.price }}</td>
+            <td class="mint-cell text-center font-xs">{{ data.salePrice }}</td>
           </tr>
         </thead>
       </table>
@@ -64,62 +72,6 @@ export default defineComponent({
   },
 });
 </script>
-<!-- BarcodeDisplay.vue -->
-<template>
-  <div>
-    <VueQrcodeReader @onDecode="onDecode" />
-    <canvas ref="barcodeCanvas" />
-  </div>
-</template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import { VueQrcodeReader } from 'vue-qrcode-reader';
-import bwipjs from 'bwip-js';
 
-export default defineComponent({
-  components: {
-    VueQrcodeReader,
-  },
-  setup() {
-    const canvasRef = ref<HTMLCanvasElement | null>(null);
 
-    onMounted(() => {
-      // Lógica adicional que puede necesitar al iniciar el componente
-    });
-
-    const onDecode = (data: string) => {
-      generateBarcode(data);
-    };
-
-    const generateBarcode = async (data: string) => {
-      try {
-        const format = 'CODE128';
-
-        const canvas = canvasRef.value;
-        const context = canvas?.getContext('2d');
-
-        if (canvas && context) {
-          // Limpia el canvas antes de generar un nuevo código de barras
-          context.clearRect(0, 0, canvas.width, canvas.height);
-
-          await bwipjs.toCanvas(canvas, {
-            bcid: format,
-            text: data,
-            scale: 3,
-            includetext: true,
-            textxalign: 'center',
-          });
-        }
-      } catch (error) {
-        console.error(`Error al generar el código de barras: ${error}`);
-      }
-    };
-
-    return {
-      canvasRef,
-      onDecode,
-    };
-  },
-});
-</script>

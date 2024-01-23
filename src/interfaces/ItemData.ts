@@ -6,11 +6,13 @@ export interface ItemInfo {
   brand: string;
   section: string;
   family: string;
-  fullseason: string;
+  fullSeason: string;
   season: string;
   modelCode: string;
   modelDescription: string;
   itemDescription: string;
   urlPhoto: string;
   itemGroupCode: string;
+  price: string;
+  salePrice: string;
 }

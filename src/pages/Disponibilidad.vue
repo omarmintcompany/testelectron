@@ -232,7 +232,7 @@ export default defineComponent({
 
       axios
         .get(
-          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/refData`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/${this.store.getCurrentWhsCode.whsCode}/refData`
         )
         .then((x) => {
           this.refData = x.data as refData;
@@ -266,7 +266,7 @@ export default defineComponent({
 
       axios
         .get(
-          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/itemData`
+          `${this.store.options["ApiEndPoint"]}/disponibilidad/${this.itemCode}/${this.store.getCurrentWhsCode.whsCode}/itemData`
         )
         .then((x) => {
           this.itemData = x.data as ItemInfo;
