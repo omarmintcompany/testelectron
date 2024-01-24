@@ -23,18 +23,19 @@
         </td>
         <td
           :class="{
-            'text-right table-border mint-cell':
-              whsCode != currentStore && !isWarehouse(whsCode),
-            'text-right table-border store-cell mint-cell':
-              whsCode == currentStore,
+
+            'text-right table-border mint-cell': whsCode != currentStore && !isWarehouse(whsCode) && !checkReservation(item.itemCode,whsCode),
+            'text-right table-border store-cell mint-cell': whsCode == currentStore,
             'text-right table-border mint-green': isWarehouse(whsCode),
+            'text-right table-border mint-reservation' : checkReservation(item.itemCode,whsCode)
+
           }"
           v-for="whsCode in sortedTitles"
           :key="whsCode"
         >
-          <div v-if="whsCode == currentStore">
+          <div v-if="whsCode == currentStore" >
             <div class="row">
-              <div class="col-1" v-if="getStock(item.itemCode, whsCode) > 0">
+              <div  v-if="getStock(item.itemCode, whsCode) > 0">
                 <q-btn
                   title="Solicitar a almacen de tienda"
                   icon="warehouse"
@@ -43,13 +44,13 @@
                   @click="requestStock(item.itemCode)"
                 ></q-btn>
               </div>
-              <div class="col" v-if="getStock(item.itemCode, whsCode) > 0">
+              <div v-if="getStock(item.itemCode, whsCode) > 0">
                 {{ getStock(item.itemCode, whsCode) }}
               </div>
             </div>
           </div>
-          <div v-else>
-            <div v-if="availableWhs(whsCode)">
+          <div v-else >
+            <div v-if="availableWhs(whsCode)" class="row">
               <q-radio
                 v-model="stockSelected"
                 :val="item.itemCode + '-' + whsCode"
@@ -59,11 +60,6 @@
                 size="xs"
                 v-if="getStock(item.itemCode, whsCode) > 0"
               />
-            </div>
-            <div v-else>
-              <div v-if="getStock(item.itemCode, whsCode) > 0">
-                {{ getStock(item.itemCode, whsCode) }}
-              </div>
             </div>
           </div>
         </td>
@@ -128,6 +124,8 @@ import Login from "../components/Login.vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 import { Transfer } from "src/ts/Transfer";
+import { itemReservations } from "src/Interfaces/DisponibilidadInterfaces";
+import { stockTable, whsconfig } from "src/Interfaces/TransferInterfaces";
 
 export default defineComponent({
   name: "stockTableComponent",
@@ -165,6 +163,10 @@ export default defineComponent({
   },
 
   props: {
+    reservations: {
+      type: Array as PropType<itemReservations[]>,
+      default: () => [],
+    },
     stock: {
       type: Array as PropType<stockTable[]>,
       default: () => [],
@@ -192,6 +194,13 @@ export default defineComponent({
     );
   },
   methods: {
+    checkReservation(itemCode: string, whsCode: string): boolean {
+        const matchingReservations = this.reservations.filter(reservation =>
+        reservation.itemCode == itemCode && reservation.whsCode == whsCode
+      );
+
+      return matchingReservations.length > 0;
+    },
     getStock(itemcode: string, whscode: string) {
       var data = this.stock
         .filter((p) => p.itemCode == itemcode)

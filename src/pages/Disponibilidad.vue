@@ -70,6 +70,7 @@
               </q-card-section>
               <q-card-section>
                 <stockTableComponent
+                  :reservations="itemReservations"
                   :stock="stockTable"
                   :titles="WhsCodeStock"
                   :whsconfig="whsConfig"
