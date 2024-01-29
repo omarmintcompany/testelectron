@@ -171,7 +171,7 @@
                     color="black"
                     icon="print"
                     title="Imprimir etiqueta del bulto"
-                    @click="printLabel(getCodeBar(props.row.id,props.row.CodeBarPackage))"
+                    @click="printLabel(props.row.id)"
                   ></q-btn>
                 </div>
               </q-td>
@@ -179,6 +179,16 @@
           </template>
 
           <template v-slot:top-right>
+              <q-select
+                v-model="printModelListSelected"
+                :options="printModelList"
+                label="Modelo de impresión"
+                label-color="black"
+                dense
+                map-options
+                emit-value
+                color="black"
+              />
             <q-icon name="local_mall" size="md" />
           </template>
 
@@ -422,6 +432,11 @@ export default defineComponent({
       transfersList: [] as TransferList[],
       status: "En Preparación",
       idTransfer: 0 as number,
+      printModelList: [
+        { label: "Modelo Ticket", value: 'packageTicket' },
+        { label: "Modelo A4", value: 'packageDefault' },
+      ],
+      printModelListSelected: "packageDefault",
     };
   },
   methods: {
@@ -667,10 +682,16 @@ export default defineComponent({
       return val != null ? moment(String(val)).format("DD/MM/YYYY") : "";
     },
     printLabel(id : string) {
+      let ticketSize : boolean = this.printModelListSelected == 'packageDefault' ? false : true;
 
+      window.open(
+          `${this.store.options["ApiEndPoint"]}/pdf/generate?typeDocument=package&templateName=`+ this.printModelListSelected + `&ticketSize=` + ticketSize +`&idDocument=` +
+          id +
+          "&WhsCode=" + this.store.getCurrentWhsCode.whsCode
+      );
 
-      const newTab = window.open('', '_blank');
-      newTab.location.href = this.$router.resolve('/packagelabel/'+id).href;
+      //const newTab = window.open('', '_blank');
+      //newTab.location.href = this.$router.resolve('/packagelabel/'+id).href;
 
     },
     getCodeBar(id: number, codebar?: number): number {

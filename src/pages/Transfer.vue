@@ -138,6 +138,18 @@
               </div>
             </q-card-section>
             <q-card-section dense>
+              <q-select
+                v-model="printModelListSelected"
+                :options="printModelList"
+                label="Modelo de impresión"
+                label-color="black"
+                dense
+                map-options
+                emit-value
+                color="black"
+              />
+            </q-card-section>
+            <q-card-section dense>
               <q-input
                 name="inputItem"
                 autofocus
@@ -574,6 +586,11 @@ export default defineComponent({
         { label: "No", value: false },
         { label: "Si", value: true },
       ],
+      printModelList: [
+        { label: "Modelo Ticket", value: 'transferTicket' },
+        { label: "Modelo A4", value: 'transferDefault' },
+      ],
+      printModelListSelected: "transferDefault",
       whsList: [] as WhsInfo[],
       types: [] as TransferType[],
       salesreps: [] as SalesRep[],
@@ -599,9 +616,11 @@ export default defineComponent({
   },
   methods: {
     printTransfer() {
+      let ticketSize : boolean = this.printModelListSelected == 'transferDefault' ? false : true;
       window.open(
-        "http://192.168.1.25/PrintTransferencia?PONumber=" +
-          this.transferData.id
+          `${this.store.options["ApiEndPoint"]}/pdf/generate?typeDocument=transfer&templateName=`+ this.printModelListSelected + `&ticketSize=` + ticketSize +`&idDocument=` +
+          this.transferData.id +
+          "&WhsCode=" + this.store.getCurrentWhsCode.whsCode
       );
     },
     printLabels() {

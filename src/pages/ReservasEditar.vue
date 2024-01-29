@@ -16,6 +16,7 @@
                     dense
                     icon="print"
                     v-if="reservationIdLocal != 0"
+                    @click="printReservation()"
                   />
                 </div>
 
@@ -74,6 +75,18 @@
               </div>
             </q-card-section>
             <q-card-section dense>
+              <q-select
+                v-model="printModelListSelected"
+                :options="printModelList"
+                label="Modelo de impresión"
+                label-color="black"
+                dense
+                map-options
+                emit-value
+                color="black"
+              />
+            </q-card-section>
+            <q-card-section>
               <q-input
                 name="inputItem"
                 color="black"
@@ -398,6 +411,11 @@ export default defineComponent({
         { label: "Cancelada", value: "C" },
         { label: "Confirmada", value: "CN" },
       ],
+      printModelList: [
+        { label: "Modelo Ticket", value: 'reservationTicket' },
+        { label: "Modelo A4", value: 'reservationDefault' },
+      ],
+      printModelListSelected: "reservationTicket",
       reservationIdLocal: 0 as number,
     };
   },
@@ -590,6 +608,15 @@ export default defineComponent({
               message: "No se ha podido crear la reserva, intentelo más tarde",
             });
           });
+    },
+    printReservation(){
+      let ticketSize : boolean = this.printModelListSelected == 'reservationDefault' ? false : true;
+
+      window.open(
+          `${this.store.options["ApiEndPoint"]}/pdf/generate?typeDocument=reservation&templateName=`+ this.printModelListSelected + `&ticketSize=` + ticketSize +`&idDocument=` +
+          this.reservationIdLocal +
+          "&WhsCode=" + this.store.getCurrentWhsCode.whsCode
+      );
     },
     preduplicate() {
       this.action = "duplicate";
