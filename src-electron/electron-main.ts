@@ -72,7 +72,7 @@ app.on("activate", () => {
 function checkForUpdates() {
   // Configura la URL del servidor de actualizaciones en tu electron-builder.yml
   autoUpdater.setFeedURL({
-    url: 'https://github.com/tu-usuario/tu-repo/releases/latest',
+    url: 'https://github.com/omarmintcompany/testelectron',
     private: false, // Opcional, dependiendo de tu configuración de releases
   });
 
