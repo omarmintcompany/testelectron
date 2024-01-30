@@ -1,0 +1,5 @@
+publish:
+  provider: github
+  owner: omarrodrigueztrujillo@gmail.com
+  repo: https://github.com/omarmintcompany/testelectron
+  token: ${{ secrets.GITHUB_TOKEN }}
