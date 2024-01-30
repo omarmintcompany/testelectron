@@ -3,7 +3,7 @@
     <q-header elevated class="mint-reverse text-white" height-hint="98">
       <q-bar class="q-electron-drag" v-if="1 == 1">
         <q-icon name="laptop_chromebook" />
-        <div>Mint Store Manager 2023</div>
+        <div>Mint Store Manager 2023 - V2</div>
         <q-space />
         <q-btn dense flat icon="minimize" @click="minimize" />
         <q-btn dense flat icon="crop_square" @click="toggleMaximize" />
